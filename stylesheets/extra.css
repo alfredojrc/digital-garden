@@ -1,0 +1,84 @@
+/*
+ * Digital Garden Custom Styles
+ * Subtle "console glow" effect for code blocks using dracula theme
+ */
+
+/* Console glow effect for code blocks */
+.highlight {
+  /* Soft glowing shadow using cyan accent color */
+  box-shadow: 0 0 8px 0 rgba(0, 229, 255, 0.3);
+  border-radius: 4px;
+  transition: box-shadow 0.3s ease-in-out;
+}
+
+/* Subtle pulse on hover */
+.highlight:hover {
+  box-shadow: 0 0 15px 0 rgba(0, 229, 255, 0.5);
+}
+
+/* Make visited links slightly different to show where user has been */
+.md-nav__link--active,
+.md-tabs__link--active {
+  font-weight: bold;
+}
+
+/* Enhanced code block styling */
+.highlight pre {
+  border: 1px solid rgba(0, 229, 255, 0.2);
+}
+
+/* Inline code enhancement */
+code {
+  background-color: rgba(0, 229, 255, 0.1);
+  padding: 0.1em 0.4em;
+  border-radius: 3px;
+}
+
+/* Blog post metadata styling */
+.md-post__meta {
+  font-size: 0.75rem;
+  opacity: 0.8;
+}
+
+/* Tag styling for better visibility */
+.md-tag {
+  background-color: rgba(0, 229, 255, 0.15);
+  border: 1px solid rgba(0, 229, 255, 0.3);
+  transition: all 0.2s ease-in-out;
+}
+
+.md-tag:hover {
+  background-color: rgba(0, 229, 255, 0.25);
+  border-color: rgba(0, 229, 255, 0.5);
+  transform: translateY(-1px);
+}
+
+/* ASCII diagram enhancement */
+pre code {
+  font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', 'Consolas', 'source-code-pro', monospace;
+  line-height: 1.4;
+  font-size: 0.9em;
+}
+
+/* Table styling improvements */
+table {
+  border-collapse: collapse;
+  width: 100%;
+  margin: 1em 0;
+}
+
+th {
+  background-color: rgba(0, 229, 255, 0.1);
+  border: 1px solid rgba(0, 229, 255, 0.3);
+}
+
+td {
+  border: 1px solid rgba(0, 229, 255, 0.2);
+}
+
+/* Admonition custom styling */
+.admonition {
+  border-left: 3px solid;
+  border-radius: 4px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
