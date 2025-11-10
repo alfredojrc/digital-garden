@@ -1,0 +1,45 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200">
+  <!-- Growing Tree - Knowledge Growth Theme -->
+  <defs>
+    <linearGradient id="growthGradient" x1="0%" y1="100%" x2="0%" y2="0%">
+      <stop offset="0%" style="stop-color:#81c784;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#66bb6a;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#4caf50;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+
+  <!-- Soil/Ground -->
+  <ellipse cx="100" cy="185" rx="80" ry="10" fill="#8d6e63" opacity="0.6"/>
+
+  <!-- Main trunk - thicker at base -->
+  <path d="M 100 185 Q 95 150 93 120 Q 92 90 95 60 L 100 20"
+        stroke="#6d4c41" stroke-width="12" fill="none" stroke-linecap="round"/>
+
+  <!-- Primary branches -->
+  <path d="M 95 60 Q 70 55 50 50" stroke="#7d5f3f" stroke-width="5" fill="none" stroke-linecap="round"/>
+  <path d="M 95 80 Q 60 75 40 80" stroke="#7d5f3f" stroke-width="6" fill="none" stroke-linecap="round"/>
+  <path d="M 97 100 Q 75 105 60 120" stroke="#7d5f3f" stroke-width="7" fill="none" stroke-linecap="round"/>
+
+  <path d="M 100 60 Q 125 55 145 50" stroke="#7d5f3f" stroke-width="5" fill="none" stroke-linecap="round"/>
+  <path d="M 98 80 Q 135 75 155 80" stroke="#7d5f3f" stroke-width="6" fill="none" stroke-linecap="round"/>
+  <path d="M 98 100 Q 120 105 135 120" stroke="#7d5f3f" stroke-width="7" fill="none" stroke-linecap="round"/>
+
+  <!-- Foliage clusters -->
+  <circle cx="50" cy="50" r="20" fill="url(#growthGradient)" opacity="0.9"/>
+  <circle cx="40" cy="80" r="22" fill="url(#growthGradient)" opacity="0.85"/>
+  <circle cx="60" cy="120" r="18" fill="url(#growthGradient)" opacity="0.8"/>
+
+  <circle cx="145" cy="50" r="20" fill="url(#growthGradient)" opacity="0.9"/>
+  <circle cx="155" cy="80" r="22" fill="url(#growthGradient)" opacity="0.85"/>
+  <circle cx="135" cy="120" r="18" fill="url(#growthGradient)" opacity="0.8"/>
+
+  <!-- Top foliage -->
+  <circle cx="100" cy="25" r="25" fill="url(#growthGradient)"/>
+  <circle cx="90" cy="40" r="20" fill="url(#growthGradient)" opacity="0.95"/>
+  <circle cx="110" cy="40" r="20" fill="url(#growthGradient)" opacity="0.95"/>
+
+  <!-- Small leaves for detail -->
+  <ellipse cx="55" cy="45" rx="8" ry="12" fill="#a5d6a7" opacity="0.7" transform="rotate(-30 55 45)"/>
+  <ellipse cx="140" cy="48" rx="8" ry="12" fill="#a5d6a7" opacity="0.7" transform="rotate(25 140 48)"/>
+  <ellipse cx="100" cy="20" rx="10" ry="14" fill="#c5e1a5" opacity="0.8"/>
+</svg>
