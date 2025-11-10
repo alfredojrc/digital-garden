@@ -1,0 +1,84 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="100" height="100">
+  <defs>
+    <style>
+      .node { fill: #3f51b5; }
+      .connection { stroke: #00bcd4; stroke-width: 1.5; fill: none; stroke-linecap: round; }
+      .node-glow { fill: #3f51b5; opacity: 0.2; }
+
+      @media (prefers-color-scheme: dark) {
+        .node { fill: #7986cb; }
+        .connection { stroke: #4dd0e1; }
+        .node-glow { fill: #7986cb; opacity: 0.15; }
+      }
+    </style>
+  </defs>
+
+  <!-- Root node (trunk base) -->
+  <circle class="node-glow" cx="50" cy="85" r="7"/>
+  <circle class="node" cx="50" cy="85" r="4.5"/>
+
+  <!-- Primary branch connections from root -->
+  <path class="connection" d="M 50 85 Q 45 70 40 60"/>
+  <path class="connection" d="M 50 85 Q 50 70 50 55"/>
+  <path class="connection" d="M 50 85 Q 55 70 60 60"/>
+
+  <!-- Second level nodes -->
+  <circle class="node-glow" cx="40" cy="60" r="5.5"/>
+  <circle class="node" cx="40" cy="60" r="3.5"/>
+
+  <circle class="node-glow" cx="50" cy="55" r="6"/>
+  <circle class="node" cx="50" cy="55" r="4"/>
+
+  <circle class="node-glow" cx="60" cy="60" r="5.5"/>
+  <circle class="node" cx="60" cy="60" r="3.5"/>
+
+  <!-- Third level connections -->
+  <path class="connection" d="M 40 60 Q 32 45 28 35"/>
+  <path class="connection" d="M 40 60 Q 40 48 42 38"/>
+  <path class="connection" d="M 50 55 Q 45 40 40 30"/>
+  <path class="connection" d="M 50 55 Q 50 40 50 28"/>
+  <path class="connection" d="M 50 55 Q 55 40 60 30"/>
+  <path class="connection" d="M 60 60 Q 58 48 58 38"/>
+  <path class="connection" d="M 60 60 Q 68 45 72 35"/>
+
+  <!-- Third level nodes (leaf nodes) -->
+  <circle class="node-glow" cx="28" cy="35" r="4.5"/>
+  <circle class="node" cx="28" cy="35" r="3"/>
+
+  <circle class="node-glow" cx="42" cy="38" r="4.5"/>
+  <circle class="node" cx="42" cy="38" r="3"/>
+
+  <circle class="node-glow" cx="40" cy="30" r="4.5"/>
+  <circle class="node" cx="40" cy="30" r="3"/>
+
+  <circle class="node-glow" cx="50" cy="28" r="5"/>
+  <circle class="node" cx="50" cy="28" r="3.5"/>
+
+  <circle class="node-glow" cx="60" cy="30" r="4.5"/>
+  <circle class="node" cx="60" cy="30" r="3"/>
+
+  <circle class="node-glow" cx="58" cy="38" r="4.5"/>
+  <circle class="node" cx="58" cy="38" r="3"/>
+
+  <circle class="node-glow" cx="72" cy="35" r="4.5"/>
+  <circle class="node" cx="72" cy="35" r="3"/>
+
+  <!-- Top level connections (endpoints) -->
+  <path class="connection" d="M 40 30 Q 35 20 32 15"/>
+  <path class="connection" d="M 50 28 Q 48 18 46 12"/>
+  <path class="connection" d="M 50 28 Q 52 18 54 12"/>
+  <path class="connection" d="M 60 30 Q 65 20 68 15"/>
+
+  <!-- Top level endpoint nodes -->
+  <circle class="node-glow" cx="32" cy="15" r="4"/>
+  <circle class="node" cx="32" cy="15" r="2.5"/>
+
+  <circle class="node-glow" cx="46" cy="12" r="4"/>
+  <circle class="node" cx="46" cy="12" r="2.5"/>
+
+  <circle class="node-glow" cx="54" cy="12" r="4"/>
+  <circle class="node" cx="54" cy="12" r="2.5"/>
+
+  <circle class="node-glow" cx="68" cy="15" r="4"/>
+  <circle class="node" cx="68" cy="15" r="2.5"/>
+</svg>
