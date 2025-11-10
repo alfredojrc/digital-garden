@@ -12,4 +12,4 @@ This section will contain:
 - **Troubleshooting Playbooks**: Common issues and solutions
 - **Performance Baselines**: Benchmark data and analysis
 
-Check back soon or watch the [repository](https://github.com/alf/digital-garden) for updates.
+Check back soon or watch the [repository](https://github.com/alfredojrc/digital-garden) for updates.

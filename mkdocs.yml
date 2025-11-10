@@ -5,7 +5,7 @@ site_author: 'Alf'
 site_description: 'A digital garden, knowledge base, and technical journal focused on distributed systems, storage architecture, and infrastructure engineering.'
 
 # Repository
-repo_url: https://github.com/alf/digital-garden
+repo_url: https://github.com/alfredojrc/digital-garden
 edit_uri: edit/main/docs/
 
 # Theme Configuration (Material for MkDocs)

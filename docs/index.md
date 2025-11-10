@@ -85,4 +85,4 @@ A deep dive into building a clustered, high-availability parallel NFS storage sy
 
 ---
 
-<small>This garden grows continuously · [Follow on GitHub](https://github.com/alf/digital-garden) · [RSS Feed](feed_rss_created.xml)</small>
+<small>This garden grows continuously · [Follow on GitHub](https://github.com/alfredojrc/digital-garden) · [RSS Feed](feed_rss_created.xml)</small>

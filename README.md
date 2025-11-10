@@ -33,7 +33,7 @@ python --version  # Should be 3.8+
 
 ```bash
 # Clone repository
-git clone https://github.com/alf/digital-garden.git
+git clone https://github.com/alfredojrc/digital-garden.git
 cd digital-garden
 
 # Install dependencies

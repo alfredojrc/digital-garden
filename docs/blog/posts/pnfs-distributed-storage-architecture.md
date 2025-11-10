@@ -701,4 +701,4 @@ This pNFS v4.2 architecture provides:
 
 ---
 
-*Have questions or running a similar setup? Open a [discussion](https://github.com/alf/digital-garden/discussions) or reach out.*
+*Have questions or running a similar setup? Open a [discussion](https://github.com/alfredojrc/digital-garden/discussions) or reach out.*

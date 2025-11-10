@@ -11,4 +11,4 @@ This section will contain:
 - **Experiments**: Technical experiments and findings
 - **Quick Notes**: Short observations and discoveries
 
-Check back soon or watch the [repository](https://github.com/alf/digital-garden) for updates.
+Check back soon or watch the [repository](https://github.com/alfredojrc/digital-garden) for updates.
