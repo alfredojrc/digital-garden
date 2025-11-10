@@ -77,6 +77,7 @@ plugins:
         - DevOps
         - Security
         - Performance
+        - Kubernetes
       categories_toc: true
       pagination: true
       pagination_per_page: 10
@@ -100,6 +101,24 @@ plugins:
         - kernel
         - performance-tuning
         - scalability
+        - kubernetes
+        - k8s
+        - cka-prep
+        - kubectl
+        - pods
+        - deployments
+        - services
+        - networking
+        - storage
+        - rbac
+        - security-contexts
+        - helm
+        - kustomize
+        - troubleshooting
+        - monitoring
+        - ingress
+        - configmaps
+        - secrets
 
 # Extensions (for console-style syntax highlighting)
 markdown_extensions:
@@ -153,6 +172,7 @@ nav:
       - Security: blog/index.md#security
       - Performance: blog/index.md#performance
   - By Theme:
+    - Kubernetes CKA Mastery: kubernetes/index.md
     - AI & Automation: blog/index.md
     - Cloud Infrastructure: blog/index.md
     - Infrastructure as Code: blog/index.md
