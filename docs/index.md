@@ -8,6 +8,16 @@
 
 [➡️ View All Posts](blog/index.md){ .md-button .md-button--primary }
 
+### [Kubernetes Architecture Fundamentals](blog/2025/11/11/kubernetes-architecture-fundamentals/)
+
+**Kubernetes · Architecture** · 15 min read
+
+Deep dive into Kubernetes cluster architecture, control plane components, and the distributed systems design that powers container orchestration at scale. Essential foundations for CKA certification with comprehensive diagrams, kubectl commands, and hands-on practice exercises.
+
+**Topics**: kubernetes, k8s, cka-prep, architecture, control-plane, kubectl
+
+[Read more →](blog/2025/11/11/kubernetes-architecture-fundamentals/){ .md-button }
+
 ### [High-Performance pNFS v4.2 Distributed Storage Architecture](blog/2025/11/10/pnfs-distributed-storage-architecture/)
 
 **Storage · Architecture** · 12 min read
@@ -23,6 +33,14 @@ A deep dive into building a clustered, high-availability parallel NFS storage sy
 ## 🗂️ Browse by Theme
 
 <div class="grid cards" markdown>
+
+-   :material-kubernetes: **Kubernetes CKA Mastery**
+
+    ---
+
+    Complete CKA certification prep with 22 comprehensive posts
+
+    [Explore Kubernetes →](kubernetes/index.md)
 
 -   :material-robot-outline: **AI & Automation**
 
