@@ -8,6 +8,26 @@
 
 [➡️ View All Posts](blog/index.md){ .md-button .md-button--primary }
 
+### [kubectl Essentials: Your Kubernetes Swiss Army Knife](blog/2025/11/11/kubectl-essentials/)
+
+**Kubernetes** · 13 min read
+
+Master kubectl commands, output formats, and productivity patterns essential for CKA exam success. Learn imperative vs declarative approaches, JSONPath queries, context management, and time-saving aliases for Kubernetes cluster management.
+
+**Topics**: kubernetes, k8s, cka-prep, kubectl
+
+[Read more →](blog/2025/11/11/kubectl-essentials/){ .md-button }
+
+### [Setting Up Your Kubernetes Lab Environment](blog/2025/11/11/setting-up-kubernetes-lab/)
+
+**Kubernetes · Infrastructure** · 12 min read
+
+Complete guide to setting up Kubernetes lab environments for CKA preparation. Covers kubeadm cluster setup, Minikube for local development, kind for testing, kubectl installation, and kubeconfig management with practical examples.
+
+**Topics**: kubernetes, k8s, cka-prep, kubeadm, kubectl, minikube
+
+[Read more →](blog/2025/11/11/setting-up-kubernetes-lab/){ .md-button }
+
 ### [Kubernetes Architecture Fundamentals](blog/2025/11/11/kubernetes-architecture-fundamentals/)
 
 **Kubernetes · Architecture** · 15 min read

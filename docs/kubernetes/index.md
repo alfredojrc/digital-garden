@@ -93,17 +93,17 @@ graph TD
 
 Build your foundational knowledge of Kubernetes architecture and essential tools.
 
-### 1. [Kubernetes Architecture Fundamentals](#)
+### 1. [Kubernetes Architecture Fundamentals](../blog/2025/11/11/kubernetes-architecture-fundamentals/)
 Control plane components, worker nodes, etcd, API server, scheduler, controller manager
 **Tags**: `kubernetes` `architecture` `fundamentals` `cka-prep`
 **Domain**: Cluster Architecture (25%)
 
-### 2. [Setting Up Your Kubernetes Lab Environment](#)
+### 2. [Setting Up Your Kubernetes Lab Environment](../blog/2025/11/11/setting-up-kubernetes-lab/)
 kubeadm, Minikube, kind, kubectl installation, kubeconfig management
 **Tags**: `kubernetes` `installation` `lab-setup` `kubeadm`
 **Domain**: Cluster Architecture (25%)
 
-### 3. [kubectl Essentials: Your Kubernetes Swiss Army Knife](#)
+### 3. [kubectl Essentials: Your Kubernetes Swiss Army Knife](../blog/2025/11/11/kubectl-essentials/)
 Master kubectl commands, aliases, output formats, context switching, imperative vs declarative
 **Tags**: `kubernetes` `kubectl` `cli` `basics`
 **Domain**: All (foundational skill)
