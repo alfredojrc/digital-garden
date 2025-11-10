@@ -106,6 +106,7 @@ plugins:
         - k8s
         - cka-prep
         - kubectl
+        - command-line
         - pods
         - deployments
         - services
@@ -122,6 +123,8 @@ plugins:
         - secrets
         - architecture
         - control-plane
+        - kubeadm
+        - minikube
 
 # Extensions (for console-style syntax highlighting)
 markdown_extensions:
