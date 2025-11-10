@@ -119,6 +119,8 @@ plugins:
         - ingress
         - configmaps
         - secrets
+        - architecture
+        - control-plane
 
 # Extensions (for console-style syntax highlighting)
 markdown_extensions:
