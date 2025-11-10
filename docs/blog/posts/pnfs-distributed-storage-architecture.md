@@ -43,51 +43,75 @@ This architecture implements a production-grade parallel NFS (pNFS) v4.2 deploym
 
 ## System Topology
 
+```mermaid
+graph TB
+    subgraph Clients["🖥️ Client Layer (GPU Compute Nodes)"]
+        C1["Client 1<br/>(pNFS v4.2)"]
+        C2["Client 2<br/>(pNFS v4.2)"]
+        CN["Client N<br/>(pNFS v4.2)"]
+    end
+
+    subgraph VIP["⚖️ High Availability Layer"]
+        LB["Virtual IP / Load Balancer<br/>(Keepalived/HAProxy)<br/>📍 10.10.1.100"]
+    end
+
+    subgraph MDSCluster["🗂️ Metadata Cluster (Active-Active)"]
+        Backend["Distributed Backend<br/>(Consensus/Shared Storage)<br/>🔄 State Sync + Heartbeat"]
+    end
+
+    subgraph Network["🌐 High-Speed Network Fabric"]
+        Fabric["InfiniBand / 100GbE RoCE<br/>⚡ Sub-microsecond latency"]
+    end
+
+    subgraph Storage["💾 Storage Nodes (Co-located MDS + DS)"]
+        direction TB
+        S1["Storage Node 1<br/>━━━━━━━━━<br/>🗄️ MDS Service<br/>📦 Data Service<br/>⚙️ NVMe SSD"]
+        S2["Storage Node 2<br/>━━━━━━━━━<br/>🗄️ MDS Service<br/>📦 Data Service<br/>⚙️ NVMe SSD"]
+        S3["Storage Node 3<br/>━━━━━━━━━<br/>🗄️ MDS Service<br/>📦 Data Service<br/>⚙️ NVMe SSD"]
+        SN["Storage Node N<br/>━━━━━━━━━<br/>🗄️ MDS Service<br/>📦 Data Service<br/>⚙️ NVMe SSD"]
+    end
+
+    %% Metadata Path (Phase 1)
+    C1 -->|"①  LAYOUTGET<br/>(Metadata Request)"| LB
+    C2 -->|"①  LAYOUTGET<br/>(Metadata Request)"| LB
+    CN -->|"①  LAYOUTGET<br/>(Metadata Request)"| LB
+
+    LB -->|Distribute| Backend
+    Backend <-->|Sync| S1
+    Backend <-->|Sync| S2
+    Backend <-->|Sync| S3
+    Backend <-->|Sync| SN
+
+    %% Data Path (Phase 2)
+    C1 -.->|"②  Parallel READ/WRITE<br/>(Direct Data I/O)"| Fabric
+    C2 -.->|"②  Parallel READ/WRITE<br/>(Direct Data I/O)"| Fabric
+    CN -.->|"②  Parallel READ/WRITE<br/>(Direct Data I/O)"| Fabric
+
+    Fabric -.->|Stripe 0| S1
+    Fabric -.->|Stripe 1| S2
+    Fabric -.->|Stripe 2| S3
+    Fabric -.->|Stripe N| SN
+
+    style Clients fill:#e1f5ff,stroke:#01579b,stroke-width:2px
+    style VIP fill:#fff3e0,stroke:#e65100,stroke-width:2px
+    style MDSCluster fill:#f3e5f5,stroke:#4a148c,stroke-width:2px
+    style Network fill:#e8f5e9,stroke:#1b5e20,stroke-width:2px
+    style Storage fill:#fce4ec,stroke:#880e4f,stroke-width:2px
+    style LB fill:#ffecb3,stroke:#ff6f00,stroke-width:2px
+    style Backend fill:#e1bee7,stroke:#6a1b9a,stroke-width:2px
+    style Fabric fill:#c8e6c9,stroke:#2e7d32,stroke-width:2px
 ```
-+--------------------------+     +--------------------------+
-|    CLIENT 1 (GPU Node)   |     |    CLIENT 2 (GPU Node)   |
-|     (pNFS v4.2 Client)   |     |     (pNFS v4.2 Client)   |
-+--------------------------+     +--------------------------+
-         |    |                                |    |
-(1. Metadata Request) .....|....|................................|....|.....
-         |    |                                |    |
-         v    v                                v    v
-+-----------------------------------------------------+
-|   METADATA VIRTUAL IP (VIP) / LOAD BALANCER         |
-|   (Directs clients to any active MDS node)          |
-+-----------------------------------------------------+
-                  |
-(Distributes to...).................|...................................
-                   .              |                 .
-                   .              v                 .
-                   .   +--------------------+     .
-                   .   |  MDS SYNC/HEARTBEAT|     .
-                   .   | (Clustered Backend)|     .
-                   .   +--------------------+     .
-                   .     ^      ^      ^         .
-                   .     |      |      |         .
-+--------------------v-----|------|------|---------v--------------------------+
-|                 .        |      |      |      .                           |
-|  HIGH-SPEED LOW-LATENCY NETWORK FABRIC (e.g., InfiniBand, 100GbE RoCE)      |
-|                 .        |      |      |      .                           |
-+-----------------|--------|------|------|------|---------------------------+
-                  |        |      |      |      |
-  (2. Parallel    |        |      |      |      | (2. Parallel
-   Data I/O)     +--------+    +--|---+  +------|----+   Data I/O)
-   ============|===============|======|===========|===|============
-   ||          |    ||       |      |           |   ||          ||
-   ||          |    ||       |      |           |   ||          ||
-   vv          v    vv       v      v           v   vv          vv
-+------------------+ +------------------+ +------------------+ +--------------+
-|  STORAGE NODE 1  | |  STORAGE NODE 2  | |  STORAGE NODE 3  | |  STORAGE...N |
-|==================| |==================| |==================| |==============|
-| [MDS Svc(Active)]| | [MDS Svc(Active)]| | [MDS Svc(Active)]| | [MDS Svc(...)]|
-|------------------| |------------------| |------------------| |--------------|
-| [Data Svc (DS)]  | | [Data Svc (DS)]  | | [Data Svc (DS)]  | | [Data Svc(DS)] |
-|------------------| |------------------| |------------------| |--------------|
-| [Physical NVMe]  | | [Physical NVMe]  | | [Physical NVMe]  | | [Physical...]  |
-+------------------+ +------------------+ +------------------+ +--------------+
-```
+
+**Architecture Flow**:
+
+| Phase | Path | Description |
+|-------|------|-------------|
+| **① Metadata** | `Client → VIP → MDS Backend` | Client requests file layout, receives stripe pattern and DS list |
+| **② Data I/O** | `Client ⇢ Fabric ⇢ Storage Nodes` | Parallel direct I/O to multiple storage nodes, bypassing MDS |
+
+!!! info "Two-Phase Operation"
+    **Phase 1 (Control Plane)**: Client contacts any MDS via VIP to get file layout
+    **Phase 2 (Data Plane)**: Client performs parallel I/O directly to storage nodes over high-speed fabric
 
 ---
 
