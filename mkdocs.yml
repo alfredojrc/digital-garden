@@ -11,8 +11,8 @@ edit_uri: edit/main/docs/
 # Theme Configuration (Material for MkDocs)
 theme:
   name: material
-  logo: assets/logos/network-tree.svg
-  favicon: assets/logos/network-tree.svg
+  logo: assets/logos/cactus.svg
+  favicon: assets/logos/cactus.svg
 
   # Palette (Dark Mode by Default)
   palette:
