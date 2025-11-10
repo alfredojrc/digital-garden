@@ -17,7 +17,7 @@
       
       
       
-      <link rel="icon" href="../../../../../assets/logos/tree-network.svg">
+      <link rel="icon" href="../../../../../assets/logos/tree-geometric-green.svg">
       <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.6.23">
     
     
@@ -96,7 +96,7 @@
   <nav class="md-header__inner md-grid" aria-label="Header">
     <a href="../../../../.." title="Digital Garden" class="md-header__button md-logo" aria-label="Digital Garden" data-md-component="logo">
       
-  <img src="../../../../../assets/logos/tree-network.svg" alt="logo">
+  <img src="../../../../../assets/logos/tree-geometric-green.svg" alt="logo">
 
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -335,7 +335,7 @@
   <label class="md-nav__title" for="__drawer">
     <a href="../../../../.." title="Digital Garden" class="md-nav__button md-logo" aria-label="Digital Garden" data-md-component="logo">
       
-  <img src="../../../../../assets/logos/tree-network.svg" alt="logo">
+  <img src="../../../../../assets/logos/tree-geometric-green.svg" alt="logo">
 
     </a>
     Digital Garden
@@ -1748,102 +1748,66 @@
 <h2 id="system-topology">System Topology<a class="headerlink" href="#system-topology" title="Link to this section">&para;</a></h2>
 <pre class="mermaid"><code>sequenceDiagram
     participant Client as Client&lt;br/&gt;(pNFS v4.2)
-    participant VIP as Virtual IP&lt;br/&gt;(Load Balancer)
-    participant MDS1 as MDS Node 1&lt;br/&gt;(Active)
-    participant MDS2 as MDS Node 2&lt;br/&gt;(Active)
-    participant Backend as Distributed Backend&lt;br/&gt;(Consensus/Shared State)
-    participant Fabric as Network Fabric&lt;br/&gt;(InfiniBand/RoCE)
-    participant DS1 as Storage Node 1&lt;br/&gt;(MDS+DS+NVMe)
-    participant DS2 as Storage Node 2&lt;br/&gt;(MDS+DS+NVMe)
-    participant DS3 as Storage Node 3&lt;br/&gt;(MDS+DS+NVMe)
+    participant MDS as MDS Cluster&lt;br/&gt;(Active-Active via VIP)
+    participant S1 as Storage Node 1&lt;br/&gt;(NVMe)
+    participant S2 as Storage Node 2&lt;br/&gt;(NVMe)
+    participant S3 as Storage Node 3&lt;br/&gt;(NVMe)
 
-    Note over Client,DS3: Phase 1: Metadata Path (Control Plane)
+    Note over Client,S3: ━━━━━━━ PHASE 1: METADATA PATH ━━━━━━━
+    Note over MDS: Virtual IP load balances to any MDS&lt;br/&gt;All MDS nodes share distributed state
 
-    Client-&gt;&gt;VIP: LAYOUTGET request
-    VIP-&gt;&gt;MDS1: Forward to available MDS
-    MDS1-&gt;&gt;Backend: Query file layout
-    Backend--&gt;&gt;MDS1: Return layout map
-    MDS1--&gt;&gt;VIP: LAYOUT response
-    VIP--&gt;&gt;Client: Layout (stripe pattern, DS addresses)
-    Note over Client: Client caches layout&lt;br/&gt;(stripe unit: 1MB, count: 3)
+    Client-&gt;&gt;+MDS: LAYOUTGET(file_handle)
+    Note right of MDS: MDS queries distributed&lt;br/&gt;backend for file layout
+    MDS--&gt;&gt;-Client: LAYOUT(stripe_pattern, DS_list)
+    Note left of Client: ✓ Client caches layout&lt;br/&gt;Stripe unit: 1MB&lt;br/&gt;Stripe count: 3 nodes
 
-    rect rgb(240, 240, 255)
-        Note over MDS1,MDS2: MDS Cluster (Active-Active)
-        MDS1-&gt;&gt;Backend: Heartbeat &amp; state sync
-        MDS2-&gt;&gt;Backend: Heartbeat &amp; state sync
-        Backend--&gt;&gt;MDS1: Cluster state
-        Backend--&gt;&gt;MDS2: Cluster state
+    Note over Client,S3: ━━━━━━━ PHASE 2: DATA PATH (MDS BYPASSED) ━━━━━━━
+
+    par Parallel Direct I/O over InfiniBand/RoCE
+        Client-&gt;&gt;+S1: WRITE Stripe 0
+        S1-&gt;&gt;S1: NVMe I/O
+        S1--&gt;&gt;-Client: ACK
+    and
+        Client-&gt;&gt;+S2: WRITE Stripe 1
+        S2-&gt;&gt;S2: NVMe I/O
+        S2--&gt;&gt;-Client: ACK
+    and
+        Client-&gt;&gt;+S3: WRITE Stripe 2
+        S3-&gt;&gt;S3: NVMe I/O
+        S3--&gt;&gt;-Client: ACK
     end
 
-    Note over Client,DS3: Phase 2: Data Path (Direct Parallel I/O)
-
-    par Parallel data transfer (bypasses MDS)
-        Client-&gt;&gt;Fabric: Stripe 0 (READ/WRITE)
-        Fabric-&gt;&gt;DS1: Route to Storage Node 1
-        DS1-&gt;&gt;DS1: NVMe I/O
-        DS1--&gt;&gt;Fabric: Data chunk 0
-        Fabric--&gt;&gt;Client: Data chunk 0
-    and
-        Client-&gt;&gt;Fabric: Stripe 1 (READ/WRITE)
-        Fabric-&gt;&gt;DS2: Route to Storage Node 2
-        DS2-&gt;&gt;DS2: NVMe I/O
-        DS2--&gt;&gt;Fabric: Data chunk 1
-        Fabric--&gt;&gt;Client: Data chunk 1
-    and
-        Client-&gt;&gt;Fabric: Stripe 2 (READ/WRITE)
-        Fabric-&gt;&gt;DS3: Route to Storage Node 3
-        DS3-&gt;&gt;DS3: NVMe I/O
-        DS3--&gt;&gt;Fabric: Data chunk 2
-        Fabric--&gt;&gt;Client: Data chunk 2
-    end
-
-    Note over Client,DS3: Aggregate throughput: 28 GB/s (3x NVMe @ 7GB/s + overhead)</code></pre>
-<p><strong>Architecture Components</strong>:</p>
+    Note over Client,S3: ⚡ Aggregate: 3 × 7 GB/s = ~20 GB/s effective throughput</code></pre>
+<p><strong>Key Architecture Points</strong>:</p>
 <table>
 <thead>
 <tr>
+<th>Layer</th>
 <th>Component</th>
-<th>Role</th>
-<th>Key Features</th>
+<th>Function</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td><strong>Client Layer</strong></td>
-<td>pNFS v4.2 clients on GPU nodes</td>
-<td>Parallel I/O, layout caching, direct data path</td>
+<td><strong>Control Plane</strong></td>
+<td>MDS Cluster (Active-Active)</td>
+<td>Virtual IP → Load balances metadata requests<br/>Distributed backend → Shared state (GFS2/OCFS2)<br/>Co-located with storage nodes</td>
 </tr>
 <tr>
-<td><strong>Virtual IP</strong></td>
-<td>Load balancer (Keepalived/HAProxy)</td>
-<td>Distributes metadata requests, &lt;2s failover</td>
+<td><strong>Data Plane</strong></td>
+<td>Storage Nodes</td>
+<td>Direct parallel I/O bypasses MDS entirely<br/>Each node: MDS service + Data service + NVMe<br/>High-speed fabric: InfiniBand or 100GbE RoCE</td>
 </tr>
 <tr>
-<td><strong>MDS Cluster</strong></td>
-<td>Active-active metadata servers</td>
-<td>Co-located with storage, shared state backend</td>
-</tr>
-<tr>
-<td><strong>Distributed Backend</strong></td>
-<td>Consensus/shared storage</td>
-<td>Real-time sync, distributed locking, GFS2/OCFS2</td>
-</tr>
-<tr>
-<td><strong>Network Fabric</strong></td>
-<td>InfiniBand or 100GbE RoCE</td>
-<td>Sub-microsecond latency, RDMA support</td>
-</tr>
-<tr>
-<td><strong>Storage Nodes</strong></td>
-<td>Hybrid MDS + DS + NVMe</td>
-<td>3-in-1: metadata service, data service, physical storage</td>
+<td><strong>Client</strong></td>
+<td>pNFS v4.2</td>
+<td>One-time layout fetch → caches stripe pattern<br/>Direct parallel writes to multiple storage nodes<br/>No metadata bottleneck on data path</td>
 </tr>
 </tbody>
 </table>
-<div class="admonition info">
-<p class="admonition-title">Two-Phase Operation</p>
-<p><strong>Phase 1 (Control Plane)</strong>: Client requests file layout from any MDS via VIP. MDS queries distributed backend and returns stripe pattern with storage node addresses. Client caches layout.</p>
-<p><strong>Phase 2 (Data Plane)</strong>: Client performs parallel direct I/O to multiple storage nodes over high-speed fabric, completely bypassing MDS. This separation enables massive scalability.</p>
+<div class="admonition success">
+<p class="admonition-title">Architecture Advantage</p>
+<p><strong>Separation of Control and Data Planes</strong>: Client contacts MDS once to get file layout, then performs all subsequent I/O directly to storage nodes over high-speed network. MDS handles only metadata operations (LAYOUTGET, OPEN, CLOSE), while bulk data transfer happens in parallel across multiple storage nodes, eliminating the metadata server bottleneck.</p>
 </div>
 <hr />
 <h2 id="component-breakdown">Component Breakdown<a class="headerlink" href="#component-breakdown" title="Link to this section">&para;</a></h2>
