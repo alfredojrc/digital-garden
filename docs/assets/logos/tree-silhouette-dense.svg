@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200">
+  <!-- Dense Canopy Silhouette - Compact with deep roots -->
+  <defs>
+    <style>
+      .canopy { fill: #4caf50; }
+      .trunk { fill: #2e7d32; }
+      .roots { fill: #1b5e20; }
+    </style>
+  </defs>
+
+  <!-- Canopy - dense cloud-like -->
+  <circle cx="85" cy="65" r="28" class="canopy"/>
+  <circle cx="115" cy="65" r="28" class="canopy"/>
+  <circle cx="100" cy="52" r="26" class="canopy"/>
+  <circle cx="100" cy="78" r="30" class="canopy"/>
+
+  <!-- Trunk - solid sturdy -->
+  <rect x="88" y="95" width="24" height="38" class="trunk" rx="2"/>
+
+  <!-- Root system - deep tap root with side roots -->
+  <path d="M 88 133 Q 75 138 68 145 L 65 150" class="roots" stroke-width="6" stroke="#1b5e20" fill="none" stroke-linecap="round"/>
+  <path d="M 94 133 Q 88 142 85 152" class="roots" stroke-width="4" stroke="#1b5e20" fill="none" stroke-linecap="round"/>
+  <path d="M 100 133 L 100 165" class="roots" stroke-width="8" stroke="#1b5e20" fill="none" stroke-linecap="round"/>
+  <path d="M 106 133 Q 112 142 115 152" class="roots" stroke-width="4" stroke="#1b5e20" fill="none" stroke-linecap="round"/>
+  <path d="M 112 133 Q 125 138 132 145 L 135 150" class="roots" stroke-width="6" stroke="#1b5e20" fill="none" stroke-linecap="round"/>
+</svg>

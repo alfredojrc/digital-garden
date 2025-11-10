@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200">
+  <!-- Layered Canopy Silhouette - Multi-tier -->
+  <defs>
+    <style>
+      .canopy-dark { fill: #2e7d32; }
+      .canopy-medium { fill: #4caf50; }
+      .canopy-light { fill: #66bb6a; }
+      .trunk { fill: #1b5e20; }
+      .roots { fill: #0d3818; }
+    </style>
+  </defs>
+
+  <!-- Canopy - layered tiers -->
+  <ellipse cx="100" cy="50" rx="35" ry="25" class="canopy-light"/>
+  <ellipse cx="100" cy="65" rx="48" ry="30" class="canopy-medium"/>
+  <ellipse cx="100" cy="82" rx="58" ry="32" class="canopy-dark"/>
+
+  <!-- Trunk -->
+  <rect x="91" y="100" width="18" height="32" class="trunk"/>
+
+  <!-- Root system - spreading wide -->
+  <path d="M 88 132 Q 75 138 60 148 Q 50 154 45 160" class="roots" stroke-width="4" stroke="#0d3818" fill="none" stroke-linecap="round"/>
+  <path d="M 95 132 Q 88 140 82 150" class="roots" stroke-width="3" stroke="#0d3818" fill="none" stroke-linecap="round"/>
+  <path d="M 100 132 L 100 155" class="roots" stroke-width="4" stroke="#0d3818" fill="none" stroke-linecap="round"/>
+  <path d="M 105 132 Q 112 140 118 150" class="roots" stroke-width="3" stroke="#0d3818" fill="none" stroke-linecap="round"/>
+  <path d="M 112 132 Q 125 138 140 148 Q 150 154 155 160" class="roots" stroke-width="4" stroke="#0d3818" fill="none" stroke-linecap="round"/>
+</svg>
