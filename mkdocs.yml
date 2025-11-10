@@ -55,7 +55,7 @@ plugins:
   - blog:
       blog_dir: blog
       blog_toc: true
-      post_dir: blog/posts
+      post_dir: "{blog}/posts"
       post_date_format: long
       post_url_format: "{date}/{slug}"
       post_url_date_format: yyyy/MM/dd
@@ -81,7 +81,7 @@ plugins:
       pagination: true
       pagination_per_page: 10
       authors: true
-      authors_file: docs/blog/.authors.yml
+      authors_file: "{blog}/.authors.yml"
   - tags:
       tags_file: blog/tags.md
       tags_allowed:
