@@ -1,4 +1,5 @@
-alf:
-  name: Alf
-  description: Infrastructure engineer, distributed systems enthusiast
-  avatar: https://github.com/alfredojrc.png
+authors:
+  alf:
+    name: Alf
+    description: Infrastructure engineer, distributed systems enthusiast
+    avatar: https://github.com/alfredojrc.png
