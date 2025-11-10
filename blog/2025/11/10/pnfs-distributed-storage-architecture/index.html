@@ -1518,50 +1518,89 @@
 </ul>
 <hr />
 <h2 id="system-topology">System Topology<a class="headerlink" href="#system-topology" title="Link to this section">&para;</a></h2>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>+--------------------------+     +--------------------------+
-</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>|    CLIENT 1 (GPU Node)   |     |    CLIENT 2 (GPU Node)   |
-</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>|     (pNFS v4.2 Client)   |     |     (pNFS v4.2 Client)   |
-</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>+--------------------------+     +--------------------------+
-</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>         |    |                                |    |
-</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>(1. Metadata Request) .....|....|................................|....|.....
-</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>         |    |                                |    |
-</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>         v    v                                v    v
-</span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>+-----------------------------------------------------+
-</span><span id="__span-0-10"><a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a>|   METADATA VIRTUAL IP (VIP) / LOAD BALANCER         |
-</span><span id="__span-0-11"><a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a>|   (Directs clients to any active MDS node)          |
-</span><span id="__span-0-12"><a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a>+-----------------------------------------------------+
-</span><span id="__span-0-13"><a id="__codelineno-0-13" name="__codelineno-0-13" href="#__codelineno-0-13"></a>                  |
-</span><span id="__span-0-14"><a id="__codelineno-0-14" name="__codelineno-0-14" href="#__codelineno-0-14"></a>(Distributes to...).................|...................................
-</span><span id="__span-0-15"><a id="__codelineno-0-15" name="__codelineno-0-15" href="#__codelineno-0-15"></a>                   .              |                 .
-</span><span id="__span-0-16"><a id="__codelineno-0-16" name="__codelineno-0-16" href="#__codelineno-0-16"></a>                   .              v                 .
-</span><span id="__span-0-17"><a id="__codelineno-0-17" name="__codelineno-0-17" href="#__codelineno-0-17"></a>                   .   +--------------------+     .
-</span><span id="__span-0-18"><a id="__codelineno-0-18" name="__codelineno-0-18" href="#__codelineno-0-18"></a>                   .   |  MDS SYNC/HEARTBEAT|     .
-</span><span id="__span-0-19"><a id="__codelineno-0-19" name="__codelineno-0-19" href="#__codelineno-0-19"></a>                   .   | (Clustered Backend)|     .
-</span><span id="__span-0-20"><a id="__codelineno-0-20" name="__codelineno-0-20" href="#__codelineno-0-20"></a>                   .   +--------------------+     .
-</span><span id="__span-0-21"><a id="__codelineno-0-21" name="__codelineno-0-21" href="#__codelineno-0-21"></a>                   .     ^      ^      ^         .
-</span><span id="__span-0-22"><a id="__codelineno-0-22" name="__codelineno-0-22" href="#__codelineno-0-22"></a>                   .     |      |      |         .
-</span><span id="__span-0-23"><a id="__codelineno-0-23" name="__codelineno-0-23" href="#__codelineno-0-23"></a>+--------------------v-----|------|------|---------v--------------------------+
-</span><span id="__span-0-24"><a id="__codelineno-0-24" name="__codelineno-0-24" href="#__codelineno-0-24"></a>|                 .        |      |      |      .                           |
-</span><span id="__span-0-25"><a id="__codelineno-0-25" name="__codelineno-0-25" href="#__codelineno-0-25"></a>|  HIGH-SPEED LOW-LATENCY NETWORK FABRIC (e.g., InfiniBand, 100GbE RoCE)      |
-</span><span id="__span-0-26"><a id="__codelineno-0-26" name="__codelineno-0-26" href="#__codelineno-0-26"></a>|                 .        |      |      |      .                           |
-</span><span id="__span-0-27"><a id="__codelineno-0-27" name="__codelineno-0-27" href="#__codelineno-0-27"></a>+-----------------|--------|------|------|------|---------------------------+
-</span><span id="__span-0-28"><a id="__codelineno-0-28" name="__codelineno-0-28" href="#__codelineno-0-28"></a>                  |        |      |      |      |
-</span><span id="__span-0-29"><a id="__codelineno-0-29" name="__codelineno-0-29" href="#__codelineno-0-29"></a>  (2. Parallel    |        |      |      |      | (2. Parallel
-</span><span id="__span-0-30"><a id="__codelineno-0-30" name="__codelineno-0-30" href="#__codelineno-0-30"></a>   Data I/O)     +--------+    +--|---+  +------|----+   Data I/O)
-</span><span id="__span-0-31"><a id="__codelineno-0-31" name="__codelineno-0-31" href="#__codelineno-0-31"></a>   ============|===============|======|===========|===|============
-</span><span id="__span-0-32"><a id="__codelineno-0-32" name="__codelineno-0-32" href="#__codelineno-0-32"></a>   ||          |    ||       |      |           |   ||          ||
-</span><span id="__span-0-33"><a id="__codelineno-0-33" name="__codelineno-0-33" href="#__codelineno-0-33"></a>   ||          |    ||       |      |           |   ||          ||
-</span><span id="__span-0-34"><a id="__codelineno-0-34" name="__codelineno-0-34" href="#__codelineno-0-34"></a>   vv          v    vv       v      v           v   vv          vv
-</span><span id="__span-0-35"><a id="__codelineno-0-35" name="__codelineno-0-35" href="#__codelineno-0-35"></a>+------------------+ +------------------+ +------------------+ +--------------+
-</span><span id="__span-0-36"><a id="__codelineno-0-36" name="__codelineno-0-36" href="#__codelineno-0-36"></a>|  STORAGE NODE 1  | |  STORAGE NODE 2  | |  STORAGE NODE 3  | |  STORAGE...N |
-</span><span id="__span-0-37"><a id="__codelineno-0-37" name="__codelineno-0-37" href="#__codelineno-0-37"></a>|==================| |==================| |==================| |==============|
-</span><span id="__span-0-38"><a id="__codelineno-0-38" name="__codelineno-0-38" href="#__codelineno-0-38"></a>| [MDS Svc(Active)]| | [MDS Svc(Active)]| | [MDS Svc(Active)]| | [MDS Svc(...)]|
-</span><span id="__span-0-39"><a id="__codelineno-0-39" name="__codelineno-0-39" href="#__codelineno-0-39"></a>|------------------| |------------------| |------------------| |--------------|
-</span><span id="__span-0-40"><a id="__codelineno-0-40" name="__codelineno-0-40" href="#__codelineno-0-40"></a>| [Data Svc (DS)]  | | [Data Svc (DS)]  | | [Data Svc (DS)]  | | [Data Svc(DS)] |
-</span><span id="__span-0-41"><a id="__codelineno-0-41" name="__codelineno-0-41" href="#__codelineno-0-41"></a>|------------------| |------------------| |------------------| |--------------|
-</span><span id="__span-0-42"><a id="__codelineno-0-42" name="__codelineno-0-42" href="#__codelineno-0-42"></a>| [Physical NVMe]  | | [Physical NVMe]  | | [Physical NVMe]  | | [Physical...]  |
-</span><span id="__span-0-43"><a id="__codelineno-0-43" name="__codelineno-0-43" href="#__codelineno-0-43"></a>+------------------+ +------------------+ +------------------+ +--------------+
-</span></code></pre></div>
+<pre class="mermaid"><code>graph TB
+    subgraph Clients["🖥️ Client Layer (GPU Compute Nodes)"]
+        C1["Client 1&lt;br/&gt;(pNFS v4.2)"]
+        C2["Client 2&lt;br/&gt;(pNFS v4.2)"]
+        CN["Client N&lt;br/&gt;(pNFS v4.2)"]
+    end
+
+    subgraph VIP["⚖️ High Availability Layer"]
+        LB["Virtual IP / Load Balancer&lt;br/&gt;(Keepalived/HAProxy)&lt;br/&gt;📍 10.10.1.100"]
+    end
+
+    subgraph MDSCluster["🗂️ Metadata Cluster (Active-Active)"]
+        Backend["Distributed Backend&lt;br/&gt;(Consensus/Shared Storage)&lt;br/&gt;🔄 State Sync + Heartbeat"]
+    end
+
+    subgraph Network["🌐 High-Speed Network Fabric"]
+        Fabric["InfiniBand / 100GbE RoCE&lt;br/&gt;⚡ Sub-microsecond latency"]
+    end
+
+    subgraph Storage["💾 Storage Nodes (Co-located MDS + DS)"]
+        direction TB
+        S1["Storage Node 1&lt;br/&gt;━━━━━━━━━&lt;br/&gt;🗄️ MDS Service&lt;br/&gt;📦 Data Service&lt;br/&gt;⚙️ NVMe SSD"]
+        S2["Storage Node 2&lt;br/&gt;━━━━━━━━━&lt;br/&gt;🗄️ MDS Service&lt;br/&gt;📦 Data Service&lt;br/&gt;⚙️ NVMe SSD"]
+        S3["Storage Node 3&lt;br/&gt;━━━━━━━━━&lt;br/&gt;🗄️ MDS Service&lt;br/&gt;📦 Data Service&lt;br/&gt;⚙️ NVMe SSD"]
+        SN["Storage Node N&lt;br/&gt;━━━━━━━━━&lt;br/&gt;🗄️ MDS Service&lt;br/&gt;📦 Data Service&lt;br/&gt;⚙️ NVMe SSD"]
+    end
+
+    %% Metadata Path (Phase 1)
+    C1 --&gt;|"①  LAYOUTGET&lt;br/&gt;(Metadata Request)"| LB
+    C2 --&gt;|"①  LAYOUTGET&lt;br/&gt;(Metadata Request)"| LB
+    CN --&gt;|"①  LAYOUTGET&lt;br/&gt;(Metadata Request)"| LB
+
+    LB --&gt;|Distribute| Backend
+    Backend &lt;--&gt;|Sync| S1
+    Backend &lt;--&gt;|Sync| S2
+    Backend &lt;--&gt;|Sync| S3
+    Backend &lt;--&gt;|Sync| SN
+
+    %% Data Path (Phase 2)
+    C1 -.-&gt;|"②  Parallel READ/WRITE&lt;br/&gt;(Direct Data I/O)"| Fabric
+    C2 -.-&gt;|"②  Parallel READ/WRITE&lt;br/&gt;(Direct Data I/O)"| Fabric
+    CN -.-&gt;|"②  Parallel READ/WRITE&lt;br/&gt;(Direct Data I/O)"| Fabric
+
+    Fabric -.-&gt;|Stripe 0| S1
+    Fabric -.-&gt;|Stripe 1| S2
+    Fabric -.-&gt;|Stripe 2| S3
+    Fabric -.-&gt;|Stripe N| SN
+
+    style Clients fill:#e1f5ff,stroke:#01579b,stroke-width:2px
+    style VIP fill:#fff3e0,stroke:#e65100,stroke-width:2px
+    style MDSCluster fill:#f3e5f5,stroke:#4a148c,stroke-width:2px
+    style Network fill:#e8f5e9,stroke:#1b5e20,stroke-width:2px
+    style Storage fill:#fce4ec,stroke:#880e4f,stroke-width:2px
+    style LB fill:#ffecb3,stroke:#ff6f00,stroke-width:2px
+    style Backend fill:#e1bee7,stroke:#6a1b9a,stroke-width:2px
+    style Fabric fill:#c8e6c9,stroke:#2e7d32,stroke-width:2px</code></pre>
+<p><strong>Architecture Flow</strong>:</p>
+<table>
+<thead>
+<tr>
+<th>Phase</th>
+<th>Path</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>① Metadata</strong></td>
+<td><code>Client → VIP → MDS Backend</code></td>
+<td>Client requests file layout, receives stripe pattern and DS list</td>
+</tr>
+<tr>
+<td><strong>② Data I/O</strong></td>
+<td><code>Client ⇢ Fabric ⇢ Storage Nodes</code></td>
+<td>Parallel direct I/O to multiple storage nodes, bypassing MDS</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition info">
+<p class="admonition-title">Two-Phase Operation</p>
+<p><strong>Phase 1 (Control Plane)</strong>: Client contacts any MDS via VIP to get file layout
+<strong>Phase 2 (Data Plane)</strong>: Client performs parallel I/O directly to storage nodes over high-speed fabric</p>
+</div>
 <hr />
 <h2 id="component-breakdown">Component Breakdown<a class="headerlink" href="#component-breakdown" title="Link to this section">&para;</a></h2>
 <h3 id="1-client-layer-pnfs-v42-clients">1. Client Layer (pNFS v4.2 Clients)<a class="headerlink" href="#1-client-layer-pnfs-v42-clients" title="Link to this section">&para;</a></h3>
@@ -1628,30 +1667,30 @@
 </ul>
 </div>
 <p><strong>Backend Options</strong>:</p>
-<div class="language-yaml highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="nt">Option 1</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Shared Block Device (DRBD + GFS2/OCFS2)</span>
-</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="w">  </span><span class="l l-Scalar l-Scalar-Plain">pros</span><span class="p p-Indicator">:</span>
-</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Battle-tested clustering</span>
-</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">POSIX semantics</span>
-</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="w w-Error">  </span><span class="nt">cons</span><span class="p">:</span>
-</span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a><span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Block-level sync overhead</span>
-</span><span id="__span-1-7"><a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a><span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Limited to 2-3 nodes typically</span>
-</span><span id="__span-1-8"><a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a>
-</span><span id="__span-1-9"><a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a><span class="nt">Option 2</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Distributed Database (etcd/Consul)</span>
-</span><span id="__span-1-10"><a id="__codelineno-1-10" name="__codelineno-1-10" href="#__codelineno-1-10"></a><span class="w">  </span><span class="l l-Scalar l-Scalar-Plain">pros</span><span class="p p-Indicator">:</span>
-</span><span id="__span-1-11"><a id="__codelineno-1-11" name="__codelineno-1-11" href="#__codelineno-1-11"></a><span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Raft consensus built-in</span>
-</span><span id="__span-1-12"><a id="__codelineno-1-12" name="__codelineno-1-12" href="#__codelineno-1-12"></a><span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Horizontal scaling</span>
-</span><span id="__span-1-13"><a id="__codelineno-1-13" name="__codelineno-1-13" href="#__codelineno-1-13"></a><span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Cloud-native</span>
-</span><span id="__span-1-14"><a id="__codelineno-1-14" name="__codelineno-1-14" href="#__codelineno-1-14"></a><span class="w w-Error">  </span><span class="nt">cons</span><span class="p">:</span>
-</span><span id="__span-1-15"><a id="__codelineno-1-15" name="__codelineno-1-15" href="#__codelineno-1-15"></a><span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Additional latency</span>
-</span><span id="__span-1-16"><a id="__codelineno-1-16" name="__codelineno-1-16" href="#__codelineno-1-16"></a><span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">More complex integration</span>
-</span><span id="__span-1-17"><a id="__codelineno-1-17" name="__codelineno-1-17" href="#__codelineno-1-17"></a>
-</span><span id="__span-1-18"><a id="__codelineno-1-18" name="__codelineno-1-18" href="#__codelineno-1-18"></a><span class="nt">Option 3</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Lustre MGS/MDT (if using Lustre as pNFS backend)</span>
-</span><span id="__span-1-19"><a id="__codelineno-1-19" name="__codelineno-1-19" href="#__codelineno-1-19"></a><span class="w">  </span><span class="l l-Scalar l-Scalar-Plain">pros</span><span class="p p-Indicator">:</span>
-</span><span id="__span-1-20"><a id="__codelineno-1-20" name="__codelineno-1-20" href="#__codelineno-1-20"></a><span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Native high availability</span>
-</span><span id="__span-1-21"><a id="__codelineno-1-21" name="__codelineno-1-21" href="#__codelineno-1-21"></a><span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Proven at exascale</span>
-</span><span id="__span-1-22"><a id="__codelineno-1-22" name="__codelineno-1-22" href="#__codelineno-1-22"></a><span class="w w-Error">  </span><span class="nt">cons</span><span class="p">:</span>
-</span><span id="__span-1-23"><a id="__codelineno-1-23" name="__codelineno-1-23" href="#__codelineno-1-23"></a><span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Lustre-specific</span>
-</span><span id="__span-1-24"><a id="__codelineno-1-24" name="__codelineno-1-24" href="#__codelineno-1-24"></a><span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Complex deployment</span>
+<div class="language-yaml highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nt">Option 1</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Shared Block Device (DRBD + GFS2/OCFS2)</span>
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="w">  </span><span class="l l-Scalar l-Scalar-Plain">pros</span><span class="p p-Indicator">:</span>
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Battle-tested clustering</span>
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">POSIX semantics</span>
+</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="w w-Error">  </span><span class="nt">cons</span><span class="p">:</span>
+</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Block-level sync overhead</span>
+</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Limited to 2-3 nodes typically</span>
+</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>
+</span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a><span class="nt">Option 2</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Distributed Database (etcd/Consul)</span>
+</span><span id="__span-0-10"><a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a><span class="w">  </span><span class="l l-Scalar l-Scalar-Plain">pros</span><span class="p p-Indicator">:</span>
+</span><span id="__span-0-11"><a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a><span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Raft consensus built-in</span>
+</span><span id="__span-0-12"><a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a><span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Horizontal scaling</span>
+</span><span id="__span-0-13"><a id="__codelineno-0-13" name="__codelineno-0-13" href="#__codelineno-0-13"></a><span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Cloud-native</span>
+</span><span id="__span-0-14"><a id="__codelineno-0-14" name="__codelineno-0-14" href="#__codelineno-0-14"></a><span class="w w-Error">  </span><span class="nt">cons</span><span class="p">:</span>
+</span><span id="__span-0-15"><a id="__codelineno-0-15" name="__codelineno-0-15" href="#__codelineno-0-15"></a><span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Additional latency</span>
+</span><span id="__span-0-16"><a id="__codelineno-0-16" name="__codelineno-0-16" href="#__codelineno-0-16"></a><span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">More complex integration</span>
+</span><span id="__span-0-17"><a id="__codelineno-0-17" name="__codelineno-0-17" href="#__codelineno-0-17"></a>
+</span><span id="__span-0-18"><a id="__codelineno-0-18" name="__codelineno-0-18" href="#__codelineno-0-18"></a><span class="nt">Option 3</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Lustre MGS/MDT (if using Lustre as pNFS backend)</span>
+</span><span id="__span-0-19"><a id="__codelineno-0-19" name="__codelineno-0-19" href="#__codelineno-0-19"></a><span class="w">  </span><span class="l l-Scalar l-Scalar-Plain">pros</span><span class="p p-Indicator">:</span>
+</span><span id="__span-0-20"><a id="__codelineno-0-20" name="__codelineno-0-20" href="#__codelineno-0-20"></a><span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Native high availability</span>
+</span><span id="__span-0-21"><a id="__codelineno-0-21" name="__codelineno-0-21" href="#__codelineno-0-21"></a><span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Proven at exascale</span>
+</span><span id="__span-0-22"><a id="__codelineno-0-22" name="__codelineno-0-22" href="#__codelineno-0-22"></a><span class="w w-Error">  </span><span class="nt">cons</span><span class="p">:</span>
+</span><span id="__span-0-23"><a id="__codelineno-0-23" name="__codelineno-0-23" href="#__codelineno-0-23"></a><span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Lustre-specific</span>
+</span><span id="__span-0-24"><a id="__codelineno-0-24" name="__codelineno-0-24" href="#__codelineno-0-24"></a><span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Complex deployment</span>
 </span></code></pre></div>
 <p><strong>Heartbeat Mechanism</strong>:
 - <strong>Interval</strong>: 500ms - 1s between nodes
@@ -1692,20 +1731,20 @@
 </tbody>
 </table>
 <p><strong>Network Design</strong>:
-<div class="language-text highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>- Dedicated storage VLAN/subnet
-</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>- Jumbo frames (MTU 9000) for throughput
-</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>- RDMA for zero-copy transfers
-</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>- Lossless Ethernet (PFC) if using RoCE
-</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>- Multiple paths for redundancy (LACP/MLAG)
+<div class="language-text highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>- Dedicated storage VLAN/subnet
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>- Jumbo frames (MTU 9000) for throughput
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>- RDMA for zero-copy transfers
+</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>- Lossless Ethernet (PFC) if using RoCE
+</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>- Multiple paths for redundancy (LACP/MLAG)
 </span></code></pre></div></p>
 <hr />
 <h3 id="5-storage-nodes">5. Storage Nodes<a class="headerlink" href="#5-storage-nodes" title="Link to this section">&para;</a></h3>
 <p><strong>Role</strong>: Serve actual file data via pNFS Data Service (DS)</p>
 <p><strong>Node Architecture</strong>:</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>Each storage node runs:
-</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>├── MDS Service (part of cluster)
-</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>├── Data Service (DS) (serves pNFS I/O)
-</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>└── Physical Storage (NVMe SSDs)
+<div class="language-text highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>Each storage node runs:
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>├── MDS Service (part of cluster)
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>├── Data Service (DS) (serves pNFS I/O)
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>└── Physical Storage (NVMe SSDs)
 </span></code></pre></div>
 <p><strong>NVMe Configuration</strong>:
 - <strong>Device</strong>: PCIe Gen4 NVMe SSDs (7000+ MB/s per device)
@@ -1716,11 +1755,11 @@
     - <code>elevator=none</code> (bypass I/O scheduler for NVMe)
     - <code>vm.dirty_ratio=5</code> (aggressive writeback)</p>
 <p><strong>Capacity Planning</strong>:
-<div class="language-text highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>Per-node capacity:
-</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>  - 4x 4TB NVMe = 16TB raw per node
-</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>  - 10 nodes = 160TB aggregate raw
-</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a>  - No RAID overhead (redundancy via replication)
-</span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a>  - Effective capacity: ~140TB (accounting for metadata)
+<div class="language-text highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>Per-node capacity:
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>  - 4x 4TB NVMe = 16TB raw per node
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>  - 10 nodes = 160TB aggregate raw
+</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>  - No RAID overhead (redundancy via replication)
+</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a>  - Effective capacity: ~140TB (accounting for metadata)
 </span></code></pre></div></p>
 <hr />
 <h2 id="data-flow-read-operation">Data Flow: Read Operation<a class="headerlink" href="#data-flow-read-operation" title="Link to this section">&para;</a></h2>
@@ -1738,17 +1777,17 @@
     MDS1--&gt;&gt;Client: LAYOUT (stripe pattern, DS list)
     Note over Client: Client caches layout</code></pre>
 <p><strong>Layout Information Returned</strong>:
-<div class="language-json highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="p">{</span>
-</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a><span class="w">  </span><span class="nt">&quot;layout_type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;LAYOUT4_NFSV4_1_FILES&quot;</span><span class="p">,</span>
-</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a><span class="w">  </span><span class="nt">&quot;stripe_unit&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">1048576</span><span class="p">,</span>
-</span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a><span class="w">  </span><span class="nt">&quot;stripe_count&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">4</span><span class="p">,</span>
-</span><span id="__span-5-5"><a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a><span class="w">  </span><span class="nt">&quot;data_servers&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
-</span><span id="__span-5-6"><a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a><span class="w">    </span><span class="s2">&quot;10.10.1.11:2049&quot;</span><span class="p">,</span><span class="w">  </span><span class="c1">// Storage Node 1</span>
-</span><span id="__span-5-7"><a id="__codelineno-5-7" name="__codelineno-5-7" href="#__codelineno-5-7"></a><span class="w">    </span><span class="s2">&quot;10.10.1.12:2049&quot;</span><span class="p">,</span><span class="w">  </span><span class="c1">// Storage Node 2</span>
-</span><span id="__span-5-8"><a id="__codelineno-5-8" name="__codelineno-5-8" href="#__codelineno-5-8"></a><span class="w">    </span><span class="s2">&quot;10.10.1.13:2049&quot;</span><span class="p">,</span><span class="w">  </span><span class="c1">// Storage Node 3</span>
-</span><span id="__span-5-9"><a id="__codelineno-5-9" name="__codelineno-5-9" href="#__codelineno-5-9"></a><span class="w">    </span><span class="s2">&quot;10.10.1.14:2049&quot;</span><span class="w">   </span><span class="c1">// Storage Node 4</span>
-</span><span id="__span-5-10"><a id="__codelineno-5-10" name="__codelineno-5-10" href="#__codelineno-5-10"></a><span class="w">  </span><span class="p">]</span>
-</span><span id="__span-5-11"><a id="__codelineno-5-11" name="__codelineno-5-11" href="#__codelineno-5-11"></a><span class="p">}</span>
+<div class="language-json highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="p">{</span>
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="w">  </span><span class="nt">&quot;layout_type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;LAYOUT4_NFSV4_1_FILES&quot;</span><span class="p">,</span>
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a><span class="w">  </span><span class="nt">&quot;stripe_unit&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">1048576</span><span class="p">,</span>
+</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a><span class="w">  </span><span class="nt">&quot;stripe_count&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">4</span><span class="p">,</span>
+</span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a><span class="w">  </span><span class="nt">&quot;data_servers&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+</span><span id="__span-4-6"><a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a><span class="w">    </span><span class="s2">&quot;10.10.1.11:2049&quot;</span><span class="p">,</span><span class="w">  </span><span class="c1">// Storage Node 1</span>
+</span><span id="__span-4-7"><a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a><span class="w">    </span><span class="s2">&quot;10.10.1.12:2049&quot;</span><span class="p">,</span><span class="w">  </span><span class="c1">// Storage Node 2</span>
+</span><span id="__span-4-8"><a id="__codelineno-4-8" name="__codelineno-4-8" href="#__codelineno-4-8"></a><span class="w">    </span><span class="s2">&quot;10.10.1.13:2049&quot;</span><span class="p">,</span><span class="w">  </span><span class="c1">// Storage Node 3</span>
+</span><span id="__span-4-9"><a id="__codelineno-4-9" name="__codelineno-4-9" href="#__codelineno-4-9"></a><span class="w">    </span><span class="s2">&quot;10.10.1.14:2049&quot;</span><span class="w">   </span><span class="c1">// Storage Node 4</span>
+</span><span id="__span-4-10"><a id="__codelineno-4-10" name="__codelineno-4-10" href="#__codelineno-4-10"></a><span class="w">  </span><span class="p">]</span>
+</span><span id="__span-4-11"><a id="__codelineno-4-11" name="__codelineno-4-11" href="#__codelineno-4-11"></a><span class="p">}</span>
 </span></code></pre></div></p>
 <h3 id="phase-2-parallel-data-io-data-path">Phase 2: Parallel Data I/O (Data Path)<a class="headerlink" href="#phase-2-parallel-data-io-data-path" title="Link to this section">&para;</a></h3>
 <pre class="mermaid"><code>graph LR
@@ -1762,9 +1801,9 @@
     DS3 --&gt; NVMe3[NVMe SSD]
     DS4 --&gt; NVMe4[NVMe SSD]</code></pre>
 <p><strong>Throughput Calculation</strong>:
-<div class="language-text highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>Single NVMe: 7 GB/s read
-</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>4-way stripe: 7 GB/s × 4 = 28 GB/s aggregate
-</span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a>Overhead (20%): ~22 GB/s effective client throughput
+<div class="language-text highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>Single NVMe: 7 GB/s read
+</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>4-way stripe: 7 GB/s × 4 = 28 GB/s aggregate
+</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>Overhead (20%): ~22 GB/s effective client throughput
 </span></code></pre></div></p>
 <div class="admonition success">
 <p class="admonition-title">Key Advantage</p>
@@ -1801,17 +1840,17 @@
 <hr />
 <h2 id="high-availability-scenarios">High Availability Scenarios<a class="headerlink" href="#high-availability-scenarios" title="Link to this section">&para;</a></h2>
 <h3 id="scenario-1-mds-node-failure">Scenario 1: MDS Node Failure<a class="headerlink" href="#scenario-1-mds-node-failure" title="Link to this section">&para;</a></h3>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>Before:
-</span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>  VIP → MDS1 (active)
-</span><span id="__span-7-3"><a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a>      → MDS2 (active)
-</span><span id="__span-7-4"><a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a>      → MDS3 (active)  ← fails
-</span><span id="__span-7-5"><a id="__codelineno-7-5" name="__codelineno-7-5" href="#__codelineno-7-5"></a>
-</span><span id="__span-7-6"><a id="__codelineno-7-6" name="__codelineno-7-6" href="#__codelineno-7-6"></a>After (within 2 seconds):
-</span><span id="__span-7-7"><a id="__codelineno-7-7" name="__codelineno-7-7" href="#__codelineno-7-7"></a>  VIP → MDS1 (active)  ← absorbs load
-</span><span id="__span-7-8"><a id="__codelineno-7-8" name="__codelineno-7-8" href="#__codelineno-7-8"></a>      → MDS2 (active)  ← absorbs load
-</span><span id="__span-7-9"><a id="__codelineno-7-9" name="__codelineno-7-9" href="#__codelineno-7-9"></a>
-</span><span id="__span-7-10"><a id="__codelineno-7-10" name="__codelineno-7-10" href="#__codelineno-7-10"></a>  MDS3: Fenced by cluster, removed from VIP pool
-</span><span id="__span-7-11"><a id="__codelineno-7-11" name="__codelineno-7-11" href="#__codelineno-7-11"></a>  Client layouts: Still valid, no client disruption
+<div class="language-text highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>Before:
+</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>  VIP → MDS1 (active)
+</span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a>      → MDS2 (active)
+</span><span id="__span-6-4"><a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a>      → MDS3 (active)  ← fails
+</span><span id="__span-6-5"><a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a>
+</span><span id="__span-6-6"><a id="__codelineno-6-6" name="__codelineno-6-6" href="#__codelineno-6-6"></a>After (within 2 seconds):
+</span><span id="__span-6-7"><a id="__codelineno-6-7" name="__codelineno-6-7" href="#__codelineno-6-7"></a>  VIP → MDS1 (active)  ← absorbs load
+</span><span id="__span-6-8"><a id="__codelineno-6-8" name="__codelineno-6-8" href="#__codelineno-6-8"></a>      → MDS2 (active)  ← absorbs load
+</span><span id="__span-6-9"><a id="__codelineno-6-9" name="__codelineno-6-9" href="#__codelineno-6-9"></a>
+</span><span id="__span-6-10"><a id="__codelineno-6-10" name="__codelineno-6-10" href="#__codelineno-6-10"></a>  MDS3: Fenced by cluster, removed from VIP pool
+</span><span id="__span-6-11"><a id="__codelineno-6-11" name="__codelineno-6-11" href="#__codelineno-6-11"></a>  Client layouts: Still valid, no client disruption
 </span></code></pre></div>
 <p><strong>Recovery Actions</strong>:
 - Quorum maintained (2/3 nodes)
@@ -1819,18 +1858,18 @@
 - New metadata requests distributed to healthy MDS nodes
 - Failed MDS auto-rejoins after recovery</p>
 <h3 id="scenario-2-storage-node-failure">Scenario 2: Storage Node Failure<a class="headerlink" href="#scenario-2-storage-node-failure" title="Link to this section">&para;</a></h3>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a>pNFS File with 4-way striping across nodes 1-4:
-</span><span id="__span-8-2"><a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a>  Node 3 fails → Stripes 2 (stored on node 3) unavailable
-</span><span id="__span-8-3"><a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a>
-</span><span id="__span-8-4"><a id="__codelineno-8-4" name="__codelineno-8-4" href="#__codelineno-8-4"></a>Client behavior:
-</span><span id="__span-8-5"><a id="__codelineno-8-5" name="__codelineno-8-5" href="#__codelineno-8-5"></a>  1. Client detects I/O error on stripe 2
-</span><span id="__span-8-6"><a id="__codelineno-8-6" name="__codelineno-8-6" href="#__codelineno-8-6"></a>  2. Client returns partial read/write to application
-</span><span id="__span-8-7"><a id="__codelineno-8-7" name="__codelineno-8-7" href="#__codelineno-8-7"></a>  3. Application must handle EIO (or use replication)
-</span><span id="__span-8-8"><a id="__codelineno-8-8" name="__codelineno-8-8" href="#__codelineno-8-8"></a>
-</span><span id="__span-8-9"><a id="__codelineno-8-9" name="__codelineno-8-9" href="#__codelineno-8-9"></a>Recovery:
-</span><span id="__span-8-10"><a id="__codelineno-8-10" name="__codelineno-8-10" href="#__codelineno-8-10"></a>  - Option A: File replicated (pNFS server-side replication)
-</span><span id="__span-8-11"><a id="__codelineno-8-11" name="__codelineno-8-11" href="#__codelineno-8-11"></a>             → Automatic failover to replica stripe
-</span><span id="__span-8-12"><a id="__codelineno-8-12" name="__codelineno-8-12" href="#__codelineno-8-12"></a>  - Option B: No replication → Data loss for affected stripes
+<div class="language-text highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>pNFS File with 4-way striping across nodes 1-4:
+</span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>  Node 3 fails → Stripes 2 (stored on node 3) unavailable
+</span><span id="__span-7-3"><a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a>
+</span><span id="__span-7-4"><a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a>Client behavior:
+</span><span id="__span-7-5"><a id="__codelineno-7-5" name="__codelineno-7-5" href="#__codelineno-7-5"></a>  1. Client detects I/O error on stripe 2
+</span><span id="__span-7-6"><a id="__codelineno-7-6" name="__codelineno-7-6" href="#__codelineno-7-6"></a>  2. Client returns partial read/write to application
+</span><span id="__span-7-7"><a id="__codelineno-7-7" name="__codelineno-7-7" href="#__codelineno-7-7"></a>  3. Application must handle EIO (or use replication)
+</span><span id="__span-7-8"><a id="__codelineno-7-8" name="__codelineno-7-8" href="#__codelineno-7-8"></a>
+</span><span id="__span-7-9"><a id="__codelineno-7-9" name="__codelineno-7-9" href="#__codelineno-7-9"></a>Recovery:
+</span><span id="__span-7-10"><a id="__codelineno-7-10" name="__codelineno-7-10" href="#__codelineno-7-10"></a>  - Option A: File replicated (pNFS server-side replication)
+</span><span id="__span-7-11"><a id="__codelineno-7-11" name="__codelineno-7-11" href="#__codelineno-7-11"></a>             → Automatic failover to replica stripe
+</span><span id="__span-7-12"><a id="__codelineno-7-12" name="__codelineno-7-12" href="#__codelineno-7-12"></a>  - Option B: No replication → Data loss for affected stripes
 </span></code></pre></div>
 <div class="admonition warning">
 <p class="admonition-title">Data Durability</p>
@@ -1843,57 +1882,57 @@
 </ul>
 </div>
 <h3 id="scenario-3-network-partition-split-brain-prevention">Scenario 3: Network Partition (Split-Brain Prevention)<a class="headerlink" href="#scenario-3-network-partition-split-brain-prevention" title="Link to this section">&para;</a></h3>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a>Network partition splits cluster:
-</span><span id="__span-9-2"><a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a>  Partition A: MDS1, MDS2 (2 nodes)
-</span><span id="__span-9-3"><a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a>  Partition B: MDS3 (1 node)
-</span><span id="__span-9-4"><a id="__codelineno-9-4" name="__codelineno-9-4" href="#__codelineno-9-4"></a>
-</span><span id="__span-9-5"><a id="__codelineno-9-5" name="__codelineno-9-5" href="#__codelineno-9-5"></a>Quorum voting:
-</span><span id="__span-9-6"><a id="__codelineno-9-6" name="__codelineno-9-6" href="#__codelineno-9-6"></a>  Partition A: 2/3 nodes = HAS QUORUM → continues operation
-</span><span id="__span-9-7"><a id="__codelineno-9-7" name="__codelineno-9-7" href="#__codelineno-9-7"></a>  Partition B: 1/3 nodes = NO QUORUM → enters read-only mode
-</span><span id="__span-9-8"><a id="__codelineno-9-8" name="__codelineno-9-8" href="#__codelineno-9-8"></a>
-</span><span id="__span-9-9"><a id="__codelineno-9-9" name="__codelineno-9-9" href="#__codelineno-9-9"></a>Prevention:
-</span><span id="__span-9-10"><a id="__codelineno-9-10" name="__codelineno-9-10" href="#__codelineno-9-10"></a>  - Fencing agent (IPMI, PDU) forcibly powers off minority partition
-</span><span id="__span-9-11"><a id="__codelineno-9-11" name="__codelineno-9-11" href="#__codelineno-9-11"></a>  - Prevents conflicting writes to shared backend
+<div class="language-text highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a>Network partition splits cluster:
+</span><span id="__span-8-2"><a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a>  Partition A: MDS1, MDS2 (2 nodes)
+</span><span id="__span-8-3"><a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a>  Partition B: MDS3 (1 node)
+</span><span id="__span-8-4"><a id="__codelineno-8-4" name="__codelineno-8-4" href="#__codelineno-8-4"></a>
+</span><span id="__span-8-5"><a id="__codelineno-8-5" name="__codelineno-8-5" href="#__codelineno-8-5"></a>Quorum voting:
+</span><span id="__span-8-6"><a id="__codelineno-8-6" name="__codelineno-8-6" href="#__codelineno-8-6"></a>  Partition A: 2/3 nodes = HAS QUORUM → continues operation
+</span><span id="__span-8-7"><a id="__codelineno-8-7" name="__codelineno-8-7" href="#__codelineno-8-7"></a>  Partition B: 1/3 nodes = NO QUORUM → enters read-only mode
+</span><span id="__span-8-8"><a id="__codelineno-8-8" name="__codelineno-8-8" href="#__codelineno-8-8"></a>
+</span><span id="__span-8-9"><a id="__codelineno-8-9" name="__codelineno-8-9" href="#__codelineno-8-9"></a>Prevention:
+</span><span id="__span-8-10"><a id="__codelineno-8-10" name="__codelineno-8-10" href="#__codelineno-8-10"></a>  - Fencing agent (IPMI, PDU) forcibly powers off minority partition
+</span><span id="__span-8-11"><a id="__codelineno-8-11" name="__codelineno-8-11" href="#__codelineno-8-11"></a>  - Prevents conflicting writes to shared backend
 </span></code></pre></div>
 <hr />
 <h2 id="performance-tuning">Performance Tuning<a class="headerlink" href="#performance-tuning" title="Link to this section">&para;</a></h2>
 <h3 id="client-side-tunables">Client-Side Tunables<a class="headerlink" href="#client-side-tunables" title="Link to this section">&para;</a></h3>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-10-1"><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a><span class="c1"># /etc/nfsmount.conf or mount options</span>
-</span><span id="__span-10-2"><a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a>mount<span class="w"> </span>-t<span class="w"> </span>nfs4<span class="w"> </span>-o<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-10-3"><a id="__codelineno-10-3" name="__codelineno-10-3" href="#__codelineno-10-3"></a><span class="w">  </span><span class="nv">vers</span><span class="o">=</span><span class="m">4</span>.2,<span class="se">\ </span><span class="w">                     </span><span class="c1"># Enable pNFS</span>
-</span><span id="__span-10-4"><a id="__codelineno-10-4" name="__codelineno-10-4" href="#__codelineno-10-4"></a><span class="w">  </span>pnfs,<span class="se">\ </span><span class="w">                         </span><span class="c1"># Use parallel NFS layouts</span>
-</span><span id="__span-10-5"><a id="__codelineno-10-5" name="__codelineno-10-5" href="#__codelineno-10-5"></a><span class="w">  </span><span class="nv">rsize</span><span class="o">=</span><span class="m">1048576</span>,<span class="se">\ </span><span class="w">                </span><span class="c1"># 1MB read size</span>
-</span><span id="__span-10-6"><a id="__codelineno-10-6" name="__codelineno-10-6" href="#__codelineno-10-6"></a><span class="w">  </span><span class="nv">wsize</span><span class="o">=</span><span class="m">1048576</span>,<span class="se">\ </span><span class="w">                </span><span class="c1"># 1MB write size</span>
-</span><span id="__span-10-7"><a id="__codelineno-10-7" name="__codelineno-10-7" href="#__codelineno-10-7"></a><span class="w">  </span><span class="nv">timeo</span><span class="o">=</span><span class="m">600</span>,<span class="se">\ </span><span class="w">                    </span><span class="c1"># 60s timeout</span>
-</span><span id="__span-10-8"><a id="__codelineno-10-8" name="__codelineno-10-8" href="#__codelineno-10-8"></a><span class="w">  </span><span class="nv">retrans</span><span class="o">=</span><span class="m">2</span>,<span class="se">\ </span><span class="w">                    </span><span class="c1"># 2 retransmissions</span>
-</span><span id="__span-10-9"><a id="__codelineno-10-9" name="__codelineno-10-9" href="#__codelineno-10-9"></a><span class="w">  </span>hard,<span class="se">\ </span><span class="w">                         </span><span class="c1"># Hard mount (don&#39;t give up)</span>
-</span><span id="__span-10-10"><a id="__codelineno-10-10" name="__codelineno-10-10" href="#__codelineno-10-10"></a><span class="w">  </span>async,<span class="se">\ </span><span class="w">                        </span><span class="c1"># Asynchronous I/O</span>
-</span><span id="__span-10-11"><a id="__codelineno-10-11" name="__codelineno-10-11" href="#__codelineno-10-11"></a><span class="w">  </span>ac,<span class="se">\ </span><span class="w">                           </span><span class="c1"># Attribute caching</span>
-</span><span id="__span-10-12"><a id="__codelineno-10-12" name="__codelineno-10-12" href="#__codelineno-10-12"></a><span class="w">  </span><span class="nv">actimeo</span><span class="o">=</span><span class="m">3600</span><span class="w"> </span><span class="se">\ </span><span class="w">                 </span><span class="c1"># 1-hour attribute cache</span>
-</span><span id="__span-10-13"><a id="__codelineno-10-13" name="__codelineno-10-13" href="#__codelineno-10-13"></a><span class="w">  </span><span class="m">10</span>.10.1.100:/export<span class="w"> </span>/mnt/pnfs
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="c1"># /etc/nfsmount.conf or mount options</span>
+</span><span id="__span-9-2"><a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a>mount<span class="w"> </span>-t<span class="w"> </span>nfs4<span class="w"> </span>-o<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-9-3"><a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a><span class="w">  </span><span class="nv">vers</span><span class="o">=</span><span class="m">4</span>.2,<span class="se">\ </span><span class="w">                     </span><span class="c1"># Enable pNFS</span>
+</span><span id="__span-9-4"><a id="__codelineno-9-4" name="__codelineno-9-4" href="#__codelineno-9-4"></a><span class="w">  </span>pnfs,<span class="se">\ </span><span class="w">                         </span><span class="c1"># Use parallel NFS layouts</span>
+</span><span id="__span-9-5"><a id="__codelineno-9-5" name="__codelineno-9-5" href="#__codelineno-9-5"></a><span class="w">  </span><span class="nv">rsize</span><span class="o">=</span><span class="m">1048576</span>,<span class="se">\ </span><span class="w">                </span><span class="c1"># 1MB read size</span>
+</span><span id="__span-9-6"><a id="__codelineno-9-6" name="__codelineno-9-6" href="#__codelineno-9-6"></a><span class="w">  </span><span class="nv">wsize</span><span class="o">=</span><span class="m">1048576</span>,<span class="se">\ </span><span class="w">                </span><span class="c1"># 1MB write size</span>
+</span><span id="__span-9-7"><a id="__codelineno-9-7" name="__codelineno-9-7" href="#__codelineno-9-7"></a><span class="w">  </span><span class="nv">timeo</span><span class="o">=</span><span class="m">600</span>,<span class="se">\ </span><span class="w">                    </span><span class="c1"># 60s timeout</span>
+</span><span id="__span-9-8"><a id="__codelineno-9-8" name="__codelineno-9-8" href="#__codelineno-9-8"></a><span class="w">  </span><span class="nv">retrans</span><span class="o">=</span><span class="m">2</span>,<span class="se">\ </span><span class="w">                    </span><span class="c1"># 2 retransmissions</span>
+</span><span id="__span-9-9"><a id="__codelineno-9-9" name="__codelineno-9-9" href="#__codelineno-9-9"></a><span class="w">  </span>hard,<span class="se">\ </span><span class="w">                         </span><span class="c1"># Hard mount (don&#39;t give up)</span>
+</span><span id="__span-9-10"><a id="__codelineno-9-10" name="__codelineno-9-10" href="#__codelineno-9-10"></a><span class="w">  </span>async,<span class="se">\ </span><span class="w">                        </span><span class="c1"># Asynchronous I/O</span>
+</span><span id="__span-9-11"><a id="__codelineno-9-11" name="__codelineno-9-11" href="#__codelineno-9-11"></a><span class="w">  </span>ac,<span class="se">\ </span><span class="w">                           </span><span class="c1"># Attribute caching</span>
+</span><span id="__span-9-12"><a id="__codelineno-9-12" name="__codelineno-9-12" href="#__codelineno-9-12"></a><span class="w">  </span><span class="nv">actimeo</span><span class="o">=</span><span class="m">3600</span><span class="w"> </span><span class="se">\ </span><span class="w">                 </span><span class="c1"># 1-hour attribute cache</span>
+</span><span id="__span-9-13"><a id="__codelineno-9-13" name="__codelineno-9-13" href="#__codelineno-9-13"></a><span class="w">  </span><span class="m">10</span>.10.1.100:/export<span class="w"> </span>/mnt/pnfs
 </span></code></pre></div>
 <h3 id="server-side-tunables">Server-Side Tunables<a class="headerlink" href="#server-side-tunables" title="Link to this section">&para;</a></h3>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-11-1"><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a><span class="c1"># NFS server threads (per-node)</span>
-</span><span id="__span-11-2"><a id="__codelineno-11-2" name="__codelineno-11-2" href="#__codelineno-11-2"></a><span class="nb">echo</span><span class="w"> </span><span class="m">256</span><span class="w"> </span>&gt;<span class="w"> </span>/proc/sys/sunrpc/nfsd_threads
-</span><span id="__span-11-3"><a id="__codelineno-11-3" name="__codelineno-11-3" href="#__codelineno-11-3"></a>
-</span><span id="__span-11-4"><a id="__codelineno-11-4" name="__codelineno-11-4" href="#__codelineno-11-4"></a><span class="c1"># Network receive buffers</span>
-</span><span id="__span-11-5"><a id="__codelineno-11-5" name="__codelineno-11-5" href="#__codelineno-11-5"></a>sysctl<span class="w"> </span>-w<span class="w"> </span>net.core.rmem_max<span class="o">=</span><span class="m">134217728</span>
-</span><span id="__span-11-6"><a id="__codelineno-11-6" name="__codelineno-11-6" href="#__codelineno-11-6"></a>sysctl<span class="w"> </span>-w<span class="w"> </span>net.core.wmem_max<span class="o">=</span><span class="m">134217728</span>
-</span><span id="__span-11-7"><a id="__codelineno-11-7" name="__codelineno-11-7" href="#__codelineno-11-7"></a>
-</span><span id="__span-11-8"><a id="__codelineno-11-8" name="__codelineno-11-8" href="#__codelineno-11-8"></a><span class="c1"># NVMe queue depth</span>
-</span><span id="__span-11-9"><a id="__codelineno-11-9" name="__codelineno-11-9" href="#__codelineno-11-9"></a><span class="nb">echo</span><span class="w"> </span><span class="m">1024</span><span class="w"> </span>&gt;<span class="w"> </span>/sys/block/nvme0n1/queue/nr_requests
-</span><span id="__span-11-10"><a id="__codelineno-11-10" name="__codelineno-11-10" href="#__codelineno-11-10"></a>
-</span><span id="__span-11-11"><a id="__codelineno-11-11" name="__codelineno-11-11" href="#__codelineno-11-11"></a><span class="c1"># Disable CPU frequency scaling (performance mode)</span>
-</span><span id="__span-11-12"><a id="__codelineno-11-12" name="__codelineno-11-12" href="#__codelineno-11-12"></a>cpupower<span class="w"> </span>frequency-set<span class="w"> </span>-g<span class="w"> </span>performance
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-10-1"><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a><span class="c1"># NFS server threads (per-node)</span>
+</span><span id="__span-10-2"><a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a><span class="nb">echo</span><span class="w"> </span><span class="m">256</span><span class="w"> </span>&gt;<span class="w"> </span>/proc/sys/sunrpc/nfsd_threads
+</span><span id="__span-10-3"><a id="__codelineno-10-3" name="__codelineno-10-3" href="#__codelineno-10-3"></a>
+</span><span id="__span-10-4"><a id="__codelineno-10-4" name="__codelineno-10-4" href="#__codelineno-10-4"></a><span class="c1"># Network receive buffers</span>
+</span><span id="__span-10-5"><a id="__codelineno-10-5" name="__codelineno-10-5" href="#__codelineno-10-5"></a>sysctl<span class="w"> </span>-w<span class="w"> </span>net.core.rmem_max<span class="o">=</span><span class="m">134217728</span>
+</span><span id="__span-10-6"><a id="__codelineno-10-6" name="__codelineno-10-6" href="#__codelineno-10-6"></a>sysctl<span class="w"> </span>-w<span class="w"> </span>net.core.wmem_max<span class="o">=</span><span class="m">134217728</span>
+</span><span id="__span-10-7"><a id="__codelineno-10-7" name="__codelineno-10-7" href="#__codelineno-10-7"></a>
+</span><span id="__span-10-8"><a id="__codelineno-10-8" name="__codelineno-10-8" href="#__codelineno-10-8"></a><span class="c1"># NVMe queue depth</span>
+</span><span id="__span-10-9"><a id="__codelineno-10-9" name="__codelineno-10-9" href="#__codelineno-10-9"></a><span class="nb">echo</span><span class="w"> </span><span class="m">1024</span><span class="w"> </span>&gt;<span class="w"> </span>/sys/block/nvme0n1/queue/nr_requests
+</span><span id="__span-10-10"><a id="__codelineno-10-10" name="__codelineno-10-10" href="#__codelineno-10-10"></a>
+</span><span id="__span-10-11"><a id="__codelineno-10-11" name="__codelineno-10-11" href="#__codelineno-10-11"></a><span class="c1"># Disable CPU frequency scaling (performance mode)</span>
+</span><span id="__span-10-12"><a id="__codelineno-10-12" name="__codelineno-10-12" href="#__codelineno-10-12"></a>cpupower<span class="w"> </span>frequency-set<span class="w"> </span>-g<span class="w"> </span>performance
 </span></code></pre></div>
 <h3 id="monitoring-metrics">Monitoring Metrics<a class="headerlink" href="#monitoring-metrics" title="Link to this section">&para;</a></h3>
-<div class="language-yaml highlight"><pre><span></span><code><span id="__span-12-1"><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a><span class="nt">Key metrics to track</span><span class="p">:</span>
-</span><span id="__span-12-2"><a id="__codelineno-12-2" name="__codelineno-12-2" href="#__codelineno-12-2"></a><span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">MDS operations/sec (LAYOUTGET, OPEN, CLOSE)</span>
-</span><span id="__span-12-3"><a id="__codelineno-12-3" name="__codelineno-12-3" href="#__codelineno-12-3"></a><span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Data server throughput (GB/s per node)</span>
-</span><span id="__span-12-4"><a id="__codelineno-12-4" name="__codelineno-12-4" href="#__codelineno-12-4"></a><span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Latency percentiles (p50, p95, p99)</span>
-</span><span id="__span-12-5"><a id="__codelineno-12-5" name="__codelineno-12-5" href="#__codelineno-12-5"></a><span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Client cache hit rates</span>
-</span><span id="__span-12-6"><a id="__codelineno-12-6" name="__codelineno-12-6" href="#__codelineno-12-6"></a><span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Network utilization (per fabric)</span>
-</span><span id="__span-12-7"><a id="__codelineno-12-7" name="__codelineno-12-7" href="#__codelineno-12-7"></a><span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">NVMe IOPS and latency</span>
+<div class="language-yaml highlight"><pre><span></span><code><span id="__span-11-1"><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a><span class="nt">Key metrics to track</span><span class="p">:</span>
+</span><span id="__span-11-2"><a id="__codelineno-11-2" name="__codelineno-11-2" href="#__codelineno-11-2"></a><span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">MDS operations/sec (LAYOUTGET, OPEN, CLOSE)</span>
+</span><span id="__span-11-3"><a id="__codelineno-11-3" name="__codelineno-11-3" href="#__codelineno-11-3"></a><span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Data server throughput (GB/s per node)</span>
+</span><span id="__span-11-4"><a id="__codelineno-11-4" name="__codelineno-11-4" href="#__codelineno-11-4"></a><span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Latency percentiles (p50, p95, p99)</span>
+</span><span id="__span-11-5"><a id="__codelineno-11-5" name="__codelineno-11-5" href="#__codelineno-11-5"></a><span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Client cache hit rates</span>
+</span><span id="__span-11-6"><a id="__codelineno-11-6" name="__codelineno-11-6" href="#__codelineno-11-6"></a><span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Network utilization (per fabric)</span>
+</span><span id="__span-11-7"><a id="__codelineno-11-7" name="__codelineno-11-7" href="#__codelineno-11-7"></a><span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">NVMe IOPS and latency</span>
 </span></code></pre></div>
 <hr />
 <h2 id="implementation-deployment-checklist">Implementation: Deployment Checklist<a class="headerlink" href="#implementation-deployment-checklist" title="Link to this section">&para;</a></h2>
@@ -1944,15 +1983,15 @@
 <hr />
 <h2 id="real-world-performance">Real-World Performance<a class="headerlink" href="#real-world-performance" title="Link to this section">&para;</a></h2>
 <h3 id="benchmark-environment">Benchmark Environment<a class="headerlink" href="#benchmark-environment" title="Link to this section">&para;</a></h3>
-<div class="language-yaml highlight"><pre><span></span><code><span id="__span-13-1"><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a><span class="nt">Hardware</span><span class="p">:</span>
-</span><span id="__span-13-2"><a id="__codelineno-13-2" name="__codelineno-13-2" href="#__codelineno-13-2"></a><span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">10x storage nodes (Dell R750)</span>
-</span><span id="__span-13-3"><a id="__codelineno-13-3" name="__codelineno-13-3" href="#__codelineno-13-3"></a><span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">4x 7.68TB NVMe per node (Samsung PM9A3)</span>
-</span><span id="__span-13-4"><a id="__codelineno-13-4" name="__codelineno-13-4" href="#__codelineno-13-4"></a><span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">100GbE RoCE network</span>
-</span><span id="__span-13-5"><a id="__codelineno-13-5" name="__codelineno-13-5" href="#__codelineno-13-5"></a><span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">2x AMD EPYC 7543 per node</span>
-</span><span id="__span-13-6"><a id="__codelineno-13-6" name="__codelineno-13-6" href="#__codelineno-13-6"></a>
-</span><span id="__span-13-7"><a id="__codelineno-13-7" name="__codelineno-13-7" href="#__codelineno-13-7"></a><span class="nt">Workload</span><span class="p">:</span>
-</span><span id="__span-13-8"><a id="__codelineno-13-8" name="__codelineno-13-8" href="#__codelineno-13-8"></a><span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">FIO sequential read (4MB block size)</span>
-</span><span id="__span-13-9"><a id="__codelineno-13-9" name="__codelineno-13-9" href="#__codelineno-13-9"></a><span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">8 clients, 16 threads each</span>
+<div class="language-yaml highlight"><pre><span></span><code><span id="__span-12-1"><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a><span class="nt">Hardware</span><span class="p">:</span>
+</span><span id="__span-12-2"><a id="__codelineno-12-2" name="__codelineno-12-2" href="#__codelineno-12-2"></a><span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">10x storage nodes (Dell R750)</span>
+</span><span id="__span-12-3"><a id="__codelineno-12-3" name="__codelineno-12-3" href="#__codelineno-12-3"></a><span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">4x 7.68TB NVMe per node (Samsung PM9A3)</span>
+</span><span id="__span-12-4"><a id="__codelineno-12-4" name="__codelineno-12-4" href="#__codelineno-12-4"></a><span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">100GbE RoCE network</span>
+</span><span id="__span-12-5"><a id="__codelineno-12-5" name="__codelineno-12-5" href="#__codelineno-12-5"></a><span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">2x AMD EPYC 7543 per node</span>
+</span><span id="__span-12-6"><a id="__codelineno-12-6" name="__codelineno-12-6" href="#__codelineno-12-6"></a>
+</span><span id="__span-12-7"><a id="__codelineno-12-7" name="__codelineno-12-7" href="#__codelineno-12-7"></a><span class="nt">Workload</span><span class="p">:</span>
+</span><span id="__span-12-8"><a id="__codelineno-12-8" name="__codelineno-12-8" href="#__codelineno-12-8"></a><span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">FIO sequential read (4MB block size)</span>
+</span><span id="__span-12-9"><a id="__codelineno-12-9" name="__codelineno-12-9" href="#__codelineno-12-9"></a><span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">8 clients, 16 threads each</span>
 </span></code></pre></div>
 <h3 id="results">Results<a class="headerlink" href="#results" title="Link to this section">&para;</a></h3>
 <table>
@@ -1999,15 +2038,15 @@
 <h2 id="troubleshooting-guide">Troubleshooting Guide<a class="headerlink" href="#troubleshooting-guide" title="Link to this section">&para;</a></h2>
 <h3 id="problem-clients-not-using-pnfs-falling-back-to-standard-nfs">Problem: Clients not using pNFS (falling back to standard NFS)<a class="headerlink" href="#problem-clients-not-using-pnfs-falling-back-to-standard-nfs" title="Link to this section">&para;</a></h3>
 <p><strong>Symptoms</strong>:
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-14-1"><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a><span class="c1"># All I/O going through MDS node</span>
-</span><span id="__span-14-2"><a id="__codelineno-14-2" name="__codelineno-14-2" href="#__codelineno-14-2"></a>nfsstat<span class="w"> </span>-m<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span><span class="s2">&quot;pnfs&quot;</span><span class="w">  </span><span class="c1"># Shows &quot;pnfs: not in use&quot;</span>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-13-1"><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a><span class="c1"># All I/O going through MDS node</span>
+</span><span id="__span-13-2"><a id="__codelineno-13-2" name="__codelineno-13-2" href="#__codelineno-13-2"></a>nfsstat<span class="w"> </span>-m<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span><span class="s2">&quot;pnfs&quot;</span><span class="w">  </span><span class="c1"># Shows &quot;pnfs: not in use&quot;</span>
 </span></code></pre></div></p>
 <p><strong>Diagnosis</strong>:
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-15-1"><a id="__codelineno-15-1" name="__codelineno-15-1" href="#__codelineno-15-1"></a><span class="c1"># Check server pNFS support</span>
-</span><span id="__span-15-2"><a id="__codelineno-15-2" name="__codelineno-15-2" href="#__codelineno-15-2"></a>nfsstat<span class="w"> </span>-s<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>pnfs
-</span><span id="__span-15-3"><a id="__codelineno-15-3" name="__codelineno-15-3" href="#__codelineno-15-3"></a>
-</span><span id="__span-15-4"><a id="__codelineno-15-4" name="__codelineno-15-4" href="#__codelineno-15-4"></a><span class="c1"># Check client kernel support</span>
-</span><span id="__span-15-5"><a id="__codelineno-15-5" name="__codelineno-15-5" href="#__codelineno-15-5"></a>grep<span class="w"> </span>PNFS<span class="w"> </span>/boot/config-<span class="k">$(</span>uname<span class="w"> </span>-r<span class="k">)</span><span class="w">  </span><span class="c1"># Should show CONFIG_PNFS_FILE_LAYOUT=m</span>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-14-1"><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a><span class="c1"># Check server pNFS support</span>
+</span><span id="__span-14-2"><a id="__codelineno-14-2" name="__codelineno-14-2" href="#__codelineno-14-2"></a>nfsstat<span class="w"> </span>-s<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>pnfs
+</span><span id="__span-14-3"><a id="__codelineno-14-3" name="__codelineno-14-3" href="#__codelineno-14-3"></a>
+</span><span id="__span-14-4"><a id="__codelineno-14-4" name="__codelineno-14-4" href="#__codelineno-14-4"></a><span class="c1"># Check client kernel support</span>
+</span><span id="__span-14-5"><a id="__codelineno-14-5" name="__codelineno-14-5" href="#__codelineno-14-5"></a>grep<span class="w"> </span>PNFS<span class="w"> </span>/boot/config-<span class="k">$(</span>uname<span class="w"> </span>-r<span class="k">)</span><span class="w">  </span><span class="c1"># Should show CONFIG_PNFS_FILE_LAYOUT=m</span>
 </span></code></pre></div></p>
 <p><strong>Solution</strong>:
 - Ensure server exports with <code>pnfs</code> option
@@ -2016,33 +2055,33 @@
 <hr />
 <h3 id="problem-high-mds-cpu-usage">Problem: High MDS CPU usage<a class="headerlink" href="#problem-high-mds-cpu-usage" title="Link to this section">&para;</a></h3>
 <p><strong>Symptoms</strong>:
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-16-1"><a id="__codelineno-16-1" name="__codelineno-16-1" href="#__codelineno-16-1"></a><span class="c1"># MDS nodes showing &gt;80% CPU</span>
-</span><span id="__span-16-2"><a id="__codelineno-16-2" name="__codelineno-16-2" href="#__codelineno-16-2"></a>top<span class="w">  </span><span class="c1"># nfsd threads consuming CPU</span>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-15-1"><a id="__codelineno-15-1" name="__codelineno-15-1" href="#__codelineno-15-1"></a><span class="c1"># MDS nodes showing &gt;80% CPU</span>
+</span><span id="__span-15-2"><a id="__codelineno-15-2" name="__codelineno-15-2" href="#__codelineno-15-2"></a>top<span class="w">  </span><span class="c1"># nfsd threads consuming CPU</span>
 </span></code></pre></div></p>
 <p><strong>Diagnosis</strong>:
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-17-1"><a id="__codelineno-17-1" name="__codelineno-17-1" href="#__codelineno-17-1"></a><span class="c1"># Check for excessive LAYOUTGET operations</span>
-</span><span id="__span-17-2"><a id="__codelineno-17-2" name="__codelineno-17-2" href="#__codelineno-17-2"></a>nfsstat<span class="w"> </span>-s<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>LAYOUTGET
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-16-1"><a id="__codelineno-16-1" name="__codelineno-16-1" href="#__codelineno-16-1"></a><span class="c1"># Check for excessive LAYOUTGET operations</span>
+</span><span id="__span-16-2"><a id="__codelineno-16-2" name="__codelineno-16-2" href="#__codelineno-16-2"></a>nfsstat<span class="w"> </span>-s<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>LAYOUTGET
 </span></code></pre></div></p>
 <p><strong>Possible Causes</strong>:
 - Clients not caching layouts (check <code>actimeo</code>)
 - Frequent layout recalls (check for conflicting access patterns)
 - Insufficient MDS threads (check <code>nfsd_threads</code>)</p>
 <p><strong>Solution</strong>:
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-18-1"><a id="__codelineno-18-1" name="__codelineno-18-1" href="#__codelineno-18-1"></a><span class="c1"># Increase client attribute cache timeout</span>
-</span><span id="__span-18-2"><a id="__codelineno-18-2" name="__codelineno-18-2" href="#__codelineno-18-2"></a>mount<span class="w"> </span>-o<span class="w"> </span>remount,actimeo<span class="o">=</span><span class="m">3600</span><span class="w"> </span>/mnt/pnfs
-</span><span id="__span-18-3"><a id="__codelineno-18-3" name="__codelineno-18-3" href="#__codelineno-18-3"></a>
-</span><span id="__span-18-4"><a id="__codelineno-18-4" name="__codelineno-18-4" href="#__codelineno-18-4"></a><span class="c1"># Add more MDS threads</span>
-</span><span id="__span-18-5"><a id="__codelineno-18-5" name="__codelineno-18-5" href="#__codelineno-18-5"></a><span class="nb">echo</span><span class="w"> </span><span class="m">512</span><span class="w"> </span>&gt;<span class="w"> </span>/proc/sys/sunrpc/nfsd_threads
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-17-1"><a id="__codelineno-17-1" name="__codelineno-17-1" href="#__codelineno-17-1"></a><span class="c1"># Increase client attribute cache timeout</span>
+</span><span id="__span-17-2"><a id="__codelineno-17-2" name="__codelineno-17-2" href="#__codelineno-17-2"></a>mount<span class="w"> </span>-o<span class="w"> </span>remount,actimeo<span class="o">=</span><span class="m">3600</span><span class="w"> </span>/mnt/pnfs
+</span><span id="__span-17-3"><a id="__codelineno-17-3" name="__codelineno-17-3" href="#__codelineno-17-3"></a>
+</span><span id="__span-17-4"><a id="__codelineno-17-4" name="__codelineno-17-4" href="#__codelineno-17-4"></a><span class="c1"># Add more MDS threads</span>
+</span><span id="__span-17-5"><a id="__codelineno-17-5" name="__codelineno-17-5" href="#__codelineno-17-5"></a><span class="nb">echo</span><span class="w"> </span><span class="m">512</span><span class="w"> </span>&gt;<span class="w"> </span>/proc/sys/sunrpc/nfsd_threads
 </span></code></pre></div></p>
 <hr />
 <h3 id="problem-uneven-storage-utilization">Problem: Uneven storage utilization<a class="headerlink" href="#problem-uneven-storage-utilization" title="Link to this section">&para;</a></h3>
 <p><strong>Symptoms</strong>:
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-19-1"><a id="__codelineno-19-1" name="__codelineno-19-1" href="#__codelineno-19-1"></a><span class="c1"># One storage node at 90%, others at 40%</span>
-</span><span id="__span-19-2"><a id="__codelineno-19-2" name="__codelineno-19-2" href="#__codelineno-19-2"></a>df<span class="w"> </span>-h<span class="w"> </span>/storage/*
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-18-1"><a id="__codelineno-18-1" name="__codelineno-18-1" href="#__codelineno-18-1"></a><span class="c1"># One storage node at 90%, others at 40%</span>
+</span><span id="__span-18-2"><a id="__codelineno-18-2" name="__codelineno-18-2" href="#__codelineno-18-2"></a>df<span class="w"> </span>-h<span class="w"> </span>/storage/*
 </span></code></pre></div></p>
 <p><strong>Diagnosis</strong>:
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-20-1"><a id="__codelineno-20-1" name="__codelineno-20-1" href="#__codelineno-20-1"></a><span class="c1"># Check file layout distribution</span>
-</span><span id="__span-20-2"><a id="__codelineno-20-2" name="__codelineno-20-2" href="#__codelineno-20-2"></a><span class="c1"># (Requires pNFS-aware tooling or manual inspection)</span>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-19-1"><a id="__codelineno-19-1" name="__codelineno-19-1" href="#__codelineno-19-1"></a><span class="c1"># Check file layout distribution</span>
+</span><span id="__span-19-2"><a id="__codelineno-19-2" name="__codelineno-19-2" href="#__codelineno-19-2"></a><span class="c1"># (Requires pNFS-aware tooling or manual inspection)</span>
 </span></code></pre></div></p>
 <p><strong>Solution</strong>:
 - <strong>Re-stripe files</strong>: Use pNFS restripe tools if available
@@ -2056,13 +2095,13 @@
 - <strong>Warm tier</strong>: SATA SSD pNFS for recent data
 - <strong>Cold tier</strong>: HDD-based object storage (S3) for archives</p>
 <p><strong>Layout policy</strong>:
-<div class="language-python highlight"><pre><span></span><code><span id="__span-21-1"><a id="__codelineno-21-1" name="__codelineno-21-1" href="#__codelineno-21-1"></a><span class="k">def</span><span class="w"> </span><span class="nf">select_storage_tier</span><span class="p">(</span><span class="n">file_metadata</span><span class="p">):</span>
-</span><span id="__span-21-2"><a id="__codelineno-21-2" name="__codelineno-21-2" href="#__codelineno-21-2"></a>    <span class="k">if</span> <span class="n">file_metadata</span><span class="o">.</span><span class="n">access_count</span> <span class="o">&gt;</span> <span class="mi">100</span><span class="p">:</span>
-</span><span id="__span-21-3"><a id="__codelineno-21-3" name="__codelineno-21-3" href="#__codelineno-21-3"></a>        <span class="k">return</span> <span class="n">TIER_NVME</span>
-</span><span id="__span-21-4"><a id="__codelineno-21-4" name="__codelineno-21-4" href="#__codelineno-21-4"></a>    <span class="k">elif</span> <span class="n">file_metadata</span><span class="o">.</span><span class="n">age_days</span> <span class="o">&lt;</span> <span class="mi">30</span><span class="p">:</span>
-</span><span id="__span-21-5"><a id="__codelineno-21-5" name="__codelineno-21-5" href="#__codelineno-21-5"></a>        <span class="k">return</span> <span class="n">TIER_SSD</span>
-</span><span id="__span-21-6"><a id="__codelineno-21-6" name="__codelineno-21-6" href="#__codelineno-21-6"></a>    <span class="k">else</span><span class="p">:</span>
-</span><span id="__span-21-7"><a id="__codelineno-21-7" name="__codelineno-21-7" href="#__codelineno-21-7"></a>        <span class="k">return</span> <span class="n">TIER_HDD</span>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-20-1"><a id="__codelineno-20-1" name="__codelineno-20-1" href="#__codelineno-20-1"></a><span class="k">def</span><span class="w"> </span><span class="nf">select_storage_tier</span><span class="p">(</span><span class="n">file_metadata</span><span class="p">):</span>
+</span><span id="__span-20-2"><a id="__codelineno-20-2" name="__codelineno-20-2" href="#__codelineno-20-2"></a>    <span class="k">if</span> <span class="n">file_metadata</span><span class="o">.</span><span class="n">access_count</span> <span class="o">&gt;</span> <span class="mi">100</span><span class="p">:</span>
+</span><span id="__span-20-3"><a id="__codelineno-20-3" name="__codelineno-20-3" href="#__codelineno-20-3"></a>        <span class="k">return</span> <span class="n">TIER_NVME</span>
+</span><span id="__span-20-4"><a id="__codelineno-20-4" name="__codelineno-20-4" href="#__codelineno-20-4"></a>    <span class="k">elif</span> <span class="n">file_metadata</span><span class="o">.</span><span class="n">age_days</span> <span class="o">&lt;</span> <span class="mi">30</span><span class="p">:</span>
+</span><span id="__span-20-5"><a id="__codelineno-20-5" name="__codelineno-20-5" href="#__codelineno-20-5"></a>        <span class="k">return</span> <span class="n">TIER_SSD</span>
+</span><span id="__span-20-6"><a id="__codelineno-20-6" name="__codelineno-20-6" href="#__codelineno-20-6"></a>    <span class="k">else</span><span class="p">:</span>
+</span><span id="__span-20-7"><a id="__codelineno-20-7" name="__codelineno-20-7" href="#__codelineno-20-7"></a>        <span class="k">return</span> <span class="n">TIER_HDD</span>
 </span></code></pre></div></p>
 <h3 id="2-erasure-coding-for-space-efficiency">2. Erasure Coding for Space Efficiency<a class="headerlink" href="#2-erasure-coding-for-space-efficiency" title="Link to this section">&para;</a></h3>
 <p>Instead of replication (2x-3x overhead), use erasure coding:
@@ -2071,11 +2110,11 @@
 - <strong>Rebuild time</strong>: ~2 hours for 10TB per failed drive</p>
 <h3 id="3-multi-site-pnfs-replication">3. Multi-Site pNFS Replication<a class="headerlink" href="#3-multi-site-pnfs-replication" title="Link to this section">&para;</a></h3>
 <p>For disaster recovery:
-<div class="language-text highlight"><pre><span></span><code><span id="__span-22-1"><a id="__codelineno-22-1" name="__codelineno-22-1" href="#__codelineno-22-1"></a>Site A (Primary):          Site B (DR):
-</span><span id="__span-22-2"><a id="__codelineno-22-2" name="__codelineno-22-2" href="#__codelineno-22-2"></a>  10 storage nodes    →      10 storage nodes
-</span><span id="__span-22-3"><a id="__codelineno-22-3" name="__codelineno-22-3" href="#__codelineno-22-3"></a>  Active MDS cluster  →      Standby MDS cluster
-</span><span id="__span-22-4"><a id="__codelineno-22-4" name="__codelineno-22-4" href="#__codelineno-22-4"></a>
-</span><span id="__span-22-5"><a id="__codelineno-22-5" name="__codelineno-22-5" href="#__codelineno-22-5"></a>Async replication (rsync/DRBD async or Lustre HSM)
+<div class="language-text highlight"><pre><span></span><code><span id="__span-21-1"><a id="__codelineno-21-1" name="__codelineno-21-1" href="#__codelineno-21-1"></a>Site A (Primary):          Site B (DR):
+</span><span id="__span-21-2"><a id="__codelineno-21-2" name="__codelineno-21-2" href="#__codelineno-21-2"></a>  10 storage nodes    →      10 storage nodes
+</span><span id="__span-21-3"><a id="__codelineno-21-3" name="__codelineno-21-3" href="#__codelineno-21-3"></a>  Active MDS cluster  →      Standby MDS cluster
+</span><span id="__span-21-4"><a id="__codelineno-21-4" name="__codelineno-21-4" href="#__codelineno-21-4"></a>
+</span><span id="__span-21-5"><a id="__codelineno-21-5" name="__codelineno-21-5" href="#__codelineno-21-5"></a>Async replication (rsync/DRBD async or Lustre HSM)
 </span></code></pre></div></p>
 <hr />
 <h2 id="conclusion">Conclusion<a class="headerlink" href="#conclusion" title="Link to this section">&para;</a></h2>
