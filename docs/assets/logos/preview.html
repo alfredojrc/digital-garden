@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Logo Alternatives Preview - Digital Garden</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: #fafafa;
+            color: #212121;
+            padding: 2rem;
+            line-height: 1.6;
+        }
+
+        @media (prefers-color-scheme: dark) {
+            body {
+                background: #1e1e1e;
+                color: #e0e0e0;
+            }
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 1rem;
+            color: #3f51b5;
+            font-size: 2.5rem;
+        }
+
+        @media (prefers-color-scheme: dark) {
+            h1 {
+                color: #7986cb;
+            }
+        }
+
+        .subtitle {
+            text-align: center;
+            margin-bottom: 3rem;
+            opacity: 0.7;
+        }
+
+        .controls {
+            text-align: center;
+            margin-bottom: 2rem;
+            padding: 1rem;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        @media (prefers-color-scheme: dark) {
+            .controls {
+                background: #2d2d2d;
+            }
+        }
+
+        .controls label {
+            margin-right: 1rem;
+            font-weight: 500;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .logo-card {
+            background: white;
+            border-radius: 12px;
+            padding: 2rem;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        @media (prefers-color-scheme: dark) {
+            .logo-card {
+                background: #2d2d2d;
+            }
+        }
+
+        .logo-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 200px;
+            margin-bottom: 1.5rem;
+            background: #f5f5f5;
+            border-radius: 8px;
+            padding: 2rem;
+        }
+
+        @media (prefers-color-scheme: dark) {
+            .logo-container {
+                background: #1a1a1a;
+            }
+        }
+
+        .logo-container img {
+            max-width: 100%;
+            height: auto;
+        }
+
+        .logo-name {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: #3f51b5;
+        }
+
+        @media (prefers-color-scheme: dark) {
+            .logo-name {
+                color: #7986cb;
+            }
+        }
+
+        .logo-concept {
+            font-size: 0.9rem;
+            opacity: 0.7;
+            margin-bottom: 1rem;
+        }
+
+        .logo-stats {
+            display: flex;
+            gap: 1rem;
+            font-size: 0.85rem;
+            flex-wrap: wrap;
+        }
+
+        .stat {
+            padding: 0.25rem 0.75rem;
+            background: #e3f2fd;
+            border-radius: 4px;
+            color: #1565c0;
+        }
+
+        @media (prefers-color-scheme: dark) {
+            .stat {
+                background: #1a237e;
+                color: #90caf9;
+            }
+        }
+
+        .stat.primary {
+            background: #c5cae9;
+            color: #283593;
+            font-weight: 600;
+        }
+
+        @media (prefers-color-scheme: dark) {
+            .stat.primary {
+                background: #3f51b5;
+                color: #e8eaf6;
+            }
+        }
+
+        .size-test {
+            margin-top: 3rem;
+            padding: 2rem;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        @media (prefers-color-scheme: dark) {
+            .size-test {
+                background: #2d2d2d;
+            }
+        }
+
+        .size-test h2 {
+            margin-bottom: 1.5rem;
+            color: #3f51b5;
+        }
+
+        @media (prefers-color-scheme: dark) {
+            .size-test h2 {
+                color: #7986cb;
+            }
+        }
+
+        .size-row {
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+            margin-bottom: 2rem;
+            padding: 1rem;
+            background: #f5f5f5;
+            border-radius: 8px;
+        }
+
+        @media (prefers-color-scheme: dark) {
+            .size-row {
+                background: #1a1a1a;
+            }
+        }
+
+        .size-label {
+            font-weight: 600;
+            min-width: 80px;
+        }
+
+        .size-examples {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            flex-wrap: wrap;
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 3rem;
+            padding-top: 2rem;
+            border-top: 1px solid #e0e0e0;
+            opacity: 0.7;
+        }
+
+        @media (prefers-color-scheme: dark) {
+            .footer {
+                border-top-color: #424242;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Digital Garden Logo Alternatives</h1>
+        <p class="subtitle">Professional SVG Implementations - Research-Driven Design</p>
+
+        <div class="controls">
+            <label for="size-select">Preview Size:</label>
+            <select id="size-select" onchange="updateSize(this.value)">
+                <option value="150">Small (150px)</option>
+                <option value="200" selected>Medium (200px)</option>
+                <option value="300">Large (300px)</option>
+                <option value="400">Extra Large (400px)</option>
+            </select>
+        </div>
+
+        <div class="grid">
+            <!-- Network Tree -->
+            <div class="logo-card">
+                <div class="logo-container">
+                    <img src="network-tree.svg" alt="Network Tree Logo" width="200" class="logo-preview">
+                </div>
+                <div class="logo-name">1. Network Tree</div>
+                <div class="logo-concept">Distributed Systems Metaphor</div>
+                <div class="logo-stats">
+                    <span class="stat primary">PRIMARY CHOICE</span>
+                    <span class="stat">⭐⭐⭐⭐⭐ Technical</span>
+                    <span class="stat">Perfect Scale</span>
+                </div>
+            </div>
+
+            <!-- Fractal Tree -->
+            <div class="logo-card">
+                <div class="logo-container">
+                    <img src="fractal-tree.svg" alt="Fractal Tree Logo" width="200" class="logo-preview">
+                </div>
+                <div class="logo-name">2. Fractal Tree</div>
+                <div class="logo-concept">Mathematical/Algorithmic Precision</div>
+                <div class="logo-stats">
+                    <span class="stat primary">SECONDARY CHOICE</span>
+                    <span class="stat">⭐⭐⭐⭐⭐ Unique</span>
+                    <span class="stat">Fibonacci</span>
+                </div>
+            </div>
+
+            <!-- Abstract Growth -->
+            <div class="logo-card">
+                <div class="logo-container">
+                    <img src="abstract-growth.svg" alt="Abstract Growth Logo" width="200" class="logo-preview">
+                </div>
+                <div class="logo-name">3. Abstract Growth</div>
+                <div class="logo-concept">Confident Simplicity</div>
+                <div class="logo-stats">
+                    <span class="stat">BEST FAVICON</span>
+                    <span class="stat">⭐⭐⭐⭐⭐ Simple</span>
+                    <span class="stat">Bold Form</span>
+                </div>
+            </div>
+
+            <!-- Layered Depth -->
+            <div class="logo-card">
+                <div class="logo-container">
+                    <img src="layered-depth.svg" alt="Layered Depth Logo" width="200" class="logo-preview">
+                </div>
+                <div class="logo-name">4. Layered Depth</div>
+                <div class="logo-concept">Visual Sophistication</div>
+                <div class="logo-stats">
+                    <span class="stat">LARGE SIZES</span>
+                    <span class="stat">⭐⭐⭐⭐ Depth</span>
+                    <span class="stat">Layers</span>
+                </div>
+            </div>
+
+            <!-- Typographic Tree -->
+            <div class="logo-card">
+                <div class="logo-container">
+                    <img src="typographic-tree.svg" alt="Typographic Tree Logo" width="200" class="logo-preview">
+                </div>
+                <div class="logo-name">5. Typographic Tree</div>
+                <div class="logo-concept">Conceptual Sophistication</div>
+                <div class="logo-stats">
+                    <span class="stat">UNIQUE CONCEPT</span>
+                    <span class="stat">⭐⭐⭐⭐⭐ Clever</span>
+                    <span class="stat">Dual Reading</span>
+                </div>
+            </div>
+
+            <!-- Root Mirror -->
+            <div class="logo-card">
+                <div class="logo-container">
+                    <img src="root-mirror.svg" alt="Root Mirror Logo" width="200" class="logo-preview">
+                </div>
+                <div class="logo-name">6. Root Mirror (Bonus)</div>
+                <div class="logo-concept">Infrastructure Symmetry</div>
+                <div class="logo-stats">
+                    <span class="stat">PHILOSOPHICAL</span>
+                    <span class="stat">⭐⭐⭐⭐⭐ Systems</span>
+                    <span class="stat">Symmetry</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Size Testing Section -->
+        <div class="size-test">
+            <h2>Scalability Test - All Sizes</h2>
+
+            <div class="size-row">
+                <div class="size-label">16px (Favicon)</div>
+                <div class="size-examples">
+                    <img src="network-tree.svg" width="16" title="Network Tree">
+                    <img src="fractal-tree.svg" width="16" title="Fractal Tree">
+                    <img src="abstract-growth.svg" width="16" title="Abstract Growth">
+                    <img src="layered-depth.svg" width="16" title="Layered Depth">
+                    <img src="typographic-tree.svg" width="16" title="Typographic Tree">
+                    <img src="root-mirror.svg" width="16" title="Root Mirror">
+                </div>
+            </div>
+
+            <div class="size-row">
+                <div class="size-label">32px (Icon)</div>
+                <div class="size-examples">
+                    <img src="network-tree.svg" width="32" title="Network Tree">
+                    <img src="fractal-tree.svg" width="32" title="Fractal Tree">
+                    <img src="abstract-growth.svg" width="32" title="Abstract Growth">
+                    <img src="layered-depth.svg" width="32" title="Layered Depth">
+                    <img src="typographic-tree.svg" width="32" title="Typographic Tree">
+                    <img src="root-mirror.svg" width="32" title="Root Mirror">
+                </div>
+            </div>
+
+            <div class="size-row">
+                <div class="size-label">64px (Standard)</div>
+                <div class="size-examples">
+                    <img src="network-tree.svg" width="64" title="Network Tree">
+                    <img src="fractal-tree.svg" width="64" title="Fractal Tree">
+                    <img src="abstract-growth.svg" width="64" title="Abstract Growth">
+                    <img src="layered-depth.svg" width="64" title="Layered Depth">
+                    <img src="typographic-tree.svg" width="64" title="Typographic Tree">
+                    <img src="root-mirror.svg" width="64" title="Root Mirror">
+                </div>
+            </div>
+
+            <div class="size-row">
+                <div class="size-label">128px (Large)</div>
+                <div class="size-examples">
+                    <img src="network-tree.svg" width="128" title="Network Tree">
+                    <img src="fractal-tree.svg" width="128" title="Fractal Tree">
+                    <img src="abstract-growth.svg" width="128" title="Abstract Growth">
+                    <img src="layered-depth.svg" width="128" title="Layered Depth">
+                    <img src="typographic-tree.svg" width="128" title="Typographic Tree">
+                    <img src="root-mirror.svg" width="128" title="Root Mirror">
+                </div>
+            </div>
+        </div>
+
+        <div class="footer">
+            <p><strong>Created:</strong> 2025-11-10 | <strong>Based on:</strong> Professional Logo Design Research</p>
+            <p>All logos include native dark mode support via CSS media queries</p>
+            <p><strong>Recommendation:</strong> Network Tree (primary) or Fractal Tree (secondary)</p>
+        </div>
+    </div>
+
+    <script>
+        function updateSize(size) {
+            const previews = document.querySelectorAll('.logo-preview');
+            previews.forEach(img => {
+                img.width = size;
+            });
+        }
+    </script>
+</body>
+</html>
