@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200">
+  <!-- Organic Canopy Silhouette - Natural asymmetric -->
+  <defs>
+    <style>
+      .tree { fill: #4caf50; }
+      .trunk { fill: #2e7d32; }
+      .roots { fill: #1b5e20; }
+    </style>
+  </defs>
+
+  <!-- Canopy - organic flowing shape -->
+  <path d="M 100 35 Q 115 40 125 50 Q 135 60 138 72 Q 140 85 135 95 Q 125 102 110 105 Q 100 106 90 105 Q 75 102 65 95 Q 58 85 60 72 Q 63 58 72 48 Q 82 40 100 35 Z" class="tree"/>
+
+  <!-- Add some organic bulges -->
+  <ellipse cx="78" cy="65" rx="18" ry="22" class="tree"/>
+  <ellipse cx="120" cy="70" rx="15" ry="18" class="tree"/>
+
+  <!-- Trunk - slightly curved -->
+  <path d="M 94 105 Q 92 118 93 130 L 107 130 Q 108 118 106 105 Z" class="trunk"/>
+
+  <!-- Root system - organic flowing -->
+  <path d="M 93 130 Q 85 135 75 142 Q 65 148 58 156" class="roots" stroke-width="5" stroke="#1b5e20" fill="none" stroke-linecap="round"/>
+  <path d="M 97 130 Q 93 140 90 150" class="roots" stroke-width="4" stroke="#1b5e20" fill="none" stroke-linecap="round"/>
+  <path d="M 100 130 Q 100 142 98 155" class="roots" stroke-width="5" stroke="#1b5e20" fill="none" stroke-linecap="round"/>
+  <path d="M 103 130 Q 107 140 110 150" class="roots" stroke-width="4" stroke="#1b5e20" fill="none" stroke-linecap="round"/>
+  <path d="M 107 130 Q 115 135 125 142 Q 135 148 142 156" class="roots" stroke-width="5" stroke="#1b5e20" fill="none" stroke-linecap="round"/>
+</svg>
