@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200">
+  <defs>
+    <style>
+      .main-shape { fill: #4CAF50; }
+      .mid-layer { fill: #66BB6A; }
+      .top-layer { fill: #81C784; }
+      .highlight { fill: #A5D6A7; opacity: 0.5; }
+      .base { fill: #388E3C; }
+
+      @media (prefers-color-scheme: dark) {
+        .main-shape { fill: #66BB6A; }
+        .mid-layer { fill: #81C784; }
+        .top-layer { fill: #9CCC9C; }
+        .highlight { fill: #C8E6C9; opacity: 0.4; }
+        .base { fill: #4CAF50; }
+      }
+    </style>
+  </defs>
+
+  <!-- Main trunk/base triangle -->
+  <path d="M100 28 L68 92 L83 92 L83 173 L117 173 L117 92 L132 92 Z" class="main-shape"/>
+
+  <!-- Mid-layer circle -->
+  <circle cx="100" cy="68" r="37" class="mid-layer"/>
+
+  <!-- Top decorative layer -->
+  <path d="M100 48 Q83 32 68 48 C78 60 89 64 100 48 C111 64 122 60 132 48 Q117 32 100 48"
+        class="top-layer"/>
+
+  <!-- Center highlight circle -->
+  <circle cx="100" cy="68" r="16" class="highlight"/>
+
+  <!-- Additional flat highlights -->
+  <circle cx="90" cy="65" r="5" class="highlight"/>
+  <circle cx="110" cy="72" r="6" class="highlight"/>
+
+  <!-- Base platform -->
+  <rect x="83" y="173" width="34" height="5" class="base" rx="2"/>
+
+  <!-- Side details for app icon clarity -->
+  <path d="M83 92 L83 120 L87 120 L87 92" class="main-shape" opacity="0.7"/>
+  <path d="M117 92 L117 120 L113 120 L113 92" class="main-shape" opacity="0.7"/>
+</svg>
