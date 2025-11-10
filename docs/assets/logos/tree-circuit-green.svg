@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="100" height="100">
+  <!-- Circuit Tree - Tech Knowledge Fusion -->
+  <defs>
+    <style>
+      .circuit { fill: none; stroke: #2e7d32; stroke-width: 2; }
+      .node { fill: #4caf50; }
+    </style>
+  </defs>
+
+  <!-- Main vertical line (trunk) -->
+  <line x1="50" y1="85" x2="50" y2="30" class="circuit" stroke-width="3"/>
+
+  <!-- Circuit branches -->
+  <path d="M 50 30 L 50 25 L 35 25 L 35 20" class="circuit"/>
+  <path d="M 50 30 L 50 25 L 65 25 L 65 20" class="circuit"/>
+  <path d="M 50 45 L 40 45 L 40 38" class="circuit"/>
+  <path d="M 50 45 L 60 45 L 60 38" class="circuit"/>
+  <path d="M 50 60 L 43 60" class="circuit"/>
+  <path d="M 50 60 L 57 60" class="circuit"/>
+
+  <!-- Circuit nodes (leaves) -->
+  <rect x="33" y="18" width="4" height="4" class="node" rx="1"/>
+  <rect x="63" y="18" width="4" height="4" class="node" rx="1"/>
+  <rect x="38" y="36" width="4" height="4" class="node" rx="1"/>
+  <rect x="58" y="36" width="4" height="4" class="node" rx="1"/>
+  <rect x="41" y="58" width="4" height="4" class="node" rx="1"/>
+  <rect x="55" y="58" width="4" height="4" class="node" rx="1"/>
+
+  <!-- Top node -->
+  <circle cx="50" cy="25" r="3" fill="#66bb6a"/>
+
+  <!-- Connection points -->
+  <circle cx="50" cy="30" r="2" fill="#2e7d32"/>
+  <circle cx="50" cy="45" r="2" fill="#2e7d32"/>
+  <circle cx="50" cy="60" r="2" fill="#2e7d32"/>
+</svg>

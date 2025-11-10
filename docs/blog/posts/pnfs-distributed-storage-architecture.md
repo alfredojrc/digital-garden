@@ -46,73 +46,48 @@ This architecture implements a production-grade parallel NFS (pNFS) v4.2 deploym
 ```mermaid
 sequenceDiagram
     participant Client as Client<br/>(pNFS v4.2)
-    participant VIP as Virtual IP<br/>(Load Balancer)
-    participant MDS1 as MDS Node 1<br/>(Active)
-    participant MDS2 as MDS Node 2<br/>(Active)
-    participant Backend as Distributed Backend<br/>(Consensus/Shared State)
-    participant Fabric as Network Fabric<br/>(InfiniBand/RoCE)
-    participant DS1 as Storage Node 1<br/>(MDS+DS+NVMe)
-    participant DS2 as Storage Node 2<br/>(MDS+DS+NVMe)
-    participant DS3 as Storage Node 3<br/>(MDS+DS+NVMe)
+    participant MDS as MDS Cluster<br/>(Active-Active via VIP)
+    participant S1 as Storage Node 1<br/>(NVMe)
+    participant S2 as Storage Node 2<br/>(NVMe)
+    participant S3 as Storage Node 3<br/>(NVMe)
 
-    Note over Client,DS3: Phase 1: Metadata Path (Control Plane)
+    Note over Client,S3: ━━━━━━━ PHASE 1: METADATA PATH ━━━━━━━
+    Note over MDS: Virtual IP load balances to any MDS<br/>All MDS nodes share distributed state
 
-    Client->>VIP: LAYOUTGET request
-    VIP->>MDS1: Forward to available MDS
-    MDS1->>Backend: Query file layout
-    Backend-->>MDS1: Return layout map
-    MDS1-->>VIP: LAYOUT response
-    VIP-->>Client: Layout (stripe pattern, DS addresses)
-    Note over Client: Client caches layout<br/>(stripe unit: 1MB, count: 3)
+    Client->>+MDS: LAYOUTGET(file_handle)
+    Note right of MDS: MDS queries distributed<br/>backend for file layout
+    MDS-->>-Client: LAYOUT(stripe_pattern, DS_list)
+    Note left of Client: ✓ Client caches layout<br/>Stripe unit: 1MB<br/>Stripe count: 3 nodes
 
-    rect rgb(240, 240, 255)
-        Note over MDS1,MDS2: MDS Cluster (Active-Active)
-        MDS1->>Backend: Heartbeat & state sync
-        MDS2->>Backend: Heartbeat & state sync
-        Backend-->>MDS1: Cluster state
-        Backend-->>MDS2: Cluster state
+    Note over Client,S3: ━━━━━━━ PHASE 2: DATA PATH (MDS BYPASSED) ━━━━━━━
+
+    par Parallel Direct I/O over InfiniBand/RoCE
+        Client->>+S1: WRITE Stripe 0
+        S1->>S1: NVMe I/O
+        S1-->>-Client: ACK
+    and
+        Client->>+S2: WRITE Stripe 1
+        S2->>S2: NVMe I/O
+        S2-->>-Client: ACK
+    and
+        Client->>+S3: WRITE Stripe 2
+        S3->>S3: NVMe I/O
+        S3-->>-Client: ACK
     end
 
-    Note over Client,DS3: Phase 2: Data Path (Direct Parallel I/O)
-
-    par Parallel data transfer (bypasses MDS)
-        Client->>Fabric: Stripe 0 (READ/WRITE)
-        Fabric->>DS1: Route to Storage Node 1
-        DS1->>DS1: NVMe I/O
-        DS1-->>Fabric: Data chunk 0
-        Fabric-->>Client: Data chunk 0
-    and
-        Client->>Fabric: Stripe 1 (READ/WRITE)
-        Fabric->>DS2: Route to Storage Node 2
-        DS2->>DS2: NVMe I/O
-        DS2-->>Fabric: Data chunk 1
-        Fabric-->>Client: Data chunk 1
-    and
-        Client->>Fabric: Stripe 2 (READ/WRITE)
-        Fabric->>DS3: Route to Storage Node 3
-        DS3->>DS3: NVMe I/O
-        DS3-->>Fabric: Data chunk 2
-        Fabric-->>Client: Data chunk 2
-    end
-
-    Note over Client,DS3: Aggregate throughput: 28 GB/s (3x NVMe @ 7GB/s + overhead)
+    Note over Client,S3: ⚡ Aggregate: 3 × 7 GB/s = ~20 GB/s effective throughput
 ```
 
-**Architecture Components**:
+**Key Architecture Points**:
 
-| Component | Role | Key Features |
-|-----------|------|--------------|
-| **Client Layer** | pNFS v4.2 clients on GPU nodes | Parallel I/O, layout caching, direct data path |
-| **Virtual IP** | Load balancer (Keepalived/HAProxy) | Distributes metadata requests, <2s failover |
-| **MDS Cluster** | Active-active metadata servers | Co-located with storage, shared state backend |
-| **Distributed Backend** | Consensus/shared storage | Real-time sync, distributed locking, GFS2/OCFS2 |
-| **Network Fabric** | InfiniBand or 100GbE RoCE | Sub-microsecond latency, RDMA support |
-| **Storage Nodes** | Hybrid MDS + DS + NVMe | 3-in-1: metadata service, data service, physical storage |
+| Layer | Component | Function |
+|-------|-----------|----------|
+| **Control Plane** | MDS Cluster (Active-Active) | Virtual IP → Load balances metadata requests<br/>Distributed backend → Shared state (GFS2/OCFS2)<br/>Co-located with storage nodes |
+| **Data Plane** | Storage Nodes | Direct parallel I/O bypasses MDS entirely<br/>Each node: MDS service + Data service + NVMe<br/>High-speed fabric: InfiniBand or 100GbE RoCE |
+| **Client** | pNFS v4.2 | One-time layout fetch → caches stripe pattern<br/>Direct parallel writes to multiple storage nodes<br/>No metadata bottleneck on data path |
 
-!!! info "Two-Phase Operation"
-    **Phase 1 (Control Plane)**: Client requests file layout from any MDS via VIP. MDS queries distributed backend and returns stripe pattern with storage node addresses. Client caches layout.
-
-    **Phase 2 (Data Plane)**: Client performs parallel direct I/O to multiple storage nodes over high-speed fabric, completely bypassing MDS. This separation enables massive scalability.
+!!! success "Architecture Advantage"
+    **Separation of Control and Data Planes**: Client contacts MDS once to get file layout, then performs all subsequent I/O directly to storage nodes over high-speed network. MDS handles only metadata operations (LAYOUTGET, OPEN, CLOSE), while bulk data transfer happens in parallel across multiple storage nodes, eliminating the metadata server bottleneck.
 
 ---
 
