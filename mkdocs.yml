@@ -11,8 +11,8 @@ edit_uri: edit/main/docs/
 # Theme Configuration (Material for MkDocs)
 theme:
   name: material
-  logo: material/brain
-  favicon: material/brain
+  logo: assets/logos/tree-network.svg
+  favicon: assets/logos/tree-network.svg
 
   # Palette (Dark Mode by Default)
   palette:
@@ -144,12 +144,25 @@ nav:
   - Blog:
     - blog/index.md
     - Tags: blog/tags.md
-  - Knowledge Base:
-    - kb/index.md
-  - Principles:
-    - principles/index.md
-  - Journal:
-    - journal/index.md
+    - Categories:
+      - Storage: blog/index.md#storage
+      - Networking: blog/index.md#networking
+      - Architecture: blog/index.md#architecture
+      - Infrastructure: blog/index.md#infrastructure
+      - DevOps: blog/index.md#devops
+      - Security: blog/index.md#security
+      - Performance: blog/index.md#performance
+  - By Theme:
+    - AI & Automation: blog/index.md
+    - Cloud Infrastructure: blog/index.md
+    - Infrastructure as Code: blog/index.md
+    - On-Premise Systems: blog/index.md
+    - Cybersecurity: blog/index.md
+    - Storage & Networking: blog/index.md
+  - Resources:
+    - Knowledge Base: kb/index.md
+    - Principles: principles/index.md
+    - Journal: journal/index.md
 
 # Extra
 extra:

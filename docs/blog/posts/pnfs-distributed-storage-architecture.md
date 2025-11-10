@@ -44,74 +44,75 @@ This architecture implements a production-grade parallel NFS (pNFS) v4.2 deploym
 ## System Topology
 
 ```mermaid
-graph TB
-    subgraph Clients["🖥️ Client Layer (GPU Compute Nodes)"]
-        C1["Client 1<br/>(pNFS v4.2)"]
-        C2["Client 2<br/>(pNFS v4.2)"]
-        CN["Client N<br/>(pNFS v4.2)"]
+sequenceDiagram
+    participant Client as Client<br/>(pNFS v4.2)
+    participant VIP as Virtual IP<br/>(Load Balancer)
+    participant MDS1 as MDS Node 1<br/>(Active)
+    participant MDS2 as MDS Node 2<br/>(Active)
+    participant Backend as Distributed Backend<br/>(Consensus/Shared State)
+    participant Fabric as Network Fabric<br/>(InfiniBand/RoCE)
+    participant DS1 as Storage Node 1<br/>(MDS+DS+NVMe)
+    participant DS2 as Storage Node 2<br/>(MDS+DS+NVMe)
+    participant DS3 as Storage Node 3<br/>(MDS+DS+NVMe)
+
+    Note over Client,DS3: Phase 1: Metadata Path (Control Plane)
+
+    Client->>VIP: LAYOUTGET request
+    VIP->>MDS1: Forward to available MDS
+    MDS1->>Backend: Query file layout
+    Backend-->>MDS1: Return layout map
+    MDS1-->>VIP: LAYOUT response
+    VIP-->>Client: Layout (stripe pattern, DS addresses)
+    Note over Client: Client caches layout<br/>(stripe unit: 1MB, count: 3)
+
+    rect rgb(240, 240, 255)
+        Note over MDS1,MDS2: MDS Cluster (Active-Active)
+        MDS1->>Backend: Heartbeat & state sync
+        MDS2->>Backend: Heartbeat & state sync
+        Backend-->>MDS1: Cluster state
+        Backend-->>MDS2: Cluster state
     end
 
-    subgraph VIP["⚖️ High Availability Layer"]
-        LB["Virtual IP / Load Balancer<br/>(Keepalived/HAProxy)<br/>📍 10.10.1.100"]
+    Note over Client,DS3: Phase 2: Data Path (Direct Parallel I/O)
+
+    par Parallel data transfer (bypasses MDS)
+        Client->>Fabric: Stripe 0 (READ/WRITE)
+        Fabric->>DS1: Route to Storage Node 1
+        DS1->>DS1: NVMe I/O
+        DS1-->>Fabric: Data chunk 0
+        Fabric-->>Client: Data chunk 0
+    and
+        Client->>Fabric: Stripe 1 (READ/WRITE)
+        Fabric->>DS2: Route to Storage Node 2
+        DS2->>DS2: NVMe I/O
+        DS2-->>Fabric: Data chunk 1
+        Fabric-->>Client: Data chunk 1
+    and
+        Client->>Fabric: Stripe 2 (READ/WRITE)
+        Fabric->>DS3: Route to Storage Node 3
+        DS3->>DS3: NVMe I/O
+        DS3-->>Fabric: Data chunk 2
+        Fabric-->>Client: Data chunk 2
     end
 
-    subgraph MDSCluster["🗂️ Metadata Cluster (Active-Active)"]
-        Backend["Distributed Backend<br/>(Consensus/Shared Storage)<br/>🔄 State Sync + Heartbeat"]
-    end
-
-    subgraph Network["🌐 High-Speed Network Fabric"]
-        Fabric["InfiniBand / 100GbE RoCE<br/>⚡ Sub-microsecond latency"]
-    end
-
-    subgraph Storage["💾 Storage Nodes (Co-located MDS + DS)"]
-        direction TB
-        S1["Storage Node 1<br/>━━━━━━━━━<br/>🗄️ MDS Service<br/>📦 Data Service<br/>⚙️ NVMe SSD"]
-        S2["Storage Node 2<br/>━━━━━━━━━<br/>🗄️ MDS Service<br/>📦 Data Service<br/>⚙️ NVMe SSD"]
-        S3["Storage Node 3<br/>━━━━━━━━━<br/>🗄️ MDS Service<br/>📦 Data Service<br/>⚙️ NVMe SSD"]
-        SN["Storage Node N<br/>━━━━━━━━━<br/>🗄️ MDS Service<br/>📦 Data Service<br/>⚙️ NVMe SSD"]
-    end
-
-    %% Metadata Path (Phase 1)
-    C1 -->|"①  LAYOUTGET<br/>(Metadata Request)"| LB
-    C2 -->|"①  LAYOUTGET<br/>(Metadata Request)"| LB
-    CN -->|"①  LAYOUTGET<br/>(Metadata Request)"| LB
-
-    LB -->|Distribute| Backend
-    Backend <-->|Sync| S1
-    Backend <-->|Sync| S2
-    Backend <-->|Sync| S3
-    Backend <-->|Sync| SN
-
-    %% Data Path (Phase 2)
-    C1 -.->|"②  Parallel READ/WRITE<br/>(Direct Data I/O)"| Fabric
-    C2 -.->|"②  Parallel READ/WRITE<br/>(Direct Data I/O)"| Fabric
-    CN -.->|"②  Parallel READ/WRITE<br/>(Direct Data I/O)"| Fabric
-
-    Fabric -.->|Stripe 0| S1
-    Fabric -.->|Stripe 1| S2
-    Fabric -.->|Stripe 2| S3
-    Fabric -.->|Stripe N| SN
-
-    style Clients fill:#e1f5ff,stroke:#01579b,stroke-width:2px
-    style VIP fill:#fff3e0,stroke:#e65100,stroke-width:2px
-    style MDSCluster fill:#f3e5f5,stroke:#4a148c,stroke-width:2px
-    style Network fill:#e8f5e9,stroke:#1b5e20,stroke-width:2px
-    style Storage fill:#fce4ec,stroke:#880e4f,stroke-width:2px
-    style LB fill:#ffecb3,stroke:#ff6f00,stroke-width:2px
-    style Backend fill:#e1bee7,stroke:#6a1b9a,stroke-width:2px
-    style Fabric fill:#c8e6c9,stroke:#2e7d32,stroke-width:2px
+    Note over Client,DS3: Aggregate throughput: 28 GB/s (3x NVMe @ 7GB/s + overhead)
 ```
 
-**Architecture Flow**:
+**Architecture Components**:
 
-| Phase | Path | Description |
-|-------|------|-------------|
-| **① Metadata** | `Client → VIP → MDS Backend` | Client requests file layout, receives stripe pattern and DS list |
-| **② Data I/O** | `Client ⇢ Fabric ⇢ Storage Nodes` | Parallel direct I/O to multiple storage nodes, bypassing MDS |
+| Component | Role | Key Features |
+|-----------|------|--------------|
+| **Client Layer** | pNFS v4.2 clients on GPU nodes | Parallel I/O, layout caching, direct data path |
+| **Virtual IP** | Load balancer (Keepalived/HAProxy) | Distributes metadata requests, <2s failover |
+| **MDS Cluster** | Active-active metadata servers | Co-located with storage, shared state backend |
+| **Distributed Backend** | Consensus/shared storage | Real-time sync, distributed locking, GFS2/OCFS2 |
+| **Network Fabric** | InfiniBand or 100GbE RoCE | Sub-microsecond latency, RDMA support |
+| **Storage Nodes** | Hybrid MDS + DS + NVMe | 3-in-1: metadata service, data service, physical storage |
 
 !!! info "Two-Phase Operation"
-    **Phase 1 (Control Plane)**: Client contacts any MDS via VIP to get file layout
-    **Phase 2 (Data Plane)**: Client performs parallel I/O directly to storage nodes over high-speed fabric
+    **Phase 1 (Control Plane)**: Client requests file layout from any MDS via VIP. MDS queries distributed backend and returns stripe pattern with storage node addresses. Client caches layout.
+
+    **Phase 2 (Data Plane)**: Client performs parallel direct I/O to multiple storage nodes over high-speed fabric, completely bypassing MDS. This separation enables massive scalability.
 
 ---
 

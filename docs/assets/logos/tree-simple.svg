@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200">
+  <!-- Simple Geometric Tree Logo -->
+  <defs>
+    <linearGradient id="treeGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#4caf50;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#2e7d32;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+
+  <!-- Trunk -->
+  <rect x="85" y="110" width="30" height="70" fill="#6d4c41" rx="5"/>
+
+  <!-- Foliage - Three triangular layers -->
+  <polygon points="100,30 50,90 150,90" fill="url(#treeGradient)"/>
+  <polygon points="100,60 60,110 140,110" fill="url(#treeGradient)" opacity="0.9"/>
+  <polygon points="100,85 70,125 130,125" fill="url(#treeGradient)" opacity="0.8"/>
+
+  <!-- Roots hint -->
+  <path d="M 85 180 Q 70 185 60 190" stroke="#8d6e63" stroke-width="3" fill="none"/>
+  <path d="M 115 180 Q 130 185 140 190" stroke="#8d6e63" stroke-width="3" fill="none"/>
+</svg>
