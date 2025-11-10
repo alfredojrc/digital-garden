@@ -173,14 +173,9 @@ nav:
       - DevOps: blog/index.md#devops
       - Security: blog/index.md#security
       - Performance: blog/index.md#performance
+      - Kubernetes: blog/index.md#kubernetes
   - By Theme:
     - Kubernetes CKA Mastery: kubernetes/index.md
-    - AI & Automation: blog/index.md
-    - Cloud Infrastructure: blog/index.md
-    - Infrastructure as Code: blog/index.md
-    - On-Premise Systems: blog/index.md
-    - Cybersecurity: blog/index.md
-    - Storage & Networking: blog/index.md
   - Resources:
     - Knowledge Base: kb/index.md
     - Principles: principles/index.md
