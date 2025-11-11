@@ -120,6 +120,7 @@ plugins:
         - kustomize
         - troubleshooting
         - monitoring
+        - security
         - ingress
         - configmaps
         - secrets
