@@ -848,6 +848,15 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#coredns-and-service-discovery-deep-dive" class="md-nav__link">
+    <span class="md-ellipsis">
+      CoreDNS and Service Discovery Deep Dive
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#deployments-replicasets-and-rolling-updates" class="md-nav__link">
     <span class="md-ellipsis">
       Deployments, ReplicaSets, and Rolling Updates
@@ -857,9 +866,27 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#ingress-and-gateway-api-modern-traffic-management" class="md-nav__link">
+    <span class="md-ellipsis">
+      Ingress and Gateway API: Modern Traffic Management
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#setting-up-your-kubernetes-lab-environment" class="md-nav__link">
     <span class="md-ellipsis">
       Setting Up Your Kubernetes Lab Environment
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#network-policies-securing-pod-communication" class="md-nav__link">
+    <span class="md-ellipsis">
+      Network Policies: Securing Pod Communication
     </span>
   </a>
   
@@ -892,24 +919,6 @@
   
 </li>
       
-        <li class="md-nav__item">
-  <a href="#kubernetes-namespaces-and-resource-quotas" class="md-nav__link">
-    <span class="md-ellipsis">
-      Kubernetes Namespaces and Resource Quotas
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#high-performance-pnfs-v42-distributed-storage-architecture" class="md-nav__link">
-    <span class="md-ellipsis">
-      High-Performance pNFS v4.2 Distributed Storage Architecture
-    </span>
-  </a>
-  
-</li>
-      
     </ul>
   
 </nav>
@@ -935,6 +944,10 @@
   
     
     
+      
+        
+      
+        
       
         
       
@@ -1099,6 +1112,56 @@
   
   <span class="md-ellipsis">
     Kubernetes
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+  
+  
+    <li class="md-nav__item">
+      <a href="../../category/networking/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Networking
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+  
+  
+    <li class="md-nav__item">
+      <a href="../../category/security/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Security
     
   </span>
   
@@ -1476,6 +1539,54 @@
             in
             
               <a href="../../category/kubernetes/" class="md-meta__link">Kubernetes</a>, 
+              <a href="../../category/networking/" class="md-meta__link">Networking</a></li>
+        
+        
+          
+          <li class="md-meta__item">
+            
+              11 min read
+            
+          </li>
+        
+      </ul>
+      
+    </div>
+  </header>
+  <div class="md-post__content md-typeset">
+    <h2 id="coredns-and-service-discovery-deep-dive"><a class="toclink" href="../../2025/11/11/kubernetes-coredns-service-discovery/">CoreDNS and Service Discovery Deep Dive</a></h2>
+<p>Master Kubernetes DNS resolution and service discovery with CoreDNS. Learn DNS patterns, troubleshooting techniques, and advanced configuration strategies essential for the CKA exam and production Kubernetes environments.</p>
+
+    
+      <nav class="md-post__action">
+        <a href="../../2025/11/11/kubernetes-coredns-service-discovery/">
+          Continue reading
+        </a>
+      </nav>
+    
+  </div>
+</article>
+      
+        <article class="md-post md-post--excerpt">
+  <header class="md-post__header">
+    
+      <nav class="md-post__authors md-typeset">
+        
+          <span class="md-author">
+            <img src="https://github.com/alfredojrc.png" alt="Alf">
+          </span>
+        
+      </nav>
+    
+    <div class="md-post__meta md-meta">
+      <ul class="md-meta__list">
+        <li class="md-meta__item">
+          <time datetime="2025-11-11 00:00:00+00:00">November 11, 2025</time></li>
+        
+          <li class="md-meta__item">
+            in
+            
+              <a href="../../category/kubernetes/" class="md-meta__link">Kubernetes</a>, 
               <a href="../../category/workloads/" class="md-meta__link">Workloads</a></li>
         
         
@@ -1524,6 +1635,66 @@
             in
             
               <a href="../../category/kubernetes/" class="md-meta__link">Kubernetes</a>, 
+              <a href="../../category/networking/" class="md-meta__link">Networking</a></li>
+        
+        
+          
+          <li class="md-meta__item">
+            
+              15 min read
+            
+          </li>
+        
+      </ul>
+      
+    </div>
+  </header>
+  <div class="md-post__content md-typeset">
+    <h2 id="ingress-and-gateway-api-modern-traffic-management"><a class="toclink" href="../../2025/11/11/kubernetes-ingress-gateway-api/">Ingress and Gateway API: Modern Traffic Management</a></h2>
+<p>In production Kubernetes environments, managing external access to your services is critical. While Services handle internal cluster networking, <strong>Ingress</strong> provides sophisticated HTTP/HTTPS routing from the outside world. This guide covers everything you need to know for the CKA exam and production deployments, including the modern Gateway API that's reshaping Kubernetes networking in 2025.</p>
+<h3 id="why-ingress-matters"><a class="toclink" href="../../2025/11/11/kubernetes-ingress-gateway-api/#why-ingress-matters">Why Ingress Matters</a></h3>
+<p>Imagine running 50 microservices in your cluster. Without Ingress, you'd need 50 LoadBalancer Services—each with its own expensive cloud load balancer and public IP address. That's not just costly; it's operationally nightmarish.</p>
+<p>Ingress solves this by providing:</p>
+<ul>
+<li><strong>Cost efficiency</strong>: One load balancer for multiple services</li>
+<li><strong>Advanced routing</strong>: Path-based, host-based, header-based routing</li>
+<li><strong>SSL/TLS termination</strong>: Centralized certificate management</li>
+<li><strong>Name-based virtual hosting</strong>: Multiple domains on one IP</li>
+<li><strong>Protocol support</strong>: HTTP, HTTPS, WebSocket, gRPC</li>
+</ul>
+<p>For the CKA exam, you'll need to demonstrate hands-on competency with Ingress resources, troubleshoot misconfigurations, and understand controller selection. In production, mastering Ingress means the difference between elegant traffic management and a tangled mess of load balancers.</p>
+<p>The landscape is evolving. While traditional Ingress remains the standard (and what's tested on the CKA), the <strong>Gateway API</strong> represents Kubernetes networking's future—offering role-oriented design, better extensibility, and more expressive routing rules. Understanding both is essential for modern Kubernetes practitioners.</p>
+
+    
+      <nav class="md-post__action">
+        <a href="../../2025/11/11/kubernetes-ingress-gateway-api/">
+          Continue reading
+        </a>
+      </nav>
+    
+  </div>
+</article>
+      
+        <article class="md-post md-post--excerpt">
+  <header class="md-post__header">
+    
+      <nav class="md-post__authors md-typeset">
+        
+          <span class="md-author">
+            <img src="https://github.com/alfredojrc.png" alt="Alf">
+          </span>
+        
+      </nav>
+    
+    <div class="md-post__meta md-meta">
+      <ul class="md-meta__list">
+        <li class="md-meta__item">
+          <time datetime="2025-11-11 00:00:00+00:00">November 11, 2025</time></li>
+        
+          <li class="md-meta__item">
+            in
+            
+              <a href="../../category/kubernetes/" class="md-meta__link">Kubernetes</a>, 
               <a href="../../category/infrastructure/" class="md-meta__link">Infrastructure</a></li>
         
         
@@ -1545,6 +1716,55 @@
     
       <nav class="md-post__action">
         <a href="../../2025/11/11/setting-up-kubernetes-lab/">
+          Continue reading
+        </a>
+      </nav>
+    
+  </div>
+</article>
+      
+        <article class="md-post md-post--excerpt">
+  <header class="md-post__header">
+    
+      <nav class="md-post__authors md-typeset">
+        
+          <span class="md-author">
+            <img src="https://github.com/alfredojrc.png" alt="Alf">
+          </span>
+        
+      </nav>
+    
+    <div class="md-post__meta md-meta">
+      <ul class="md-meta__list">
+        <li class="md-meta__item">
+          <time datetime="2025-11-11 00:00:00+00:00">November 11, 2025</time></li>
+        
+          <li class="md-meta__item">
+            in
+            
+              <a href="../../category/kubernetes/" class="md-meta__link">Kubernetes</a>, 
+              <a href="../../category/networking/" class="md-meta__link">Networking</a>, 
+              <a href="../../category/security/" class="md-meta__link">Security</a></li>
+        
+        
+          
+          <li class="md-meta__item">
+            
+              12 min read
+            
+          </li>
+        
+      </ul>
+      
+    </div>
+  </header>
+  <div class="md-post__content md-typeset">
+    <h2 id="network-policies-securing-pod-communication"><a class="toclink" href="../../2025/11/11/kubernetes-network-policies/">Network Policies: Securing Pod Communication</a></h2>
+<p>In a world where security breaches make headlines daily, protecting your Kubernetes cluster isn't optional—it's mission-critical. Network Policies are your first line of defense, implementing a zero-trust security model within your cluster. For CKA candidates, mastering Network Policies isn't just about passing the exam (though they represent a significant portion of the 20% Services &amp; Networking domain)—it's about understanding how to build production-grade, secure Kubernetes environments.</p>
+
+    
+      <nav class="md-post__action">
+        <a href="../../2025/11/11/kubernetes-network-policies/">
           Continue reading
         </a>
       </nav>
@@ -1696,102 +1916,6 @@
   </div>
 </article>
       
-        <article class="md-post md-post--excerpt">
-  <header class="md-post__header">
-    
-      <nav class="md-post__authors md-typeset">
-        
-          <span class="md-author">
-            <img src="https://github.com/alfredojrc.png" alt="Alf">
-          </span>
-        
-      </nav>
-    
-    <div class="md-post__meta md-meta">
-      <ul class="md-meta__list">
-        <li class="md-meta__item">
-          <time datetime="2025-11-11 00:00:00+00:00">November 11, 2025</time></li>
-        
-          <li class="md-meta__item">
-            in
-            
-              <a href="../../category/kubernetes/" class="md-meta__link">Kubernetes</a>, 
-              <a href="../../category/infrastructure/" class="md-meta__link">Infrastructure</a></li>
-        
-        
-          
-          <li class="md-meta__item">
-            
-              11 min read
-            
-          </li>
-        
-      </ul>
-      
-    </div>
-  </header>
-  <div class="md-post__content md-typeset">
-    <h2 id="kubernetes-namespaces-and-resource-quotas"><a class="toclink" href="../../2025/11/11/namespaces-resource-quotas/">Kubernetes Namespaces and Resource Quotas</a></h2>
-<p>Master namespace isolation and resource management for CKA exam success. Learn how to partition clusters, enforce resource limits, and prevent resource exhaustion in multi-tenant environments.</p>
-
-    
-      <nav class="md-post__action">
-        <a href="../../2025/11/11/namespaces-resource-quotas/">
-          Continue reading
-        </a>
-      </nav>
-    
-  </div>
-</article>
-      
-        <article class="md-post md-post--excerpt">
-  <header class="md-post__header">
-    
-      <nav class="md-post__authors md-typeset">
-        
-          <span class="md-author">
-            <img src="https://github.com/alfredojrc.png" alt="Alf">
-          </span>
-        
-      </nav>
-    
-    <div class="md-post__meta md-meta">
-      <ul class="md-meta__list">
-        <li class="md-meta__item">
-          <time datetime="2025-11-10 00:00:00+00:00">November 10, 2025</time></li>
-        
-          <li class="md-meta__item">
-            in
-            
-              <a href="../../category/storage/" class="md-meta__link">Storage</a>, 
-              <a href="../../category/architecture/" class="md-meta__link">Architecture</a></li>
-        
-        
-          
-          <li class="md-meta__item">
-            
-              12 min read
-            
-          </li>
-        
-      </ul>
-      
-    </div>
-  </header>
-  <div class="md-post__content md-typeset">
-    <h2 id="high-performance-pnfs-v42-distributed-storage-architecture"><a class="toclink" href="../../2025/11/10/pnfs-distributed-storage-architecture/">High-Performance pNFS v4.2 Distributed Storage Architecture</a></h2>
-<p>A deep dive into building a clustered, high-availability parallel NFS storage system with load-balanced metadata servers, NVMe-backed storage nodes, and low-latency interconnects.</p>
-
-    
-      <nav class="md-post__action">
-        <a href="../../2025/11/10/pnfs-distributed-storage-architecture/">
-          Continue reading
-        </a>
-      </nav>
-    
-  </div>
-</article>
-      
       
         
           
@@ -1799,7 +1923,7 @@
 
 
 <nav class="md-pagination">
-  
+  <span class="md-pagination__current">1</span> <a class="md-pagination__link" href="page/2/">2</a>
 </nav>
         
       

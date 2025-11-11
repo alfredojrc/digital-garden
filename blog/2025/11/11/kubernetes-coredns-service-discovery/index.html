@@ -1,0 +1,3036 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="A digital garden, knowledge base, and technical journal focused on distributed systems, storage architecture, and infrastructure engineering.">
+      
+      
+        <meta name="author" content="Alf">
+      
+      
+        <link rel="canonical" href="https://digital-garden.atmy.casa/blog/2025/11/11/kubernetes-coredns-service-discovery/">
+      
+      
+        <link rel="prev" href="../kubernetes-deployments-replicasets/">
+      
+      
+        <link rel="next" href="../kubernetes-architecture-fundamentals/">
+      
+      
+      <link rel="icon" href="../../../../../assets/logos/cactus.svg">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.6.23">
+    
+    
+      
+        <title>CoreDNS and Service Discovery Deep Dive - Digital Garden</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../../../../assets/stylesheets/main.84d31ad4.min.css">
+      
+        
+        <link rel="stylesheet" href="../../../../../assets/stylesheets/palette.06af60db.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../../../../stylesheets/extra.css">
+    
+    <script>__md_scope=new URL("../../../../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+  
+
+
+    
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="cyan">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#coredns-and-service-discovery-deep-dive" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow md-header--lifted" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../../../../.." title="Digital Garden" class="md-header__button md-logo" aria-label="Digital Garden" data-md-component="logo">
+      
+  <img src="../../../../../assets/logos/cactus.svg" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Digital Garden
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              CoreDNS and Service Discovery Deep Dive
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="cyan"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m17.75 4.09-2.53 1.94.91 3.06-2.63-1.81-2.63 1.81.91-3.06-2.53-1.94L12.44 4l1.06-3 1.06 3zm3.5 6.91-1.64 1.25.59 1.98-1.7-1.17-1.7 1.17.59-1.98L15.75 11l2.06-.05L18.5 9l.69 1.95zm-2.28 4.95c.83-.08 1.72 1.1 1.19 1.85-.32.45-.66.87-1.08 1.27C15.17 23 8.84 23 4.94 19.07c-3.91-3.9-3.91-10.24 0-14.14.4-.4.82-.76 1.27-1.08.75-.53 1.93.36 1.85 1.19-.27 2.86.69 5.83 2.89 8.02a9.96 9.96 0 0 0 8.02 2.89m-1.64 2.02a12.08 12.08 0 0 1-7.8-3.47c-2.17-2.19-3.33-5-3.49-7.82-2.81 3.14-2.7 7.96.31 10.98 3.02 3.01 7.84 3.12 10.98.31"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="cyan"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 7a5 5 0 0 1 5 5 5 5 0 0 1-5 5 5 5 0 0 1-5-5 5 5 0 0 1 5-5m0 2a3 3 0 0 0-3 3 3 3 0 0 0 3 3 3 3 0 0 0 3-3 3 3 0 0 0-3-3m0-7 2.39 3.42C13.65 5.15 12.84 5 12 5s-1.65.15-2.39.42zM3.34 7l4.16-.35A7.2 7.2 0 0 0 5.94 8.5c-.44.74-.69 1.5-.83 2.29zm.02 10 1.76-3.77a7.131 7.131 0 0 0 2.38 4.14zM20.65 7l-1.77 3.79a7.02 7.02 0 0 0-2.38-4.15zm-.01 10-4.14.36c.59-.51 1.12-1.14 1.54-1.86.42-.73.69-1.5.83-2.29zM12 22l-2.41-3.44c.74.27 1.55.44 2.41.44.82 0 1.63-.17 2.37-.44z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/alfredojrc/digital-garden" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+    
+      
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../../../.." class="md-tabs__link">
+        
+  
+  
+    
+  
+  Home
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+    
+  
+  
+    
+    
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../../../../" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Blog
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../../../../kubernetes/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  By Theme
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../../../../kb/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Resources
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ul>
+  </div>
+</nav>
+    
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+                
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" hidden>
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+  
+
+<nav class="md-nav md-nav--primary md-nav--lifted md-nav--integrated" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../../../../.." title="Digital Garden" class="md-nav__button md-logo" aria-label="Digital Garden" data-md-component="logo">
+      
+  <img src="../../../../../assets/logos/cactus.svg" alt="logo">
+
+    </a>
+    Digital Garden
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/alfredojrc/digital-garden" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Home
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" checked>
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../../../" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    Blog
+    
+  </span>
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_2" id="__nav_2_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            Blog
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../tags/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Tags
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_3" id="__nav_2_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Categories
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_3">
+            <span class="md-nav__icon md-icon"></span>
+            Categories
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../index.md#storage" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Storage
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../index.md#networking" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Networking
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../index.md#architecture" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Architecture
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../index.md#infrastructure" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Infrastructure
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../index.md#devops" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    DevOps
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../index.md#security" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Security
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../index.md#performance" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Performance
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../index.md#kubernetes" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Kubernetes
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_4" id="__nav_2_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Archive
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_4">
+            <span class="md-nav__icon md-icon"></span>
+            Archive
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+    
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../archive/2025/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    November 2025
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_5" id="__nav_2_5_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Categories
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_5">
+            <span class="md-nav__icon md-icon"></span>
+            Categories
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+    
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../category/architecture/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Architecture
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../category/cli/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    CLI
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../category/configuration/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Configuration
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../category/infrastructure/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Infrastructure
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../category/kubernetes/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Kubernetes
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../category/networking/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Networking
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../category/security/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Security
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../category/storage/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Storage
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../category/workloads/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Workloads
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../../../../kubernetes/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    By Theme
+    
+  </span>
+  
+
+            </a>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            By Theme
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../../../../kb/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    Resources
+    
+  </span>
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_4" id="__nav_4_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            Resources
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../../principles/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Principles
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../../journal/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Journal
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+          
+          
+  <div class="md-content md-content--post" data-md-component="content">
+    <div class="md-sidebar md-sidebar--post" data-md-component="sidebar" data-md-type="navigation">
+      <div class="md-sidebar__scrollwrap">
+        <div class="md-sidebar__inner md-post">
+          <nav class="md-nav md-nav--primary">
+            <div class="md-post__back">
+              <div class="md-nav__title md-nav__container">
+                <a href="../../../../" class="md-nav__link">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+                  <span class="md-ellipsis">
+                    Back to index
+                  </span>
+                </a>
+              </div>
+            </div>
+            
+              <div class="md-post__authors md-typeset">
+                
+                  <div class="md-profile md-post__profile">
+                    <span class="md-author md-author--long">
+                      <img src="https://github.com/alfredojrc.png" alt="Alf">
+                    </span>
+                    <span class="md-profile__description">
+                      <strong>
+                        
+                          Alf
+                        
+                      </strong>
+                      <br>
+                      Infrastructure engineer, distributed systems enthusiast
+                    </span>
+                  </div>
+                
+              </div>
+            
+            <ul class="md-post__meta md-nav__list">
+              <li class="md-nav__item md-nav__item--section">
+                <div class="md-post__title">
+                  <span class="md-ellipsis">
+                    Metadata
+                  </span>
+                </div>
+                <nav class="md-nav">
+                  <ul class="md-nav__list">
+                    <li class="md-nav__item">
+                      <div class="md-nav__link">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 19H5V8h14m-3-7v2H8V1H6v2H5c-1.11 0-2 .89-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2h-1V1m-1 11h-5v5h5z"/></svg>
+                        <time datetime="2025-11-11 00:00:00+00:00" class="md-ellipsis">November 11, 2025</time>
+                      </div>
+                    </li>
+                    
+                    
+                      <li class="md-nav__item">
+                        <div class="md-nav__link">
+                          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9 3v15h3V3zm3 2 4 13 3-1-4-13zM5 5v13h3V5zM3 19v2h18v-2z"/></svg>
+                          <span class="md-ellipsis">
+                            in
+                            
+                              <a href="../../../../category/kubernetes/">Kubernetes</a>, 
+                              <a href="../../../../category/networking/">Networking</a></span>
+                        </div>
+                      </li>
+                    
+                    
+                      
+                      <li class="md-nav__item">
+                        <div class="md-nav__link">
+                          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 20a8 8 0 0 0 8-8 8 8 0 0 0-8-8 8 8 0 0 0-8 8 8 8 0 0 0 8 8m0-18a10 10 0 0 1 10 10 10 10 0 0 1-10 10C6.47 22 2 17.5 2 12A10 10 0 0 1 12 2m.5 5v5.25l4.5 2.67-.75 1.23L11 13V7z"/></svg>
+                          <span class="md-ellipsis">
+                            
+                              11 min read
+                            
+                          </span>
+                        </div>
+                      </li>
+                    
+                  </ul>
+                </nav>
+              </li>
+            </ul>
+            
+          </nav>
+          
+            
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#introduction" class="md-nav__link">
+    <span class="md-ellipsis">
+      Introduction
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#dns-in-kubernetes-architecture" class="md-nav__link">
+    <span class="md-ellipsis">
+      DNS in Kubernetes Architecture
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="DNS in Kubernetes Architecture">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#coredns-overview" class="md-nav__link">
+    <span class="md-ellipsis">
+      CoreDNS Overview
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#dns-record-types-in-kubernetes" class="md-nav__link">
+    <span class="md-ellipsis">
+      DNS Record Types in Kubernetes
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#dns-resolution-flow" class="md-nav__link">
+    <span class="md-ellipsis">
+      DNS Resolution Flow
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#search-domains-and-fqdn-construction" class="md-nav__link">
+    <span class="md-ellipsis">
+      Search Domains and FQDN Construction
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#coredns-configuration-deep-dive" class="md-nav__link">
+    <span class="md-ellipsis">
+      CoreDNS Configuration Deep Dive
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="CoreDNS Configuration Deep Dive">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#corefile-structure" class="md-nav__link">
+    <span class="md-ellipsis">
+      Corefile Structure
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#coredns-plugins" class="md-nav__link">
+    <span class="md-ellipsis">
+      CoreDNS Plugins
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="CoreDNS Plugins">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-errors-plugin" class="md-nav__link">
+    <span class="md-ellipsis">
+      1. errors Plugin
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-health-plugin" class="md-nav__link">
+    <span class="md-ellipsis">
+      2. health Plugin
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-ready-plugin" class="md-nav__link">
+    <span class="md-ellipsis">
+      3. ready Plugin
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4-kubernetes-plugin" class="md-nav__link">
+    <span class="md-ellipsis">
+      4. kubernetes Plugin
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#5-prometheus-plugin" class="md-nav__link">
+    <span class="md-ellipsis">
+      5. prometheus Plugin
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#6-forward-plugin" class="md-nav__link">
+    <span class="md-ellipsis">
+      6. forward Plugin
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#7-cache-plugin" class="md-nav__link">
+    <span class="md-ellipsis">
+      7. cache Plugin
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#8-loop-plugin" class="md-nav__link">
+    <span class="md-ellipsis">
+      8. loop Plugin
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#9-reload-plugin" class="md-nav__link">
+    <span class="md-ellipsis">
+      9. reload Plugin
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#10-loadbalance-plugin" class="md-nav__link">
+    <span class="md-ellipsis">
+      10. loadbalance Plugin
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#custom-dns-records" class="md-nav__link">
+    <span class="md-ellipsis">
+      Custom DNS Records
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#rewrite-plugin-for-dns-aliasing" class="md-nav__link">
+    <span class="md-ellipsis">
+      Rewrite Plugin for DNS Aliasing
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#service-discovery-patterns" class="md-nav__link">
+    <span class="md-ellipsis">
+      Service Discovery Patterns
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Service Discovery Patterns">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#clusterip-service-dns" class="md-nav__link">
+    <span class="md-ellipsis">
+      ClusterIP Service DNS
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#headless-service-dns" class="md-nav__link">
+    <span class="md-ellipsis">
+      Headless Service DNS
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pod-dns-configuration" class="md-nav__link">
+    <span class="md-ellipsis">
+      Pod DNS Configuration
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#troubleshooting-dns-issues" class="md-nav__link">
+    <span class="md-ellipsis">
+      Troubleshooting DNS Issues
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Troubleshooting DNS Issues">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#systematic-debugging-workflow" class="md-nav__link">
+    <span class="md-ellipsis">
+      Systematic Debugging Workflow
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#essential-dns-testing-commands" class="md-nav__link">
+    <span class="md-ellipsis">
+      Essential DNS Testing Commands
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#common-dns-issues-and-solutions" class="md-nav__link">
+    <span class="md-ellipsis">
+      Common DNS Issues and Solutions
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Common DNS Issues and Solutions">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#issue-1-pod-cannot-resolve-cluster-services" class="md-nav__link">
+    <span class="md-ellipsis">
+      Issue 1: Pod Cannot Resolve Cluster Services
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#issue-2-cannot-resolve-external-domains" class="md-nav__link">
+    <span class="md-ellipsis">
+      Issue 2: Cannot Resolve External Domains
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#issue-3-service-exists-but-dns-doesnt-resolve" class="md-nav__link">
+    <span class="md-ellipsis">
+      Issue 3: Service Exists But DNS Doesn't Resolve
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#issue-4-headless-service-returns-no-ips" class="md-nav__link">
+    <span class="md-ellipsis">
+      Issue 4: Headless Service Returns No IPs
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#coredns-log-analysis" class="md-nav__link">
+    <span class="md-ellipsis">
+      CoreDNS Log Analysis
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#advanced-dns-topics" class="md-nav__link">
+    <span class="md-ellipsis">
+      Advanced DNS Topics
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Advanced DNS Topics">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#nodelocal-dnscache-2025-best-practice" class="md-nav__link">
+    <span class="md-ellipsis">
+      NodeLocal DNSCache (2025 Best Practice)
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#dns-policies" class="md-nav__link">
+    <span class="md-ellipsis">
+      DNS Policies
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ndots-configuration-tuning" class="md-nav__link">
+    <span class="md-ellipsis">
+      ndots Configuration Tuning
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#cka-exam-dns-skills" class="md-nav__link">
+    <span class="md-ellipsis">
+      CKA Exam DNS Skills
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="CKA Exam DNS Skills">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#fast-dns-testing-techniques" class="md-nav__link">
+    <span class="md-ellipsis">
+      Fast DNS Testing Techniques
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#common-cka-exam-scenarios" class="md-nav__link">
+    <span class="md-ellipsis">
+      Common CKA Exam Scenarios
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#time-saving-tips" class="md-nav__link">
+    <span class="md-ellipsis">
+      Time-Saving Tips
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#conclusion" class="md-nav__link">
+    <span class="md-ellipsis">
+      Conclusion
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+          
+        </div>
+      </div>
+    </div>
+    <article class="md-content__inner md-typeset">
+      
+        
+  
+
+
+  <nav class="md-tags" >
+    
+      
+      
+      
+        <a href="../../../../tags/#tag:cka-prep" class="md-tag">cka-prep</a>
+      
+    
+      
+      
+      
+        <a href="../../../../tags/#tag:coredns" class="md-tag">coredns</a>
+      
+    
+      
+      
+      
+        <a href="../../../../tags/#tag:dns" class="md-tag">dns</a>
+      
+    
+      
+      
+      
+        <a href="../../../../tags/#tag:k8s" class="md-tag">k8s</a>
+      
+    
+      
+      
+      
+        <a href="../../../../tags/#tag:kubernetes" class="md-tag">kubernetes</a>
+      
+    
+      
+      
+      
+        <a href="../../../../tags/#tag:networking" class="md-tag">networking</a>
+      
+    
+      
+      
+      
+        <a href="../../../../tags/#tag:service-discovery" class="md-tag">service-discovery</a>
+      
+    
+  </nav>
+
+
+  
+    <a href="https://github.com/alfredojrc/digital-garden/edit/main/docs/blog/posts/kubernetes-coredns.md" title="Edit this page" class="md-content__button md-icon" rel="edit">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20H6V4h7v5h5v3.1l2-2V8l-6-6H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h4zm10.2-7c.1 0 .3.1.4.2l1.3 1.3c.2.2.2.6 0 .8l-1 1-2.1-2.1 1-1c.1-.1.2-.2.4-.2m0 3.9L14.1 23H12v-2.1l6.1-6.1z"/></svg>
+    </a>
+  
+  
+    
+      
+    
+    <a href="https://github.com/alfredojrc/digital-garden/raw/main/docs/blog/posts/kubernetes-coredns.md" title="View source of this page" class="md-content__button md-icon">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M17 18c.56 0 1 .44 1 1s-.44 1-1 1-1-.44-1-1 .44-1 1-1m0-3c-2.73 0-5.06 1.66-6 4 .94 2.34 3.27 4 6 4s5.06-1.66 6-4c-.94-2.34-3.27-4-6-4m0 6.5a2.5 2.5 0 0 1-2.5-2.5 2.5 2.5 0 0 1 2.5-2.5 2.5 2.5 0 0 1 2.5 2.5 2.5 2.5 0 0 1-2.5 2.5M9.27 20H6V4h7v5h5v4.07c.7.08 1.36.25 2 .49V8l-6-6H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h4.5a8.2 8.2 0 0 1-1.23-2"/></svg>
+    </a>
+  
+
+
+<h1 id="coredns-and-service-discovery-deep-dive">CoreDNS and Service Discovery Deep Dive<a class="headerlink" href="#coredns-and-service-discovery-deep-dive" title="Link to this section">&para;</a></h1>
+<p>Master Kubernetes DNS resolution and service discovery with CoreDNS. Learn DNS patterns, troubleshooting techniques, and advanced configuration strategies essential for the CKA exam and production Kubernetes environments.</p>
+<!-- more -->
+
+<h2 id="introduction">Introduction<a class="headerlink" href="#introduction" title="Link to this section">&para;</a></h2>
+<p>In the dynamic world of Kubernetes, where pods are ephemeral and IP addresses constantly change, DNS becomes the critical foundation for reliable service communication. Without DNS, your microservices architecture would crumble—applications couldn't discover each other, load balancing would fail, and the entire orchestration system would become unmanageable.</p>
+<p>CoreDNS serves as Kubernetes' DNS server, automatically creating DNS records for every Service and Pod in your cluster. When a pod needs to communicate with a backend service, it doesn't need to know the service's IP address—it simply queries DNS for <code>backend-service</code> and CoreDNS returns the appropriate ClusterIP. This seamless service discovery is what makes Kubernetes' dynamic environment practical for real-world applications.</p>
+<p>For the Certified Kubernetes Administrator (CKA) exam, DNS troubleshooting is a critical skill. You'll encounter scenarios where applications can't communicate, services aren't resolving, or DNS queries are failing. Understanding CoreDNS architecture, configuration, and debugging techniques is essential for both the exam and production operations.</p>
+<p>In this comprehensive guide, you'll master:</p>
+<ul>
+<li><strong>DNS architecture</strong>: CoreDNS components, plugins, and how DNS resolution works</li>
+<li><strong>Service DNS patterns</strong>: ClusterIP services, headless services, and SRV records</li>
+<li><strong>Pod DNS configuration</strong>: DNS policies, search domains, and FQDN construction</li>
+<li><strong>CoreDNS configuration</strong>: Corefile structure, plugin chains, and custom DNS entries</li>
+<li><strong>Advanced features</strong>: NodeLocal DNSCache (2025), DNS policies, and performance optimization</li>
+<li><strong>Troubleshooting mastery</strong>: Systematic debugging workflows using nslookup, dig, and CoreDNS logs</li>
+<li><strong>CKA exam skills</strong>: Fast DNS testing, common scenarios, and time-saving techniques</li>
+</ul>
+<p><strong>CKA Exam Relevance</strong>: DNS and service discovery appear across multiple exam domains—Services &amp; Networking (20%), Troubleshooting (30%), and Cluster Architecture (25%). You must demonstrate proficiency in diagnosing DNS issues, understanding CoreDNS configuration, and validating service discovery under exam time pressure.</p>
+<p>Whether you're preparing for the CKA certification or building production-grade Kubernetes expertise, understanding CoreDNS is fundamental. Let's explore how DNS makes Kubernetes networking work seamlessly.</p>
+<hr />
+<h2 id="dns-in-kubernetes-architecture">DNS in Kubernetes Architecture<a class="headerlink" href="#dns-in-kubernetes-architecture" title="Link to this section">&para;</a></h2>
+<h3 id="coredns-overview">CoreDNS Overview<a class="headerlink" href="#coredns-overview" title="Link to this section">&para;</a></h3>
+<p>CoreDNS replaced kube-dns as the default Kubernetes DNS server starting in Kubernetes 1.13, and for good reason. Built in Go and designed as a modular, plugin-based DNS server, CoreDNS is faster, more flexible, and significantly easier to configure than its predecessor.</p>
+<p>At its core, CoreDNS runs as a Deployment in the <code>kube-system</code> namespace, typically with two replicas for high availability. Each CoreDNS pod watches the Kubernetes API server for Service and Endpoint changes, automatically creating and updating DNS records as resources are created, modified, or deleted.</p>
+<p>Here's the basic architecture:</p>
+<pre class="mermaid"><code>graph TB
+    subgraph "Application Pod"
+        App[Application Container]
+        Resolver[/etc/resolv.conf]
+    end
+
+    subgraph "kube-system Namespace"
+        CoreDNS1[CoreDNS Pod 1]
+        CoreDNS2[CoreDNS Pod 2]
+        ConfigMap[CoreDNS ConfigMap]
+    end
+
+    subgraph "Kubernetes API"
+        APIServer[API Server]
+        ServiceRegistry[Services]
+        EndpointRegistry[Endpoints]
+    end
+
+    App --&gt;|DNS Query| Resolver
+    Resolver --&gt;|UDP/TCP 53| CoreDNS1
+    Resolver --&gt;|UDP/TCP 53| CoreDNS2
+    CoreDNS1 --&gt;|Watch| APIServer
+    CoreDNS2 --&gt;|Watch| APIServer
+    APIServer --&gt;|Service Events| ServiceRegistry
+    APIServer --&gt;|Endpoint Events| EndpointRegistry
+    ConfigMap --&gt;|Configuration| CoreDNS1
+    ConfigMap --&gt;|Configuration| CoreDNS2
+
+    style App fill:#e1f5ff
+    style CoreDNS1 fill:#fff4e1
+    style CoreDNS2 fill:#fff4e1
+    style ConfigMap fill:#f0f0f0</code></pre>
+<p><strong>Key Components</strong>:</p>
+<ul>
+<li><strong>CoreDNS Deployment</strong>: Runs the DNS server pods with resource limits and anti-affinity rules</li>
+<li><strong>CoreDNS Service</strong>: ClusterIP service (usually <code>10.96.0.10</code>) that kubelet configures in pod <code>/etc/resolv.conf</code></li>
+<li><strong>CoreDNS ConfigMap</strong>: Contains the Corefile configuration defining DNS resolution behavior</li>
+<li><strong>Kubernetes Plugin</strong>: CoreDNS plugin that watches the API and generates DNS records</li>
+<li><strong>Cache Plugin</strong>: In-memory cache for DNS queries to reduce API load</li>
+<li><strong>Forward Plugin</strong>: Forwards non-cluster queries to upstream DNS servers</li>
+</ul>
+<h3 id="dns-record-types-in-kubernetes">DNS Record Types in Kubernetes<a class="headerlink" href="#dns-record-types-in-kubernetes" title="Link to this section">&para;</a></h3>
+<p>CoreDNS creates several types of DNS records automatically:</p>
+<p><strong>Service DNS Records (A/AAAA)</strong>:
+<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>&lt;service-name&gt;.&lt;namespace&gt;.svc.&lt;cluster-domain&gt;
+</span></code></pre></div></p>
+<p>Example: <code>nginx.default.svc.cluster.local</code> → <code>10.96.100.50</code> (ClusterIP)</p>
+<p><strong>Headless Service Records (A/AAAA)</strong>:
+<div class="language-text highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>&lt;service-name&gt;.&lt;namespace&gt;.svc.&lt;cluster-domain&gt; → Pod IPs
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>&lt;pod-hostname&gt;.&lt;service-name&gt;.&lt;namespace&gt;.svc.&lt;cluster-domain&gt; → Pod IP
+</span></code></pre></div></p>
+<p>Example: <code>nginx.default.svc.cluster.local</code> → <code>10.244.1.10, 10.244.2.15</code> (Pod IPs)</p>
+<p><strong>Pod DNS Records (A/AAAA)</strong>:
+<div class="language-text highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>&lt;pod-ip-with-dashes&gt;.&lt;namespace&gt;.pod.&lt;cluster-domain&gt;
+</span></code></pre></div></p>
+<p>Example: <code>10-244-1-10.default.pod.cluster.local</code> → <code>10.244.1.10</code></p>
+<p><strong>SRV Records</strong> (Service Discovery with Port Information):
+<div class="language-text highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>_&lt;port-name&gt;._&lt;protocol&gt;.&lt;service-name&gt;.&lt;namespace&gt;.svc.&lt;cluster-domain&gt;
+</span></code></pre></div></p>
+<p>Example: <code>_http._tcp.nginx.default.svc.cluster.local</code> → <code>0 100 80 nginx.default.svc.cluster.local</code></p>
+<h3 id="dns-resolution-flow">DNS Resolution Flow<a class="headerlink" href="#dns-resolution-flow" title="Link to this section">&para;</a></h3>
+<p>Understanding how DNS queries flow through the system is critical for troubleshooting:</p>
+<pre class="mermaid"><code>sequenceDiagram
+    participant App as Application Pod
+    participant Kubelet as kubelet
+    participant CoreDNS as CoreDNS Pod
+    participant Cache as DNS Cache
+    participant API as Kubernetes API
+    participant Upstream as Upstream DNS
+
+    Note over App,Kubelet: Pod Creation
+    Kubelet-&gt;&gt;App: Inject /etc/resolv.conf&lt;br/&gt;nameserver 10.96.0.10&lt;br/&gt;search default.svc.cluster.local
+
+    Note over App,CoreDNS: DNS Query: "backend"
+    App-&gt;&gt;CoreDNS: Query "backend" (short name)
+    CoreDNS-&gt;&gt;CoreDNS: Apply search domains:&lt;br/&gt;backend.default.svc.cluster.local
+    CoreDNS-&gt;&gt;Cache: Check cache
+
+    alt Cache Hit
+        Cache-&gt;&gt;CoreDNS: Return cached IP
+        CoreDNS-&gt;&gt;App: 10.96.200.100
+    else Cache Miss
+        CoreDNS-&gt;&gt;API: Query Service "backend" in "default"
+        API-&gt;&gt;CoreDNS: ClusterIP: 10.96.200.100
+        CoreDNS-&gt;&gt;Cache: Store in cache (30s TTL)
+        CoreDNS-&gt;&gt;App: 10.96.200.100
+    end
+
+    Note over App,Upstream: External Query: "google.com"
+    App-&gt;&gt;CoreDNS: Query "google.com"
+    CoreDNS-&gt;&gt;CoreDNS: Not cluster domain
+    CoreDNS-&gt;&gt;Upstream: Forward to 8.8.8.8
+    Upstream-&gt;&gt;CoreDNS: 142.250.185.46
+    CoreDNS-&gt;&gt;App: 142.250.185.46</code></pre>
+<p><strong>Resolution Steps</strong>:</p>
+<ol>
+<li><strong>Application initiates query</strong>: App container queries DNS using the nameserver from <code>/etc/resolv.conf</code></li>
+<li><strong>Search domain expansion</strong>: If querying a short name (e.g., <code>backend</code>), the resolver appends search domains</li>
+<li><strong>CoreDNS receives query</strong>: Query reaches CoreDNS service (typically <code>10.96.0.10:53</code>)</li>
+<li><strong>Cache check</strong>: CoreDNS checks its in-memory cache for the record</li>
+<li><strong>Kubernetes plugin lookup</strong>: If cache miss, the kubernetes plugin queries the API for Service/Endpoint data</li>
+<li><strong>Response construction</strong>: CoreDNS builds the DNS response with the appropriate A/AAAA records</li>
+<li><strong>Cache storage</strong>: Result is cached with TTL (typically 30 seconds for cluster records)</li>
+<li><strong>External forwarding</strong>: Non-cluster queries are forwarded to upstream DNS servers</li>
+</ol>
+<h3 id="search-domains-and-fqdn-construction">Search Domains and FQDN Construction<a class="headerlink" href="#search-domains-and-fqdn-construction" title="Link to this section">&para;</a></h3>
+<p>Every pod's <code>/etc/resolv.conf</code> contains search domains that enable short-name DNS queries:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>nameserver<span class="w"> </span><span class="m">10</span>.96.0.10
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>search<span class="w"> </span>default.svc.cluster.local<span class="w"> </span>svc.cluster.local<span class="w"> </span>cluster.local
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>options<span class="w"> </span>ndots:5
+</span></code></pre></div>
+<p><strong>Search Domain Behavior</strong>:</p>
+<ul>
+<li><strong>Query: <code>backend</code></strong> → Tries <code>backend.default.svc.cluster.local</code>, then <code>backend.svc.cluster.local</code>, then <code>backend.cluster.local</code></li>
+<li><strong>Query: <code>backend.production</code></strong> → Tries <code>backend.production.default.svc.cluster.local</code>, then <code>backend.production.svc.cluster.local</code>, etc.</li>
+<li><strong>Query: <code>backend.production.svc.cluster.local</code></strong> → Direct FQDN query, no search domain expansion</li>
+</ul>
+<p><strong>ndots Configuration</strong>:</p>
+<p>The <code>ndots:5</code> option determines when search domains are applied. If a query has fewer than 5 dots, search domains are tried first. This means:</p>
+<ul>
+<li><code>backend</code> (0 dots) → Search domains applied</li>
+<li><code>backend.production</code> (1 dot) → Search domains applied</li>
+<li><code>backend.production.svc.cluster.local.</code> (4 dots + trailing <code>.</code>) → Direct query, no search</li>
+</ul>
+<p><strong>Important</strong>: Always use the trailing dot (<code>.</code>) for external domains to avoid unnecessary search domain queries:
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="c1"># Inefficient - tries search domains first</span>
+</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>curl<span class="w"> </span>http://api.example.com/data
+</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>
+</span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a><span class="c1"># Efficient - direct query</span>
+</span><span id="__span-5-5"><a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a>curl<span class="w"> </span>http://api.example.com./data
+</span></code></pre></div></p>
+<hr />
+<h2 id="coredns-configuration-deep-dive">CoreDNS Configuration Deep Dive<a class="headerlink" href="#coredns-configuration-deep-dive" title="Link to this section">&para;</a></h2>
+<h3 id="corefile-structure">Corefile Structure<a class="headerlink" href="#corefile-structure" title="Link to this section">&para;</a></h3>
+<p>CoreDNS is configured via a ConfigMap named <code>coredns</code> in the <code>kube-system</code> namespace. The ConfigMap contains a Corefile—a configuration format similar to nginx or Apache—that defines DNS server behavior through a plugin chain.</p>
+<p>Let's examine a typical Corefile:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>kubectl<span class="w"> </span>get<span class="w"> </span>configmap<span class="w"> </span>coredns<span class="w"> </span>-n<span class="w"> </span>kube-system<span class="w"> </span>-o<span class="w"> </span>yaml
+</span></code></pre></div>
+<div class="language-yaml highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">v1</span>
+</span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a><span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ConfigMap</span>
+</span><span id="__span-7-3"><a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a><span class="nt">metadata</span><span class="p">:</span>
+</span><span id="__span-7-4"><a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a><span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">coredns</span>
+</span><span id="__span-7-5"><a id="__codelineno-7-5" name="__codelineno-7-5" href="#__codelineno-7-5"></a><span class="w">  </span><span class="nt">namespace</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">kube-system</span>
+</span><span id="__span-7-6"><a id="__codelineno-7-6" name="__codelineno-7-6" href="#__codelineno-7-6"></a><span class="nt">data</span><span class="p">:</span>
+</span><span id="__span-7-7"><a id="__codelineno-7-7" name="__codelineno-7-7" href="#__codelineno-7-7"></a><span class="w">  </span><span class="nt">Corefile</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">|</span>
+</span><span id="__span-7-8"><a id="__codelineno-7-8" name="__codelineno-7-8" href="#__codelineno-7-8"></a><span class="w">    </span><span class="no">.:53 {</span>
+</span><span id="__span-7-9"><a id="__codelineno-7-9" name="__codelineno-7-9" href="#__codelineno-7-9"></a><span class="w">        </span><span class="no">errors</span>
+</span><span id="__span-7-10"><a id="__codelineno-7-10" name="__codelineno-7-10" href="#__codelineno-7-10"></a><span class="w">        </span><span class="no">health {</span>
+</span><span id="__span-7-11"><a id="__codelineno-7-11" name="__codelineno-7-11" href="#__codelineno-7-11"></a><span class="w">           </span><span class="no">lameduck 5s</span>
+</span><span id="__span-7-12"><a id="__codelineno-7-12" name="__codelineno-7-12" href="#__codelineno-7-12"></a><span class="w">        </span><span class="no">}</span>
+</span><span id="__span-7-13"><a id="__codelineno-7-13" name="__codelineno-7-13" href="#__codelineno-7-13"></a><span class="w">        </span><span class="no">ready</span>
+</span><span id="__span-7-14"><a id="__codelineno-7-14" name="__codelineno-7-14" href="#__codelineno-7-14"></a><span class="w">        </span><span class="no">kubernetes cluster.local in-addr.arpa ip6.arpa {</span>
+</span><span id="__span-7-15"><a id="__codelineno-7-15" name="__codelineno-7-15" href="#__codelineno-7-15"></a><span class="w">           </span><span class="no">pods insecure</span>
+</span><span id="__span-7-16"><a id="__codelineno-7-16" name="__codelineno-7-16" href="#__codelineno-7-16"></a><span class="w">           </span><span class="no">fallthrough in-addr.arpa ip6.arpa</span>
+</span><span id="__span-7-17"><a id="__codelineno-7-17" name="__codelineno-7-17" href="#__codelineno-7-17"></a><span class="w">           </span><span class="no">ttl 30</span>
+</span><span id="__span-7-18"><a id="__codelineno-7-18" name="__codelineno-7-18" href="#__codelineno-7-18"></a><span class="w">        </span><span class="no">}</span>
+</span><span id="__span-7-19"><a id="__codelineno-7-19" name="__codelineno-7-19" href="#__codelineno-7-19"></a><span class="w">        </span><span class="no">prometheus :9153</span>
+</span><span id="__span-7-20"><a id="__codelineno-7-20" name="__codelineno-7-20" href="#__codelineno-7-20"></a><span class="w">        </span><span class="no">forward . /etc/resolv.conf {</span>
+</span><span id="__span-7-21"><a id="__codelineno-7-21" name="__codelineno-7-21" href="#__codelineno-7-21"></a><span class="w">           </span><span class="no">max_concurrent 1000</span>
+</span><span id="__span-7-22"><a id="__codelineno-7-22" name="__codelineno-7-22" href="#__codelineno-7-22"></a><span class="w">        </span><span class="no">}</span>
+</span><span id="__span-7-23"><a id="__codelineno-7-23" name="__codelineno-7-23" href="#__codelineno-7-23"></a><span class="w">        </span><span class="no">cache 30</span>
+</span><span id="__span-7-24"><a id="__codelineno-7-24" name="__codelineno-7-24" href="#__codelineno-7-24"></a><span class="w">        </span><span class="no">loop</span>
+</span><span id="__span-7-25"><a id="__codelineno-7-25" name="__codelineno-7-25" href="#__codelineno-7-25"></a><span class="w">        </span><span class="no">reload</span>
+</span><span id="__span-7-26"><a id="__codelineno-7-26" name="__codelineno-7-26" href="#__codelineno-7-26"></a><span class="w">        </span><span class="no">loadbalance</span>
+</span><span id="__span-7-27"><a id="__codelineno-7-27" name="__codelineno-7-27" href="#__codelineno-7-27"></a><span class="w">    </span><span class="no">}</span>
+</span></code></pre></div>
+<p><strong>Corefile Sections Explained</strong>:</p>
+<ul>
+<li><strong><code>.:53</code></strong>: Server block listening on port 53 for all domains (<code>.</code> matches everything)</li>
+<li><strong>Plugin order matters</strong>: Plugins are executed in the order listed (errors → health → ready → kubernetes → ...)</li>
+<li><strong>Each plugin</strong>: Configures specific DNS behavior (logging, health checks, Kubernetes records, caching, etc.)</li>
+</ul>
+<h3 id="coredns-plugins">CoreDNS Plugins<a class="headerlink" href="#coredns-plugins" title="Link to this section">&para;</a></h3>
+<p>Let's break down each plugin and its purpose:</p>
+<h4 id="1-errors-plugin">1. errors Plugin<a class="headerlink" href="#1-errors-plugin" title="Link to this section">&para;</a></h4>
+<p><div class="language-text highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a>errors
+</span></code></pre></div>
+Enables error logging to stdout. Essential for troubleshooting DNS issues.</p>
+<h4 id="2-health-plugin">2. health Plugin<a class="headerlink" href="#2-health-plugin" title="Link to this section">&para;</a></h4>
+<p><div class="language-text highlight"><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a>health {
+</span><span id="__span-9-2"><a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a>   lameduck 5s
+</span><span id="__span-9-3"><a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a>}
+</span></code></pre></div>
+Exposes a health check endpoint at <code>:8080/health</code>. The <code>lameduck</code> period delays the health check failure during pod shutdown, allowing time for graceful termination.</p>
+<h4 id="3-ready-plugin">3. ready Plugin<a class="headerlink" href="#3-ready-plugin" title="Link to this section">&para;</a></h4>
+<p><div class="language-text highlight"><pre><span></span><code><span id="__span-10-1"><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a>ready
+</span></code></pre></div>
+Exposes a readiness check at <code>:8181/ready</code>. This endpoint returns 200 OK when all plugins are ready to serve queries.</p>
+<h4 id="4-kubernetes-plugin">4. kubernetes Plugin<a class="headerlink" href="#4-kubernetes-plugin" title="Link to this section">&para;</a></h4>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-11-1"><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a>kubernetes cluster.local in-addr.arpa ip6.arpa {
+</span><span id="__span-11-2"><a id="__codelineno-11-2" name="__codelineno-11-2" href="#__codelineno-11-2"></a>   pods insecure
+</span><span id="__span-11-3"><a id="__codelineno-11-3" name="__codelineno-11-3" href="#__codelineno-11-3"></a>   fallthrough in-addr.arpa ip6.arpa
+</span><span id="__span-11-4"><a id="__codelineno-11-4" name="__codelineno-11-4" href="#__codelineno-11-4"></a>   ttl 30
+</span><span id="__span-11-5"><a id="__codelineno-11-5" name="__codelineno-11-5" href="#__codelineno-11-5"></a>}
+</span></code></pre></div>
+<p>This is the core plugin that provides Kubernetes DNS functionality:</p>
+<ul>
+<li><strong><code>cluster.local</code></strong>: The cluster domain for DNS records</li>
+<li><strong><code>in-addr.arpa ip6.arpa</code></strong>: Reverse DNS zones for PTR lookups</li>
+<li><strong><code>pods insecure</code></strong>: Enables pod DNS records using pod IP address (<code>10-244-1-10.default.pod.cluster.local</code>)</li>
+<li><code>insecure</code> mode doesn't verify pod existence (faster but less strict)</li>
+<li>Use <code>pods verified</code> for production to validate pods exist</li>
+<li><strong><code>fallthrough</code></strong>: Pass queries for reverse DNS zones to the next plugin if not found</li>
+<li><strong><code>ttl 30</code></strong>: DNS records have a 30-second time-to-live</li>
+</ul>
+<p><strong>Advanced Options</strong>:
+<div class="language-text highlight"><pre><span></span><code><span id="__span-12-1"><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a>kubernetes cluster.local in-addr.arpa ip6.arpa {
+</span><span id="__span-12-2"><a id="__codelineno-12-2" name="__codelineno-12-2" href="#__codelineno-12-2"></a>   pods verified
+</span><span id="__span-12-3"><a id="__codelineno-12-3" name="__codelineno-12-3" href="#__codelineno-12-3"></a>   endpoint_pod_names
+</span><span id="__span-12-4"><a id="__codelineno-12-4" name="__codelineno-12-4" href="#__codelineno-12-4"></a>   upstream
+</span><span id="__span-12-5"><a id="__codelineno-12-5" name="__codelineno-12-5" href="#__codelineno-12-5"></a>   ttl 30
+</span><span id="__span-12-6"><a id="__codelineno-12-6" name="__codelineno-12-6" href="#__codelineno-12-6"></a>   fallthrough in-addr.arpa ip6.arpa
+</span><span id="__span-12-7"><a id="__codelineno-12-7" name="__codelineno-12-7" href="#__codelineno-12-7"></a>}
+</span></code></pre></div></p>
+<ul>
+<li><strong><code>endpoint_pod_names</code></strong>: Use pod names from Endpoints instead of generated names</li>
+<li><strong><code>upstream</code></strong>: Query upstream servers for external queries instead of returning NXDOMAIN</li>
+</ul>
+<h4 id="5-prometheus-plugin">5. prometheus Plugin<a class="headerlink" href="#5-prometheus-plugin" title="Link to this section">&para;</a></h4>
+<p><div class="language-text highlight"><pre><span></span><code><span id="__span-13-1"><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a>prometheus :9153
+</span></code></pre></div>
+Exposes Prometheus metrics at <code>:9153/metrics</code> for monitoring DNS performance, query rates, and cache hit ratios.</p>
+<h4 id="6-forward-plugin">6. forward Plugin<a class="headerlink" href="#6-forward-plugin" title="Link to this section">&para;</a></h4>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-14-1"><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a>forward . /etc/resolv.conf {
+</span><span id="__span-14-2"><a id="__codelineno-14-2" name="__codelineno-14-2" href="#__codelineno-14-2"></a>   max_concurrent 1000
+</span><span id="__span-14-3"><a id="__codelineno-14-3" name="__codelineno-14-3" href="#__codelineno-14-3"></a>}
+</span></code></pre></div>
+<p>Forwards non-cluster DNS queries to upstream DNS servers:</p>
+<ul>
+<li><strong><code>. /etc/resolv.conf</code></strong>: Forward all non-matched queries to nameservers in CoreDNS pod's <code>/etc/resolv.conf</code></li>
+<li><strong>Alternative</strong>: <code>forward . 8.8.8.8 8.8.4.4</code> (use specific DNS servers)</li>
+<li><strong><code>max_concurrent 1000</code></strong>: Limit concurrent upstream queries to prevent overwhelming upstream servers</li>
+</ul>
+<p><strong>Custom Upstream Example</strong>:
+<div class="language-text highlight"><pre><span></span><code><span id="__span-15-1"><a id="__codelineno-15-1" name="__codelineno-15-1" href="#__codelineno-15-1"></a>forward . 1.1.1.1 1.0.0.1 {
+</span><span id="__span-15-2"><a id="__codelineno-15-2" name="__codelineno-15-2" href="#__codelineno-15-2"></a>   max_concurrent 1000
+</span><span id="__span-15-3"><a id="__codelineno-15-3" name="__codelineno-15-3" href="#__codelineno-15-3"></a>   policy sequential
+</span><span id="__span-15-4"><a id="__codelineno-15-4" name="__codelineno-15-4" href="#__codelineno-15-4"></a>   health_check 5s
+</span><span id="__span-15-5"><a id="__codelineno-15-5" name="__codelineno-15-5" href="#__codelineno-15-5"></a>}
+</span></code></pre></div></p>
+<h4 id="7-cache-plugin">7. cache Plugin<a class="headerlink" href="#7-cache-plugin" title="Link to this section">&para;</a></h4>
+<p><div class="language-text highlight"><pre><span></span><code><span id="__span-16-1"><a id="__codelineno-16-1" name="__codelineno-16-1" href="#__codelineno-16-1"></a>cache 30
+</span></code></pre></div>
+Caches DNS responses for 30 seconds to reduce load on the Kubernetes API and upstream DNS servers.</p>
+<p><strong>Advanced Cache Configuration</strong>:
+<div class="language-text highlight"><pre><span></span><code><span id="__span-17-1"><a id="__codelineno-17-1" name="__codelineno-17-1" href="#__codelineno-17-1"></a>cache 30 {
+</span><span id="__span-17-2"><a id="__codelineno-17-2" name="__codelineno-17-2" href="#__codelineno-17-2"></a>   success 9984 30
+</span><span id="__span-17-3"><a id="__codelineno-17-3" name="__codelineno-17-3" href="#__codelineno-17-3"></a>   denial 9984 5
+</span><span id="__span-17-4"><a id="__codelineno-17-4" name="__codelineno-17-4" href="#__codelineno-17-4"></a>   prefetch 10 60s 10%
+</span><span id="__span-17-5"><a id="__codelineno-17-5" name="__codelineno-17-5" href="#__codelineno-17-5"></a>}
+</span></code></pre></div></p>
+<ul>
+<li><strong><code>success 9984 30</code></strong>: Cache successful responses for 30 seconds (max 9984 entries)</li>
+<li><strong><code>denial 9984 5</code></strong>: Cache NXDOMAIN responses for 5 seconds</li>
+<li><strong><code>prefetch 10 60s 10%</code></strong>: Prefetch records that will expire in 60s if accessed by &gt;10% of requests</li>
+</ul>
+<h4 id="8-loop-plugin">8. loop Plugin<a class="headerlink" href="#8-loop-plugin" title="Link to this section">&para;</a></h4>
+<p><div class="language-text highlight"><pre><span></span><code><span id="__span-18-1"><a id="__codelineno-18-1" name="__codelineno-18-1" href="#__codelineno-18-1"></a>loop
+</span></code></pre></div>
+Detects and prevents DNS forwarding loops that could cause infinite query cycles.</p>
+<h4 id="9-reload-plugin">9. reload Plugin<a class="headerlink" href="#9-reload-plugin" title="Link to this section">&para;</a></h4>
+<p><div class="language-text highlight"><pre><span></span><code><span id="__span-19-1"><a id="__codelineno-19-1" name="__codelineno-19-1" href="#__codelineno-19-1"></a>reload
+</span></code></pre></div>
+Watches the Corefile for changes and automatically reloads configuration without restarting CoreDNS pods.</p>
+<h4 id="10-loadbalance-plugin">10. loadbalance Plugin<a class="headerlink" href="#10-loadbalance-plugin" title="Link to this section">&para;</a></h4>
+<p><div class="language-text highlight"><pre><span></span><code><span id="__span-20-1"><a id="__codelineno-20-1" name="__codelineno-20-1" href="#__codelineno-20-1"></a>loadbalance
+</span></code></pre></div>
+Randomizes the order of A/AAAA records in DNS responses, providing basic client-side load balancing.</p>
+<h3 id="custom-dns-records">Custom DNS Records<a class="headerlink" href="#custom-dns-records" title="Link to this section">&para;</a></h3>
+<p>You can add custom DNS entries for internal services or override external domains:</p>
+<div class="language-yaml highlight"><pre><span></span><code><span id="__span-21-1"><a id="__codelineno-21-1" name="__codelineno-21-1" href="#__codelineno-21-1"></a><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">v1</span>
+</span><span id="__span-21-2"><a id="__codelineno-21-2" name="__codelineno-21-2" href="#__codelineno-21-2"></a><span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ConfigMap</span>
+</span><span id="__span-21-3"><a id="__codelineno-21-3" name="__codelineno-21-3" href="#__codelineno-21-3"></a><span class="nt">metadata</span><span class="p">:</span>
+</span><span id="__span-21-4"><a id="__codelineno-21-4" name="__codelineno-21-4" href="#__codelineno-21-4"></a><span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">coredns</span>
+</span><span id="__span-21-5"><a id="__codelineno-21-5" name="__codelineno-21-5" href="#__codelineno-21-5"></a><span class="w">  </span><span class="nt">namespace</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">kube-system</span>
+</span><span id="__span-21-6"><a id="__codelineno-21-6" name="__codelineno-21-6" href="#__codelineno-21-6"></a><span class="nt">data</span><span class="p">:</span>
+</span><span id="__span-21-7"><a id="__codelineno-21-7" name="__codelineno-21-7" href="#__codelineno-21-7"></a><span class="w">  </span><span class="nt">Corefile</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">|</span>
+</span><span id="__span-21-8"><a id="__codelineno-21-8" name="__codelineno-21-8" href="#__codelineno-21-8"></a><span class="w">    </span><span class="no">.:53 {</span>
+</span><span id="__span-21-9"><a id="__codelineno-21-9" name="__codelineno-21-9" href="#__codelineno-21-9"></a><span class="w">        </span><span class="no">errors</span>
+</span><span id="__span-21-10"><a id="__codelineno-21-10" name="__codelineno-21-10" href="#__codelineno-21-10"></a><span class="w">        </span><span class="no">health {</span>
+</span><span id="__span-21-11"><a id="__codelineno-21-11" name="__codelineno-21-11" href="#__codelineno-21-11"></a><span class="w">           </span><span class="no">lameduck 5s</span>
+</span><span id="__span-21-12"><a id="__codelineno-21-12" name="__codelineno-21-12" href="#__codelineno-21-12"></a><span class="w">        </span><span class="no">}</span>
+</span><span id="__span-21-13"><a id="__codelineno-21-13" name="__codelineno-21-13" href="#__codelineno-21-13"></a><span class="w">        </span><span class="no">ready</span>
+</span><span id="__span-21-14"><a id="__codelineno-21-14" name="__codelineno-21-14" href="#__codelineno-21-14"></a>
+</span><span id="__span-21-15"><a id="__codelineno-21-15" name="__codelineno-21-15" href="#__codelineno-21-15"></a><span class="w">        </span><span class="no"># Custom static DNS entries</span>
+</span><span id="__span-21-16"><a id="__codelineno-21-16" name="__codelineno-21-16" href="#__codelineno-21-16"></a><span class="w">        </span><span class="no">hosts {</span>
+</span><span id="__span-21-17"><a id="__codelineno-21-17" name="__codelineno-21-17" href="#__codelineno-21-17"></a><span class="w">           </span><span class="no">192.168.1.100 internal-db.company.local</span>
+</span><span id="__span-21-18"><a id="__codelineno-21-18" name="__codelineno-21-18" href="#__codelineno-21-18"></a><span class="w">           </span><span class="no">192.168.1.101 legacy-app.company.local</span>
+</span><span id="__span-21-19"><a id="__codelineno-21-19" name="__codelineno-21-19" href="#__codelineno-21-19"></a><span class="w">           </span><span class="no">fallthrough</span>
+</span><span id="__span-21-20"><a id="__codelineno-21-20" name="__codelineno-21-20" href="#__codelineno-21-20"></a><span class="w">        </span><span class="no">}</span>
+</span><span id="__span-21-21"><a id="__codelineno-21-21" name="__codelineno-21-21" href="#__codelineno-21-21"></a>
+</span><span id="__span-21-22"><a id="__codelineno-21-22" name="__codelineno-21-22" href="#__codelineno-21-22"></a><span class="w">        </span><span class="no">kubernetes cluster.local in-addr.arpa ip6.arpa {</span>
+</span><span id="__span-21-23"><a id="__codelineno-21-23" name="__codelineno-21-23" href="#__codelineno-21-23"></a><span class="w">           </span><span class="no">pods insecure</span>
+</span><span id="__span-21-24"><a id="__codelineno-21-24" name="__codelineno-21-24" href="#__codelineno-21-24"></a><span class="w">           </span><span class="no">fallthrough in-addr.arpa ip6.arpa</span>
+</span><span id="__span-21-25"><a id="__codelineno-21-25" name="__codelineno-21-25" href="#__codelineno-21-25"></a><span class="w">           </span><span class="no">ttl 30</span>
+</span><span id="__span-21-26"><a id="__codelineno-21-26" name="__codelineno-21-26" href="#__codelineno-21-26"></a><span class="w">        </span><span class="no">}</span>
+</span><span id="__span-21-27"><a id="__codelineno-21-27" name="__codelineno-21-27" href="#__codelineno-21-27"></a>
+</span><span id="__span-21-28"><a id="__codelineno-21-28" name="__codelineno-21-28" href="#__codelineno-21-28"></a><span class="w">        </span><span class="no">prometheus :9153</span>
+</span><span id="__span-21-29"><a id="__codelineno-21-29" name="__codelineno-21-29" href="#__codelineno-21-29"></a><span class="w">        </span><span class="no">forward . /etc/resolv.conf</span>
+</span><span id="__span-21-30"><a id="__codelineno-21-30" name="__codelineno-21-30" href="#__codelineno-21-30"></a><span class="w">        </span><span class="no">cache 30</span>
+</span><span id="__span-21-31"><a id="__codelineno-21-31" name="__codelineno-21-31" href="#__codelineno-21-31"></a><span class="w">        </span><span class="no">loop</span>
+</span><span id="__span-21-32"><a id="__codelineno-21-32" name="__codelineno-21-32" href="#__codelineno-21-32"></a><span class="w">        </span><span class="no">reload</span>
+</span><span id="__span-21-33"><a id="__codelineno-21-33" name="__codelineno-21-33" href="#__codelineno-21-33"></a><span class="w">        </span><span class="no">loadbalance</span>
+</span><span id="__span-21-34"><a id="__codelineno-21-34" name="__codelineno-21-34" href="#__codelineno-21-34"></a><span class="w">    </span><span class="no">}</span>
+</span></code></pre></div>
+<p><strong>Static Host Entries</strong>:
+<div class="language-text highlight"><pre><span></span><code><span id="__span-22-1"><a id="__codelineno-22-1" name="__codelineno-22-1" href="#__codelineno-22-1"></a>hosts {
+</span><span id="__span-22-2"><a id="__codelineno-22-2" name="__codelineno-22-2" href="#__codelineno-22-2"></a>   192.168.1.100 internal-db.company.local
+</span><span id="__span-22-3"><a id="__codelineno-22-3" name="__codelineno-22-3" href="#__codelineno-22-3"></a>   fallthrough
+</span><span id="__span-22-4"><a id="__codelineno-22-4" name="__codelineno-22-4" href="#__codelineno-22-4"></a>}
+</span></code></pre></div></p>
+<p>The <code>fallthrough</code> directive ensures that queries not matching static entries continue down the plugin chain.</p>
+<h3 id="rewrite-plugin-for-dns-aliasing">Rewrite Plugin for DNS Aliasing<a class="headerlink" href="#rewrite-plugin-for-dns-aliasing" title="Link to this section">&para;</a></h3>
+<p>Create DNS aliases or rewrite queries:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-23-1"><a id="__codelineno-23-1" name="__codelineno-23-1" href="#__codelineno-23-1"></a>rewrite name api.internal.local backend.default.svc.cluster.local
+</span></code></pre></div>
+<p>This rewrites queries for <code>api.internal.local</code> to <code>backend.default.svc.cluster.local</code>.</p>
+<p><strong>Advanced Rewrite</strong>:
+<div class="language-text highlight"><pre><span></span><code><span id="__span-24-1"><a id="__codelineno-24-1" name="__codelineno-24-1" href="#__codelineno-24-1"></a>rewrite {
+</span><span id="__span-24-2"><a id="__codelineno-24-2" name="__codelineno-24-2" href="#__codelineno-24-2"></a>   name regex (.*)\.old-domain\.com {1}.new-domain.com
+</span><span id="__span-24-3"><a id="__codelineno-24-3" name="__codelineno-24-3" href="#__codelineno-24-3"></a>}
+</span></code></pre></div></p>
+<hr />
+<h2 id="service-discovery-patterns">Service Discovery Patterns<a class="headerlink" href="#service-discovery-patterns" title="Link to this section">&para;</a></h2>
+<h3 id="clusterip-service-dns">ClusterIP Service DNS<a class="headerlink" href="#clusterip-service-dns" title="Link to this section">&para;</a></h3>
+<p>The most common service type uses a stable ClusterIP for internal load balancing:</p>
+<div class="language-yaml highlight"><pre><span></span><code><span id="__span-25-1"><a id="__codelineno-25-1" name="__codelineno-25-1" href="#__codelineno-25-1"></a><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">v1</span>
+</span><span id="__span-25-2"><a id="__codelineno-25-2" name="__codelineno-25-2" href="#__codelineno-25-2"></a><span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Service</span>
+</span><span id="__span-25-3"><a id="__codelineno-25-3" name="__codelineno-25-3" href="#__codelineno-25-3"></a><span class="nt">metadata</span><span class="p">:</span>
+</span><span id="__span-25-4"><a id="__codelineno-25-4" name="__codelineno-25-4" href="#__codelineno-25-4"></a><span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">nginx</span>
+</span><span id="__span-25-5"><a id="__codelineno-25-5" name="__codelineno-25-5" href="#__codelineno-25-5"></a><span class="w">  </span><span class="nt">namespace</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">production</span>
+</span><span id="__span-25-6"><a id="__codelineno-25-6" name="__codelineno-25-6" href="#__codelineno-25-6"></a><span class="nt">spec</span><span class="p">:</span>
+</span><span id="__span-25-7"><a id="__codelineno-25-7" name="__codelineno-25-7" href="#__codelineno-25-7"></a><span class="w">  </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ClusterIP</span>
+</span><span id="__span-25-8"><a id="__codelineno-25-8" name="__codelineno-25-8" href="#__codelineno-25-8"></a><span class="w">  </span><span class="nt">selector</span><span class="p">:</span>
+</span><span id="__span-25-9"><a id="__codelineno-25-9" name="__codelineno-25-9" href="#__codelineno-25-9"></a><span class="w">    </span><span class="nt">app</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">nginx</span>
+</span><span id="__span-25-10"><a id="__codelineno-25-10" name="__codelineno-25-10" href="#__codelineno-25-10"></a><span class="w">  </span><span class="nt">ports</span><span class="p">:</span>
+</span><span id="__span-25-11"><a id="__codelineno-25-11" name="__codelineno-25-11" href="#__codelineno-25-11"></a><span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">http</span>
+</span><span id="__span-25-12"><a id="__codelineno-25-12" name="__codelineno-25-12" href="#__codelineno-25-12"></a><span class="w">    </span><span class="nt">protocol</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">TCP</span>
+</span><span id="__span-25-13"><a id="__codelineno-25-13" name="__codelineno-25-13" href="#__codelineno-25-13"></a><span class="w">    </span><span class="nt">port</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">80</span>
+</span><span id="__span-25-14"><a id="__codelineno-25-14" name="__codelineno-25-14" href="#__codelineno-25-14"></a><span class="w">    </span><span class="nt">targetPort</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">8080</span>
+</span></code></pre></div>
+<p><strong>DNS Resolution</strong>:
+<pre class="mermaid"><code>graph LR
+    Query[DNS Query] --&gt;|nginx| SearchDomain[Search Domain Expansion]
+    SearchDomain --&gt;|nginx.production.svc.cluster.local| CoreDNS
+    CoreDNS --&gt;|Kubernetes Plugin| API[API Server]
+    API --&gt;|Service ClusterIP| Response[10.96.100.50]
+    Response --&gt; Client[Client Pod]
+
+    style Query fill:#e1f5ff
+    style CoreDNS fill:#fff4e1
+    style Response fill:#d4edda</code></pre></p>
+<p><strong>Available DNS Names</strong> (from same namespace <code>production</code>):
+<div class="language-text highlight"><pre><span></span><code><span id="__span-26-1"><a id="__codelineno-26-1" name="__codelineno-26-1" href="#__codelineno-26-1"></a>nginx                              → 10.96.100.50 (short name)
+</span><span id="__span-26-2"><a id="__codelineno-26-2" name="__codelineno-26-2" href="#__codelineno-26-2"></a>nginx.production                   → 10.96.100.50 (namespace qualified)
+</span><span id="__span-26-3"><a id="__codelineno-26-3" name="__codelineno-26-3" href="#__codelineno-26-3"></a>nginx.production.svc               → 10.96.100.50 (service scoped)
+</span><span id="__span-26-4"><a id="__codelineno-26-4" name="__codelineno-26-4" href="#__codelineno-26-4"></a>nginx.production.svc.cluster.local → 10.96.100.50 (FQDN)
+</span></code></pre></div></p>
+<p><strong>From Different Namespace</strong>:
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-27-1"><a id="__codelineno-27-1" name="__codelineno-27-1" href="#__codelineno-27-1"></a><span class="c1"># Short name fails - only works within same namespace</span>
+</span><span id="__span-27-2"><a id="__codelineno-27-2" name="__codelineno-27-2" href="#__codelineno-27-2"></a>curl<span class="w"> </span>http://nginx/
+</span><span id="__span-27-3"><a id="__codelineno-27-3" name="__codelineno-27-3" href="#__codelineno-27-3"></a><span class="c1"># Error: could not resolve host</span>
+</span><span id="__span-27-4"><a id="__codelineno-27-4" name="__codelineno-27-4" href="#__codelineno-27-4"></a>
+</span><span id="__span-27-5"><a id="__codelineno-27-5" name="__codelineno-27-5" href="#__codelineno-27-5"></a><span class="c1"># Must use namespace-qualified name</span>
+</span><span id="__span-27-6"><a id="__codelineno-27-6" name="__codelineno-27-6" href="#__codelineno-27-6"></a>curl<span class="w"> </span>http://nginx.production/
+</span><span id="__span-27-7"><a id="__codelineno-27-7" name="__codelineno-27-7" href="#__codelineno-27-7"></a><span class="c1"># Success: 200 OK</span>
+</span><span id="__span-27-8"><a id="__codelineno-27-8" name="__codelineno-27-8" href="#__codelineno-27-8"></a>
+</span><span id="__span-27-9"><a id="__codelineno-27-9" name="__codelineno-27-9" href="#__codelineno-27-9"></a><span class="c1"># FQDN always works</span>
+</span><span id="__span-27-10"><a id="__codelineno-27-10" name="__codelineno-27-10" href="#__codelineno-27-10"></a>curl<span class="w"> </span>http://nginx.production.svc.cluster.local/
+</span><span id="__span-27-11"><a id="__codelineno-27-11" name="__codelineno-27-11" href="#__codelineno-27-11"></a><span class="c1"># Success: 200 OK</span>
+</span></code></pre></div></p>
+<p><strong>SRV Records for Port Discovery</strong>:
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-28-1"><a id="__codelineno-28-1" name="__codelineno-28-1" href="#__codelineno-28-1"></a>dig<span class="w"> </span>SRV<span class="w"> </span>_http._tcp.nginx.production.svc.cluster.local
+</span><span id="__span-28-2"><a id="__codelineno-28-2" name="__codelineno-28-2" href="#__codelineno-28-2"></a>
+</span><span id="__span-28-3"><a id="__codelineno-28-3" name="__codelineno-28-3" href="#__codelineno-28-3"></a><span class="p">;</span><span class="w"> </span>ANSWER<span class="w"> </span>SECTION:
+</span><span id="__span-28-4"><a id="__codelineno-28-4" name="__codelineno-28-4" href="#__codelineno-28-4"></a>_http._tcp.nginx.production.svc.cluster.local.<span class="w"> </span><span class="m">30</span><span class="w"> </span>IN<span class="w"> </span>SRV<span class="w"> </span><span class="m">0</span><span class="w"> </span><span class="m">100</span><span class="w"> </span><span class="m">80</span><span class="w"> </span>nginx.production.svc.cluster.local.
+</span></code></pre></div></p>
+<p>SRV record format: <code>priority weight port target</code></p>
+<h3 id="headless-service-dns">Headless Service DNS<a class="headerlink" href="#headless-service-dns" title="Link to this section">&para;</a></h3>
+<p>Headless services (with <code>clusterIP: None</code>) return pod IPs directly instead of a stable ClusterIP, enabling direct pod-to-pod communication:</p>
+<div class="language-yaml highlight"><pre><span></span><code><span id="__span-29-1"><a id="__codelineno-29-1" name="__codelineno-29-1" href="#__codelineno-29-1"></a><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">v1</span>
+</span><span id="__span-29-2"><a id="__codelineno-29-2" name="__codelineno-29-2" href="#__codelineno-29-2"></a><span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Service</span>
+</span><span id="__span-29-3"><a id="__codelineno-29-3" name="__codelineno-29-3" href="#__codelineno-29-3"></a><span class="nt">metadata</span><span class="p">:</span>
+</span><span id="__span-29-4"><a id="__codelineno-29-4" name="__codelineno-29-4" href="#__codelineno-29-4"></a><span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">nginx-headless</span>
+</span><span id="__span-29-5"><a id="__codelineno-29-5" name="__codelineno-29-5" href="#__codelineno-29-5"></a><span class="w">  </span><span class="nt">namespace</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">production</span>
+</span><span id="__span-29-6"><a id="__codelineno-29-6" name="__codelineno-29-6" href="#__codelineno-29-6"></a><span class="nt">spec</span><span class="p">:</span>
+</span><span id="__span-29-7"><a id="__codelineno-29-7" name="__codelineno-29-7" href="#__codelineno-29-7"></a><span class="w">  </span><span class="nt">clusterIP</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">None</span><span class="w">  </span><span class="c1"># Headless service</span>
+</span><span id="__span-29-8"><a id="__codelineno-29-8" name="__codelineno-29-8" href="#__codelineno-29-8"></a><span class="w">  </span><span class="nt">selector</span><span class="p">:</span>
+</span><span id="__span-29-9"><a id="__codelineno-29-9" name="__codelineno-29-9" href="#__codelineno-29-9"></a><span class="w">    </span><span class="nt">app</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">nginx</span>
+</span><span id="__span-29-10"><a id="__codelineno-29-10" name="__codelineno-29-10" href="#__codelineno-29-10"></a><span class="w">  </span><span class="nt">ports</span><span class="p">:</span>
+</span><span id="__span-29-11"><a id="__codelineno-29-11" name="__codelineno-29-11" href="#__codelineno-29-11"></a><span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">http</span>
+</span><span id="__span-29-12"><a id="__codelineno-29-12" name="__codelineno-29-12" href="#__codelineno-29-12"></a><span class="w">    </span><span class="nt">protocol</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">TCP</span>
+</span><span id="__span-29-13"><a id="__codelineno-29-13" name="__codelineno-29-13" href="#__codelineno-29-13"></a><span class="w">    </span><span class="nt">port</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">80</span>
+</span><span id="__span-29-14"><a id="__codelineno-29-14" name="__codelineno-29-14" href="#__codelineno-29-14"></a><span class="w">    </span><span class="nt">targetPort</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">8080</span>
+</span></code></pre></div>
+<p><strong>DNS Behavior</strong>:</p>
+<pre class="mermaid"><code>graph TB
+    subgraph "DNS Query Flow"
+        Query[Query: nginx-headless.production.svc.cluster.local]
+        CoreDNS[CoreDNS]
+        API[Kubernetes API]
+    end
+
+    subgraph "Pod Endpoints"
+        Pod1[nginx-0&lt;br/&gt;10.244.1.10]
+        Pod2[nginx-1&lt;br/&gt;10.244.2.15]
+        Pod3[nginx-2&lt;br/&gt;10.244.3.20]
+    end
+
+    Query --&gt; CoreDNS
+    CoreDNS --&gt; API
+    API --&gt;|Endpoint IPs| CoreDNS
+    CoreDNS --&gt;|A Records| Response["10.244.1.10&lt;br/&gt;10.244.2.15&lt;br/&gt;10.244.3.20"]
+
+    Response -.-&gt; Pod1
+    Response -.-&gt; Pod2
+    Response -.-&gt; Pod3
+
+    style Query fill:#e1f5ff
+    style CoreDNS fill:#fff4e1
+    style Response fill:#d4edda</code></pre>
+<p><strong>DNS Resolution Returns All Pod IPs</strong>:
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-30-1"><a id="__codelineno-30-1" name="__codelineno-30-1" href="#__codelineno-30-1"></a>nslookup<span class="w"> </span>nginx-headless.production.svc.cluster.local
+</span><span id="__span-30-2"><a id="__codelineno-30-2" name="__codelineno-30-2" href="#__codelineno-30-2"></a>
+</span><span id="__span-30-3"><a id="__codelineno-30-3" name="__codelineno-30-3" href="#__codelineno-30-3"></a>Server:<span class="w">    </span><span class="m">10</span>.96.0.10
+</span><span id="__span-30-4"><a id="__codelineno-30-4" name="__codelineno-30-4" href="#__codelineno-30-4"></a>Address:<span class="w">   </span><span class="m">10</span>.96.0.10#53
+</span><span id="__span-30-5"><a id="__codelineno-30-5" name="__codelineno-30-5" href="#__codelineno-30-5"></a>
+</span><span id="__span-30-6"><a id="__codelineno-30-6" name="__codelineno-30-6" href="#__codelineno-30-6"></a>Name:<span class="w">   </span>nginx-headless.production.svc.cluster.local
+</span><span id="__span-30-7"><a id="__codelineno-30-7" name="__codelineno-30-7" href="#__codelineno-30-7"></a>Address:<span class="w"> </span><span class="m">10</span>.244.1.10
+</span><span id="__span-30-8"><a id="__codelineno-30-8" name="__codelineno-30-8" href="#__codelineno-30-8"></a>Name:<span class="w">   </span>nginx-headless.production.svc.cluster.local
+</span><span id="__span-30-9"><a id="__codelineno-30-9" name="__codelineno-30-9" href="#__codelineno-30-9"></a>Address:<span class="w"> </span><span class="m">10</span>.244.2.15
+</span><span id="__span-30-10"><a id="__codelineno-30-10" name="__codelineno-30-10" href="#__codelineno-30-10"></a>Name:<span class="w">   </span>nginx-headless.production.svc.cluster.local
+</span><span id="__span-30-11"><a id="__codelineno-30-11" name="__codelineno-30-11" href="#__codelineno-30-11"></a>Address:<span class="w"> </span><span class="m">10</span>.244.3.20
+</span></code></pre></div></p>
+<p><strong>Individual Pod DNS</strong> (for StatefulSets):
+<div class="language-text highlight"><pre><span></span><code><span id="__span-31-1"><a id="__codelineno-31-1" name="__codelineno-31-1" href="#__codelineno-31-1"></a>&lt;pod-name&gt;.&lt;service-name&gt;.&lt;namespace&gt;.svc.cluster.local
+</span></code></pre></div></p>
+<p>Example with StatefulSet:
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-32-1"><a id="__codelineno-32-1" name="__codelineno-32-1" href="#__codelineno-32-1"></a>nslookup<span class="w"> </span>nginx-0.nginx-headless.production.svc.cluster.local
+</span><span id="__span-32-2"><a id="__codelineno-32-2" name="__codelineno-32-2" href="#__codelineno-32-2"></a>
+</span><span id="__span-32-3"><a id="__codelineno-32-3" name="__codelineno-32-3" href="#__codelineno-32-3"></a>Server:<span class="w">    </span><span class="m">10</span>.96.0.10
+</span><span id="__span-32-4"><a id="__codelineno-32-4" name="__codelineno-32-4" href="#__codelineno-32-4"></a>Address:<span class="w">   </span><span class="m">10</span>.96.0.10#53
+</span><span id="__span-32-5"><a id="__codelineno-32-5" name="__codelineno-32-5" href="#__codelineno-32-5"></a>
+</span><span id="__span-32-6"><a id="__codelineno-32-6" name="__codelineno-32-6" href="#__codelineno-32-6"></a>Name:<span class="w">   </span>nginx-0.nginx-headless.production.svc.cluster.local
+</span><span id="__span-32-7"><a id="__codelineno-32-7" name="__codelineno-32-7" href="#__codelineno-32-7"></a>Address:<span class="w"> </span><span class="m">10</span>.244.1.10
+</span></code></pre></div></p>
+<p><strong>Use Cases for Headless Services</strong>:
+- <strong>StatefulSets</strong>: Stable DNS names for individual pods (<code>mongo-0</code>, <code>mongo-1</code>, <code>mongo-2</code>)
+- <strong>Database clusters</strong>: Direct communication with specific database replicas
+- <strong>Custom load balancing</strong>: Applications implementing their own load balancing logic
+- <strong>Service discovery</strong>: Discovering all pod endpoints for a service</p>
+<h3 id="pod-dns-configuration">Pod DNS Configuration<a class="headerlink" href="#pod-dns-configuration" title="Link to this section">&para;</a></h3>
+<p>Pods have automatic DNS records based on their IP address:</p>
+<p><strong>Default Pod DNS</strong>:
+<div class="language-text highlight"><pre><span></span><code><span id="__span-33-1"><a id="__codelineno-33-1" name="__codelineno-33-1" href="#__codelineno-33-1"></a>&lt;pod-ip-with-dashes&gt;.&lt;namespace&gt;.pod.&lt;cluster-domain&gt;
+</span></code></pre></div></p>
+<p>Example: <code>10-244-1-10.default.pod.cluster.local</code> → <code>10.244.1.10</code></p>
+<p><strong>Pod with Hostname and Subdomain</strong>:
+<div class="language-yaml highlight"><pre><span></span><code><span id="__span-34-1"><a id="__codelineno-34-1" name="__codelineno-34-1" href="#__codelineno-34-1"></a><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">v1</span>
+</span><span id="__span-34-2"><a id="__codelineno-34-2" name="__codelineno-34-2" href="#__codelineno-34-2"></a><span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Pod</span>
+</span><span id="__span-34-3"><a id="__codelineno-34-3" name="__codelineno-34-3" href="#__codelineno-34-3"></a><span class="nt">metadata</span><span class="p">:</span>
+</span><span id="__span-34-4"><a id="__codelineno-34-4" name="__codelineno-34-4" href="#__codelineno-34-4"></a><span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">web</span>
+</span><span id="__span-34-5"><a id="__codelineno-34-5" name="__codelineno-34-5" href="#__codelineno-34-5"></a><span class="w">  </span><span class="nt">namespace</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">production</span>
+</span><span id="__span-34-6"><a id="__codelineno-34-6" name="__codelineno-34-6" href="#__codelineno-34-6"></a><span class="nt">spec</span><span class="p">:</span>
+</span><span id="__span-34-7"><a id="__codelineno-34-7" name="__codelineno-34-7" href="#__codelineno-34-7"></a><span class="w">  </span><span class="nt">hostname</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">web-server</span>
+</span><span id="__span-34-8"><a id="__codelineno-34-8" name="__codelineno-34-8" href="#__codelineno-34-8"></a><span class="w">  </span><span class="nt">subdomain</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">nginx-headless</span>
+</span><span id="__span-34-9"><a id="__codelineno-34-9" name="__codelineno-34-9" href="#__codelineno-34-9"></a><span class="w">  </span><span class="nt">containers</span><span class="p">:</span>
+</span><span id="__span-34-10"><a id="__codelineno-34-10" name="__codelineno-34-10" href="#__codelineno-34-10"></a><span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">nginx</span>
+</span><span id="__span-34-11"><a id="__codelineno-34-11" name="__codelineno-34-11" href="#__codelineno-34-11"></a><span class="w">    </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">nginx:1.25</span>
+</span></code></pre></div></p>
+<p>DNS becomes:
+<div class="language-text highlight"><pre><span></span><code><span id="__span-35-1"><a id="__codelineno-35-1" name="__codelineno-35-1" href="#__codelineno-35-1"></a>web-server.nginx-headless.production.svc.cluster.local → 10.244.1.10
+</span></code></pre></div></p>
+<p>This is particularly useful for StatefulSets where predictable DNS names are required.</p>
+<hr />
+<h2 id="troubleshooting-dns-issues">Troubleshooting DNS Issues<a class="headerlink" href="#troubleshooting-dns-issues" title="Link to this section">&para;</a></h2>
+<h3 id="systematic-debugging-workflow">Systematic Debugging Workflow<a class="headerlink" href="#systematic-debugging-workflow" title="Link to this section">&para;</a></h3>
+<p>When facing DNS issues, follow this methodical approach:</p>
+<pre class="mermaid"><code>graph TD
+    Start[DNS Issue Reported] --&gt; Check1{Can pod resolve&lt;br/&gt;cluster services?}
+    Check1 --&gt;|No| Debug1[Test DNS from pod]
+    Check1 --&gt;|Yes| Check2{Can pod resolve&lt;br/&gt;external domains?}
+
+    Debug1 --&gt; Test1[kubectl exec -it pod -- nslookup kubernetes.default]
+    Test1 --&gt; Result1{Success?}
+    Result1 --&gt;|No| Fix1[Check CoreDNS pods,&lt;br/&gt;resolv.conf, network policy]
+    Result1 --&gt;|Yes| Check2
+
+    Check2 --&gt;|No| Debug2[Check upstream DNS]
+    Check2 --&gt;|Yes| Check3{Specific service&lt;br/&gt;not resolving?}
+
+    Debug2 --&gt; Test2[kubectl exec -it pod -- nslookup google.com]
+    Test2 --&gt; Result2{Success?}
+    Result2 --&gt;|No| Fix2[Check forward plugin,&lt;br/&gt;upstream DNS servers,&lt;br/&gt;network connectivity]
+    Result2 --&gt;|Yes| Check3
+
+    Check3 --&gt;|Yes| Debug3[Verify service exists]
+    Debug3 --&gt; Test3[kubectl get svc service-name -n namespace]
+    Test3 --&gt; Result3{Service exists?}
+    Result3 --&gt;|No| Fix3[Create service or&lt;br/&gt;fix service name]
+    Result3 --&gt;|Yes| Debug4[Check endpoints]
+
+    Debug4 --&gt; Test4[kubectl get endpoints service-name -n namespace]
+    Test4 --&gt; Result4{Endpoints ready?}
+    Result4 --&gt;|No| Fix4[Check pod selector,&lt;br/&gt;pod readiness,&lt;br/&gt;pod labels]
+    Result4 --&gt;|Yes| Debug5[Check DNS record]
+
+    Debug5 --&gt; Test5[kubectl exec -it pod -- nslookup service.namespace.svc.cluster.local]
+    Test5 --&gt; Result5{Resolves correctly?}
+    Result5 --&gt;|No| Fix5[Check CoreDNS logs,&lt;br/&gt;restart CoreDNS,&lt;br/&gt;check Corefile config]
+    Result5 --&gt;|Yes| Fix6[Issue may be&lt;br/&gt;application-level,&lt;br/&gt;not DNS]
+
+    style Start fill:#e1f5ff
+    style Fix1 fill:#f8d7da
+    style Fix2 fill:#f8d7da
+    style Fix3 fill:#f8d7da
+    style Fix4 fill:#f8d7da
+    style Fix5 fill:#f8d7da
+    style Fix6 fill:#fff3cd</code></pre>
+<h3 id="essential-dns-testing-commands">Essential DNS Testing Commands<a class="headerlink" href="#essential-dns-testing-commands" title="Link to this section">&para;</a></h3>
+<p><strong>Test DNS from a debug pod</strong>:
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-36-1"><a id="__codelineno-36-1" name="__codelineno-36-1" href="#__codelineno-36-1"></a><span class="c1"># Create a debug pod with DNS tools</span>
+</span><span id="__span-36-2"><a id="__codelineno-36-2" name="__codelineno-36-2" href="#__codelineno-36-2"></a>kubectl<span class="w"> </span>run<span class="w"> </span>debug-dns<span class="w"> </span>--image<span class="o">=</span>nicolaka/netshoot<span class="w"> </span>-it<span class="w"> </span>--rm<span class="w"> </span>--<span class="w"> </span>/bin/bash
+</span><span id="__span-36-3"><a id="__codelineno-36-3" name="__codelineno-36-3" href="#__codelineno-36-3"></a>
+</span><span id="__span-36-4"><a id="__codelineno-36-4" name="__codelineno-36-4" href="#__codelineno-36-4"></a><span class="c1"># Inside the pod:</span>
+</span><span id="__span-36-5"><a id="__codelineno-36-5" name="__codelineno-36-5" href="#__codelineno-36-5"></a><span class="c1"># Test cluster DNS</span>
+</span><span id="__span-36-6"><a id="__codelineno-36-6" name="__codelineno-36-6" href="#__codelineno-36-6"></a>nslookup<span class="w"> </span>kubernetes.default
+</span><span id="__span-36-7"><a id="__codelineno-36-7" name="__codelineno-36-7" href="#__codelineno-36-7"></a>nslookup<span class="w"> </span>kubernetes.default.svc.cluster.local
+</span><span id="__span-36-8"><a id="__codelineno-36-8" name="__codelineno-36-8" href="#__codelineno-36-8"></a>
+</span><span id="__span-36-9"><a id="__codelineno-36-9" name="__codelineno-36-9" href="#__codelineno-36-9"></a><span class="c1"># Test external DNS</span>
+</span><span id="__span-36-10"><a id="__codelineno-36-10" name="__codelineno-36-10" href="#__codelineno-36-10"></a>nslookup<span class="w"> </span>google.com
+</span><span id="__span-36-11"><a id="__codelineno-36-11" name="__codelineno-36-11" href="#__codelineno-36-11"></a>
+</span><span id="__span-36-12"><a id="__codelineno-36-12" name="__codelineno-36-12" href="#__codelineno-36-12"></a><span class="c1"># Use dig for detailed information</span>
+</span><span id="__span-36-13"><a id="__codelineno-36-13" name="__codelineno-36-13" href="#__codelineno-36-13"></a>dig<span class="w"> </span>kubernetes.default
+</span><span id="__span-36-14"><a id="__codelineno-36-14" name="__codelineno-36-14" href="#__codelineno-36-14"></a>dig<span class="w"> </span>@10.96.0.10<span class="w"> </span>kubernetes.default<span class="w">  </span><span class="c1"># Query CoreDNS directly</span>
+</span><span id="__span-36-15"><a id="__codelineno-36-15" name="__codelineno-36-15" href="#__codelineno-36-15"></a>
+</span><span id="__span-36-16"><a id="__codelineno-36-16" name="__codelineno-36-16" href="#__codelineno-36-16"></a><span class="c1"># Test specific service</span>
+</span><span id="__span-36-17"><a id="__codelineno-36-17" name="__codelineno-36-17" href="#__codelineno-36-17"></a>nslookup<span class="w"> </span>nginx.production.svc.cluster.local
+</span><span id="__span-36-18"><a id="__codelineno-36-18" name="__codelineno-36-18" href="#__codelineno-36-18"></a>
+</span><span id="__span-36-19"><a id="__codelineno-36-19" name="__codelineno-36-19" href="#__codelineno-36-19"></a><span class="c1"># Test headless service</span>
+</span><span id="__span-36-20"><a id="__codelineno-36-20" name="__codelineno-36-20" href="#__codelineno-36-20"></a>nslookup<span class="w"> </span>nginx-headless.production.svc.cluster.local
+</span><span id="__span-36-21"><a id="__codelineno-36-21" name="__codelineno-36-21" href="#__codelineno-36-21"></a>
+</span><span id="__span-36-22"><a id="__codelineno-36-22" name="__codelineno-36-22" href="#__codelineno-36-22"></a><span class="c1"># Test SRV records</span>
+</span><span id="__span-36-23"><a id="__codelineno-36-23" name="__codelineno-36-23" href="#__codelineno-36-23"></a>dig<span class="w"> </span>SRV<span class="w"> </span>_http._tcp.nginx.production.svc.cluster.local
+</span></code></pre></div></p>
+<p><strong>Check pod's DNS configuration</strong>:
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-37-1"><a id="__codelineno-37-1" name="__codelineno-37-1" href="#__codelineno-37-1"></a><span class="c1"># View resolv.conf</span>
+</span><span id="__span-37-2"><a id="__codelineno-37-2" name="__codelineno-37-2" href="#__codelineno-37-2"></a>kubectl<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>-it<span class="w"> </span>pod-name<span class="w"> </span>--<span class="w"> </span>cat<span class="w"> </span>/etc/resolv.conf
+</span><span id="__span-37-3"><a id="__codelineno-37-3" name="__codelineno-37-3" href="#__codelineno-37-3"></a>
+</span><span id="__span-37-4"><a id="__codelineno-37-4" name="__codelineno-37-4" href="#__codelineno-37-4"></a><span class="c1"># Expected output:</span>
+</span><span id="__span-37-5"><a id="__codelineno-37-5" name="__codelineno-37-5" href="#__codelineno-37-5"></a><span class="c1"># nameserver 10.96.0.10</span>
+</span><span id="__span-37-6"><a id="__codelineno-37-6" name="__codelineno-37-6" href="#__codelineno-37-6"></a><span class="c1"># search default.svc.cluster.local svc.cluster.local cluster.local</span>
+</span><span id="__span-37-7"><a id="__codelineno-37-7" name="__codelineno-37-7" href="#__codelineno-37-7"></a><span class="c1"># options ndots:5</span>
+</span><span id="__span-37-8"><a id="__codelineno-37-8" name="__codelineno-37-8" href="#__codelineno-37-8"></a>
+</span><span id="__span-37-9"><a id="__codelineno-37-9" name="__codelineno-37-9" href="#__codelineno-37-9"></a><span class="c1"># Verify DNS connectivity</span>
+</span><span id="__span-37-10"><a id="__codelineno-37-10" name="__codelineno-37-10" href="#__codelineno-37-10"></a>kubectl<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>-it<span class="w"> </span>pod-name<span class="w"> </span>--<span class="w"> </span>ping<span class="w"> </span>-c<span class="w"> </span><span class="m">3</span><span class="w"> </span><span class="m">10</span>.96.0.10
+</span></code></pre></div></p>
+<h3 id="common-dns-issues-and-solutions">Common DNS Issues and Solutions<a class="headerlink" href="#common-dns-issues-and-solutions" title="Link to this section">&para;</a></h3>
+<h4 id="issue-1-pod-cannot-resolve-cluster-services">Issue 1: Pod Cannot Resolve Cluster Services<a class="headerlink" href="#issue-1-pod-cannot-resolve-cluster-services" title="Link to this section">&para;</a></h4>
+<p><strong>Symptoms</strong>:
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-38-1"><a id="__codelineno-38-1" name="__codelineno-38-1" href="#__codelineno-38-1"></a>nslookup<span class="w"> </span>kubernetes.default
+</span><span id="__span-38-2"><a id="__codelineno-38-2" name="__codelineno-38-2" href="#__codelineno-38-2"></a>Server:<span class="w">    </span><span class="m">10</span>.96.0.10
+</span><span id="__span-38-3"><a id="__codelineno-38-3" name="__codelineno-38-3" href="#__codelineno-38-3"></a>Address:<span class="w">   </span><span class="m">10</span>.96.0.10#53
+</span><span id="__span-38-4"><a id="__codelineno-38-4" name="__codelineno-38-4" href="#__codelineno-38-4"></a>
+</span><span id="__span-38-5"><a id="__codelineno-38-5" name="__codelineno-38-5" href="#__codelineno-38-5"></a>**<span class="w"> </span>server<span class="w"> </span>can<span class="err">&#39;</span>t<span class="w"> </span>find<span class="w"> </span>kubernetes.default:<span class="w"> </span>NXDOMAIN
+</span></code></pre></div></p>
+<p><strong>Debugging Steps</strong>:
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-39-1"><a id="__codelineno-39-1" name="__codelineno-39-1" href="#__codelineno-39-1"></a><span class="c1"># 1. Check CoreDNS pods are running</span>
+</span><span id="__span-39-2"><a id="__codelineno-39-2" name="__codelineno-39-2" href="#__codelineno-39-2"></a>kubectl<span class="w"> </span>get<span class="w"> </span>pods<span class="w"> </span>-n<span class="w"> </span>kube-system<span class="w"> </span>-l<span class="w"> </span>k8s-app<span class="o">=</span>kube-dns
+</span><span id="__span-39-3"><a id="__codelineno-39-3" name="__codelineno-39-3" href="#__codelineno-39-3"></a>NAME<span class="w">                      </span>READY<span class="w">   </span>STATUS<span class="w">    </span>RESTARTS<span class="w">   </span>AGE
+</span><span id="__span-39-4"><a id="__codelineno-39-4" name="__codelineno-39-4" href="#__codelineno-39-4"></a>coredns-5d78c9869d-abcde<span class="w">  </span><span class="m">1</span>/1<span class="w">     </span>Running<span class="w">   </span><span class="m">0</span><span class="w">          </span>5d
+</span><span id="__span-39-5"><a id="__codelineno-39-5" name="__codelineno-39-5" href="#__codelineno-39-5"></a>coredns-5d78c9869d-fghij<span class="w">  </span><span class="m">1</span>/1<span class="w">     </span>Running<span class="w">   </span><span class="m">0</span><span class="w">          </span>5d
+</span><span id="__span-39-6"><a id="__codelineno-39-6" name="__codelineno-39-6" href="#__codelineno-39-6"></a>
+</span><span id="__span-39-7"><a id="__codelineno-39-7" name="__codelineno-39-7" href="#__codelineno-39-7"></a><span class="c1"># 2. Check CoreDNS service exists and has endpoints</span>
+</span><span id="__span-39-8"><a id="__codelineno-39-8" name="__codelineno-39-8" href="#__codelineno-39-8"></a>kubectl<span class="w"> </span>get<span class="w"> </span>svc<span class="w"> </span>-n<span class="w"> </span>kube-system<span class="w"> </span>kube-dns
+</span><span id="__span-39-9"><a id="__codelineno-39-9" name="__codelineno-39-9" href="#__codelineno-39-9"></a>kubectl<span class="w"> </span>get<span class="w"> </span>endpoints<span class="w"> </span>-n<span class="w"> </span>kube-system<span class="w"> </span>kube-dns
+</span><span id="__span-39-10"><a id="__codelineno-39-10" name="__codelineno-39-10" href="#__codelineno-39-10"></a>
+</span><span id="__span-39-11"><a id="__codelineno-39-11" name="__codelineno-39-11" href="#__codelineno-39-11"></a><span class="c1"># 3. Check CoreDNS logs for errors</span>
+</span><span id="__span-39-12"><a id="__codelineno-39-12" name="__codelineno-39-12" href="#__codelineno-39-12"></a>kubectl<span class="w"> </span>logs<span class="w"> </span>-n<span class="w"> </span>kube-system<span class="w"> </span>-l<span class="w"> </span>k8s-app<span class="o">=</span>kube-dns<span class="w"> </span>--tail<span class="o">=</span><span class="m">100</span>
+</span><span id="__span-39-13"><a id="__codelineno-39-13" name="__codelineno-39-13" href="#__codelineno-39-13"></a>
+</span><span id="__span-39-14"><a id="__codelineno-39-14" name="__codelineno-39-14" href="#__codelineno-39-14"></a><span class="c1"># 4. Verify pod&#39;s resolv.conf points to CoreDNS</span>
+</span><span id="__span-39-15"><a id="__codelineno-39-15" name="__codelineno-39-15" href="#__codelineno-39-15"></a>kubectl<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>-it<span class="w"> </span>pod-name<span class="w"> </span>--<span class="w"> </span>cat<span class="w"> </span>/etc/resolv.conf
+</span><span id="__span-39-16"><a id="__codelineno-39-16" name="__codelineno-39-16" href="#__codelineno-39-16"></a>
+</span><span id="__span-39-17"><a id="__codelineno-39-17" name="__codelineno-39-17" href="#__codelineno-39-17"></a><span class="c1"># 5. Test DNS directly from CoreDNS service IP</span>
+</span><span id="__span-39-18"><a id="__codelineno-39-18" name="__codelineno-39-18" href="#__codelineno-39-18"></a>kubectl<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>-it<span class="w"> </span>pod-name<span class="w"> </span>--<span class="w"> </span>nslookup<span class="w"> </span>kubernetes.default<span class="w"> </span><span class="m">10</span>.96.0.10
+</span></code></pre></div></p>
+<p><strong>Common Causes</strong>:
+- CoreDNS pods not running (check pod status)
+- Wrong nameserver in <code>/etc/resolv.conf</code> (kubelet configuration issue)
+- Network policy blocking DNS traffic (port 53 UDP/TCP)
+- CoreDNS service ClusterIP changed (check service YAML)</p>
+<p><strong>Solutions</strong>:
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-40-1"><a id="__codelineno-40-1" name="__codelineno-40-1" href="#__codelineno-40-1"></a><span class="c1"># Restart CoreDNS pods</span>
+</span><span id="__span-40-2"><a id="__codelineno-40-2" name="__codelineno-40-2" href="#__codelineno-40-2"></a>kubectl<span class="w"> </span>rollout<span class="w"> </span>restart<span class="w"> </span>deployment<span class="w"> </span>coredns<span class="w"> </span>-n<span class="w"> </span>kube-system
+</span><span id="__span-40-3"><a id="__codelineno-40-3" name="__codelineno-40-3" href="#__codelineno-40-3"></a>
+</span><span id="__span-40-4"><a id="__codelineno-40-4" name="__codelineno-40-4" href="#__codelineno-40-4"></a><span class="c1"># Check network policies blocking DNS</span>
+</span><span id="__span-40-5"><a id="__codelineno-40-5" name="__codelineno-40-5" href="#__codelineno-40-5"></a>kubectl<span class="w"> </span>get<span class="w"> </span>networkpolicy<span class="w"> </span>-A
+</span><span id="__span-40-6"><a id="__codelineno-40-6" name="__codelineno-40-6" href="#__codelineno-40-6"></a>kubectl<span class="w"> </span>describe<span class="w"> </span>networkpolicy<span class="w"> </span>&lt;policy-name&gt;
+</span><span id="__span-40-7"><a id="__codelineno-40-7" name="__codelineno-40-7" href="#__codelineno-40-7"></a>
+</span><span id="__span-40-8"><a id="__codelineno-40-8" name="__codelineno-40-8" href="#__codelineno-40-8"></a><span class="c1"># Verify kubelet DNS configuration</span>
+</span><span id="__span-40-9"><a id="__codelineno-40-9" name="__codelineno-40-9" href="#__codelineno-40-9"></a>kubectl<span class="w"> </span>get<span class="w"> </span>configmap<span class="w"> </span>kubelet-config<span class="w"> </span>-n<span class="w"> </span>kube-system<span class="w"> </span>-o<span class="w"> </span>yaml<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>clusterDNS
+</span></code></pre></div></p>
+<h4 id="issue-2-cannot-resolve-external-domains">Issue 2: Cannot Resolve External Domains<a class="headerlink" href="#issue-2-cannot-resolve-external-domains" title="Link to this section">&para;</a></h4>
+<p><strong>Symptoms</strong>:
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-41-1"><a id="__codelineno-41-1" name="__codelineno-41-1" href="#__codelineno-41-1"></a>nslookup<span class="w"> </span>google.com
+</span><span id="__span-41-2"><a id="__codelineno-41-2" name="__codelineno-41-2" href="#__codelineno-41-2"></a>Server:<span class="w">    </span><span class="m">10</span>.96.0.10
+</span><span id="__span-41-3"><a id="__codelineno-41-3" name="__codelineno-41-3" href="#__codelineno-41-3"></a>Address:<span class="w">   </span><span class="m">10</span>.96.0.10#53
+</span><span id="__span-41-4"><a id="__codelineno-41-4" name="__codelineno-41-4" href="#__codelineno-41-4"></a>
+</span><span id="__span-41-5"><a id="__codelineno-41-5" name="__codelineno-41-5" href="#__codelineno-41-5"></a>**<span class="w"> </span>server<span class="w"> </span>can<span class="err">&#39;</span>t<span class="w"> </span>find<span class="w"> </span>google.com:<span class="w"> </span>NXDOMAIN
+</span></code></pre></div></p>
+<p><strong>Debugging Steps</strong>:
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-42-1"><a id="__codelineno-42-1" name="__codelineno-42-1" href="#__codelineno-42-1"></a><span class="c1"># 1. Check CoreDNS forward configuration</span>
+</span><span id="__span-42-2"><a id="__codelineno-42-2" name="__codelineno-42-2" href="#__codelineno-42-2"></a>kubectl<span class="w"> </span>get<span class="w"> </span>configmap<span class="w"> </span>coredns<span class="w"> </span>-n<span class="w"> </span>kube-system<span class="w"> </span>-o<span class="w"> </span>yaml<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-A<span class="w"> </span><span class="m">5</span><span class="w"> </span>forward
+</span><span id="__span-42-3"><a id="__codelineno-42-3" name="__codelineno-42-3" href="#__codelineno-42-3"></a>
+</span><span id="__span-42-4"><a id="__codelineno-42-4" name="__codelineno-42-4" href="#__codelineno-42-4"></a><span class="c1"># 2. Check CoreDNS can reach upstream DNS</span>
+</span><span id="__span-42-5"><a id="__codelineno-42-5" name="__codelineno-42-5" href="#__codelineno-42-5"></a>kubectl<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>-it<span class="w"> </span>-n<span class="w"> </span>kube-system<span class="w"> </span>&lt;coredns-pod&gt;<span class="w"> </span>--<span class="w"> </span>cat<span class="w"> </span>/etc/resolv.conf
+</span><span id="__span-42-6"><a id="__codelineno-42-6" name="__codelineno-42-6" href="#__codelineno-42-6"></a>kubectl<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>-it<span class="w"> </span>-n<span class="w"> </span>kube-system<span class="w"> </span>&lt;coredns-pod&gt;<span class="w"> </span>--<span class="w"> </span>nslookup<span class="w"> </span>google.com
+</span><span id="__span-42-7"><a id="__codelineno-42-7" name="__codelineno-42-7" href="#__codelineno-42-7"></a>
+</span><span id="__span-42-8"><a id="__codelineno-42-8" name="__codelineno-42-8" href="#__codelineno-42-8"></a><span class="c1"># 3. Test from CoreDNS pod directly</span>
+</span><span id="__span-42-9"><a id="__codelineno-42-9" name="__codelineno-42-9" href="#__codelineno-42-9"></a>kubectl<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>-it<span class="w"> </span>-n<span class="w"> </span>kube-system<span class="w"> </span>&lt;coredns-pod&gt;<span class="w"> </span>--<span class="w"> </span>ping<span class="w"> </span>-c<span class="w"> </span><span class="m">3</span><span class="w"> </span><span class="m">8</span>.8.8.8
+</span></code></pre></div></p>
+<p><strong>Common Causes</strong>:
+- Upstream DNS servers unreachable (firewall/network issue)
+- Wrong upstream DNS configuration in Corefile
+- No internet connectivity from cluster nodes
+- DNS forwarding disabled or misconfigured</p>
+<p><strong>Solutions</strong>:
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-43-1"><a id="__codelineno-43-1" name="__codelineno-43-1" href="#__codelineno-43-1"></a><span class="c1"># Update upstream DNS servers in Corefile</span>
+</span><span id="__span-43-2"><a id="__codelineno-43-2" name="__codelineno-43-2" href="#__codelineno-43-2"></a>kubectl<span class="w"> </span>edit<span class="w"> </span>configmap<span class="w"> </span>coredns<span class="w"> </span>-n<span class="w"> </span>kube-system
+</span><span id="__span-43-3"><a id="__codelineno-43-3" name="__codelineno-43-3" href="#__codelineno-43-3"></a>
+</span><span id="__span-43-4"><a id="__codelineno-43-4" name="__codelineno-43-4" href="#__codelineno-43-4"></a><span class="c1"># Change:</span>
+</span><span id="__span-43-5"><a id="__codelineno-43-5" name="__codelineno-43-5" href="#__codelineno-43-5"></a><span class="c1"># forward . /etc/resolv.conf</span>
+</span><span id="__span-43-6"><a id="__codelineno-43-6" name="__codelineno-43-6" href="#__codelineno-43-6"></a><span class="c1"># To:</span>
+</span><span id="__span-43-7"><a id="__codelineno-43-7" name="__codelineno-43-7" href="#__codelineno-43-7"></a><span class="c1"># forward . 8.8.8.8 8.8.4.4 1.1.1.1</span>
+</span><span id="__span-43-8"><a id="__codelineno-43-8" name="__codelineno-43-8" href="#__codelineno-43-8"></a>
+</span><span id="__span-43-9"><a id="__codelineno-43-9" name="__codelineno-43-9" href="#__codelineno-43-9"></a><span class="c1"># CoreDNS will auto-reload with reload plugin</span>
+</span></code></pre></div></p>
+<h4 id="issue-3-service-exists-but-dns-doesnt-resolve">Issue 3: Service Exists But DNS Doesn't Resolve<a class="headerlink" href="#issue-3-service-exists-but-dns-doesnt-resolve" title="Link to this section">&para;</a></h4>
+<p><strong>Symptoms</strong>:
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-44-1"><a id="__codelineno-44-1" name="__codelineno-44-1" href="#__codelineno-44-1"></a>kubectl<span class="w"> </span>get<span class="w"> </span>svc<span class="w"> </span>nginx
+</span><span id="__span-44-2"><a id="__codelineno-44-2" name="__codelineno-44-2" href="#__codelineno-44-2"></a>NAME<span class="w">    </span>TYPE<span class="w">        </span>CLUSTER-IP<span class="w">     </span>EXTERNAL-IP<span class="w">   </span>PORT<span class="o">(</span>S<span class="o">)</span><span class="w">   </span>AGE
+</span><span id="__span-44-3"><a id="__codelineno-44-3" name="__codelineno-44-3" href="#__codelineno-44-3"></a>nginx<span class="w">   </span>ClusterIP<span class="w">   </span><span class="m">10</span>.96.100.50<span class="w">   </span>&lt;none&gt;<span class="w">        </span><span class="m">80</span>/TCP<span class="w">    </span>5m
+</span><span id="__span-44-4"><a id="__codelineno-44-4" name="__codelineno-44-4" href="#__codelineno-44-4"></a>
+</span><span id="__span-44-5"><a id="__codelineno-44-5" name="__codelineno-44-5" href="#__codelineno-44-5"></a>nslookup<span class="w"> </span>nginx.default.svc.cluster.local
+</span><span id="__span-44-6"><a id="__codelineno-44-6" name="__codelineno-44-6" href="#__codelineno-44-6"></a>**<span class="w"> </span>server<span class="w"> </span>can<span class="err">&#39;</span>t<span class="w"> </span>find<span class="w"> </span>nginx.default.svc.cluster.local:<span class="w"> </span>NXDOMAIN
+</span></code></pre></div></p>
+<p><strong>Debugging Steps</strong>:
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-45-1"><a id="__codelineno-45-1" name="__codelineno-45-1" href="#__codelineno-45-1"></a><span class="c1"># 1. Check if service has endpoints</span>
+</span><span id="__span-45-2"><a id="__codelineno-45-2" name="__codelineno-45-2" href="#__codelineno-45-2"></a>kubectl<span class="w"> </span>get<span class="w"> </span>endpoints<span class="w"> </span>nginx
+</span><span id="__span-45-3"><a id="__codelineno-45-3" name="__codelineno-45-3" href="#__codelineno-45-3"></a>NAME<span class="w">    </span>ENDPOINTS<span class="w">         </span>AGE
+</span><span id="__span-45-4"><a id="__codelineno-45-4" name="__codelineno-45-4" href="#__codelineno-45-4"></a>nginx<span class="w">   </span>&lt;none&gt;<span class="w">            </span>5m<span class="w">  </span><span class="c1"># No endpoints!</span>
+</span><span id="__span-45-5"><a id="__codelineno-45-5" name="__codelineno-45-5" href="#__codelineno-45-5"></a>
+</span><span id="__span-45-6"><a id="__codelineno-45-6" name="__codelineno-45-6" href="#__codelineno-45-6"></a><span class="c1"># 2. Check pod labels match service selector</span>
+</span><span id="__span-45-7"><a id="__codelineno-45-7" name="__codelineno-45-7" href="#__codelineno-45-7"></a>kubectl<span class="w"> </span>get<span class="w"> </span>svc<span class="w"> </span>nginx<span class="w"> </span>-o<span class="w"> </span>yaml<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-A<span class="w"> </span><span class="m">5</span><span class="w"> </span>selector
+</span><span id="__span-45-8"><a id="__codelineno-45-8" name="__codelineno-45-8" href="#__codelineno-45-8"></a>kubectl<span class="w"> </span>get<span class="w"> </span>pods<span class="w"> </span>-l<span class="w"> </span><span class="nv">app</span><span class="o">=</span>nginx<span class="w"> </span>--show-labels
+</span><span id="__span-45-9"><a id="__codelineno-45-9" name="__codelineno-45-9" href="#__codelineno-45-9"></a>
+</span><span id="__span-45-10"><a id="__codelineno-45-10" name="__codelineno-45-10" href="#__codelineno-45-10"></a><span class="c1"># 3. Check pods are ready</span>
+</span><span id="__span-45-11"><a id="__codelineno-45-11" name="__codelineno-45-11" href="#__codelineno-45-11"></a>kubectl<span class="w"> </span>get<span class="w"> </span>pods<span class="w"> </span>-l<span class="w"> </span><span class="nv">app</span><span class="o">=</span>nginx
+</span><span id="__span-45-12"><a id="__codelineno-45-12" name="__codelineno-45-12" href="#__codelineno-45-12"></a>
+</span><span id="__span-45-13"><a id="__codelineno-45-13" name="__codelineno-45-13" href="#__codelineno-45-13"></a><span class="c1"># 4. Force DNS cache clear by restarting CoreDNS</span>
+</span><span id="__span-45-14"><a id="__codelineno-45-14" name="__codelineno-45-14" href="#__codelineno-45-14"></a>kubectl<span class="w"> </span>rollout<span class="w"> </span>restart<span class="w"> </span>deployment<span class="w"> </span>coredns<span class="w"> </span>-n<span class="w"> </span>kube-system
+</span></code></pre></div></p>
+<p><strong>Common Causes</strong>:
+- Service selector doesn't match any pods (label mismatch)
+- Pods exist but aren't ready (readiness probe failing)
+- DNS cache stale (wait 30s or restart CoreDNS)
+- Service in wrong namespace</p>
+<p><strong>Solutions</strong>:
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-46-1"><a id="__codelineno-46-1" name="__codelineno-46-1" href="#__codelineno-46-1"></a><span class="c1"># Fix service selector to match pod labels</span>
+</span><span id="__span-46-2"><a id="__codelineno-46-2" name="__codelineno-46-2" href="#__codelineno-46-2"></a>kubectl<span class="w"> </span>edit<span class="w"> </span>svc<span class="w"> </span>nginx
+</span><span id="__span-46-3"><a id="__codelineno-46-3" name="__codelineno-46-3" href="#__codelineno-46-3"></a>
+</span><span id="__span-46-4"><a id="__codelineno-46-4" name="__codelineno-46-4" href="#__codelineno-46-4"></a><span class="c1"># Check why pods aren&#39;t ready</span>
+</span><span id="__span-46-5"><a id="__codelineno-46-5" name="__codelineno-46-5" href="#__codelineno-46-5"></a>kubectl<span class="w"> </span>describe<span class="w"> </span>pod<span class="w"> </span>&lt;pod-name&gt;
+</span><span id="__span-46-6"><a id="__codelineno-46-6" name="__codelineno-46-6" href="#__codelineno-46-6"></a>
+</span><span id="__span-46-7"><a id="__codelineno-46-7" name="__codelineno-46-7" href="#__codelineno-46-7"></a><span class="c1"># Verify labels match</span>
+</span><span id="__span-46-8"><a id="__codelineno-46-8" name="__codelineno-46-8" href="#__codelineno-46-8"></a>kubectl<span class="w"> </span>get<span class="w"> </span>pods<span class="w"> </span>--show-labels
+</span><span id="__span-46-9"><a id="__codelineno-46-9" name="__codelineno-46-9" href="#__codelineno-46-9"></a>kubectl<span class="w"> </span>get<span class="w"> </span>svc<span class="w"> </span>nginx<span class="w"> </span>-o<span class="w"> </span><span class="nv">jsonpath</span><span class="o">=</span><span class="s1">&#39;{.spec.selector}&#39;</span>
+</span></code></pre></div></p>
+<h4 id="issue-4-headless-service-returns-no-ips">Issue 4: Headless Service Returns No IPs<a class="headerlink" href="#issue-4-headless-service-returns-no-ips" title="Link to this section">&para;</a></h4>
+<p><strong>Debugging</strong>:
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-47-1"><a id="__codelineno-47-1" name="__codelineno-47-1" href="#__codelineno-47-1"></a><span class="c1"># Check endpoints exist</span>
+</span><span id="__span-47-2"><a id="__codelineno-47-2" name="__codelineno-47-2" href="#__codelineno-47-2"></a>kubectl<span class="w"> </span>get<span class="w"> </span>endpoints<span class="w"> </span>nginx-headless
+</span><span id="__span-47-3"><a id="__codelineno-47-3" name="__codelineno-47-3" href="#__codelineno-47-3"></a>
+</span><span id="__span-47-4"><a id="__codelineno-47-4" name="__codelineno-47-4" href="#__codelineno-47-4"></a><span class="c1"># Check pods are ready and have IPs</span>
+</span><span id="__span-47-5"><a id="__codelineno-47-5" name="__codelineno-47-5" href="#__codelineno-47-5"></a>kubectl<span class="w"> </span>get<span class="w"> </span>pods<span class="w"> </span>-l<span class="w"> </span><span class="nv">app</span><span class="o">=</span>nginx<span class="w"> </span>-o<span class="w"> </span>wide
+</span><span id="__span-47-6"><a id="__codelineno-47-6" name="__codelineno-47-6" href="#__codelineno-47-6"></a>
+</span><span id="__span-47-7"><a id="__codelineno-47-7" name="__codelineno-47-7" href="#__codelineno-47-7"></a><span class="c1"># Verify service is truly headless</span>
+</span><span id="__span-47-8"><a id="__codelineno-47-8" name="__codelineno-47-8" href="#__codelineno-47-8"></a>kubectl<span class="w"> </span>get<span class="w"> </span>svc<span class="w"> </span>nginx-headless<span class="w"> </span>-o<span class="w"> </span>yaml<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>clusterIP
+</span><span id="__span-47-9"><a id="__codelineno-47-9" name="__codelineno-47-9" href="#__codelineno-47-9"></a><span class="c1"># Should show: clusterIP: None</span>
+</span><span id="__span-47-10"><a id="__codelineno-47-10" name="__codelineno-47-10" href="#__codelineno-47-10"></a>
+</span><span id="__span-47-11"><a id="__codelineno-47-11" name="__codelineno-47-11" href="#__codelineno-47-11"></a><span class="c1"># Test DNS resolution</span>
+</span><span id="__span-47-12"><a id="__codelineno-47-12" name="__codelineno-47-12" href="#__codelineno-47-12"></a>kubectl<span class="w"> </span>run<span class="w"> </span>debug<span class="w"> </span>--image<span class="o">=</span>nicolaka/netshoot<span class="w"> </span>-it<span class="w"> </span>--rm<span class="w"> </span>--<span class="w"> </span>nslookup<span class="w"> </span>nginx-headless.default.svc.cluster.local
+</span></code></pre></div></p>
+<h3 id="coredns-log-analysis">CoreDNS Log Analysis<a class="headerlink" href="#coredns-log-analysis" title="Link to this section">&para;</a></h3>
+<p><strong>View CoreDNS logs</strong>:
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-48-1"><a id="__codelineno-48-1" name="__codelineno-48-1" href="#__codelineno-48-1"></a><span class="c1"># Follow CoreDNS logs</span>
+</span><span id="__span-48-2"><a id="__codelineno-48-2" name="__codelineno-48-2" href="#__codelineno-48-2"></a>kubectl<span class="w"> </span>logs<span class="w"> </span>-n<span class="w"> </span>kube-system<span class="w"> </span>-l<span class="w"> </span>k8s-app<span class="o">=</span>kube-dns<span class="w"> </span>-f
+</span><span id="__span-48-3"><a id="__codelineno-48-3" name="__codelineno-48-3" href="#__codelineno-48-3"></a>
+</span><span id="__span-48-4"><a id="__codelineno-48-4" name="__codelineno-48-4" href="#__codelineno-48-4"></a><span class="c1"># Filter for errors</span>
+</span><span id="__span-48-5"><a id="__codelineno-48-5" name="__codelineno-48-5" href="#__codelineno-48-5"></a>kubectl<span class="w"> </span>logs<span class="w"> </span>-n<span class="w"> </span>kube-system<span class="w"> </span>-l<span class="w"> </span>k8s-app<span class="o">=</span>kube-dns<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-i<span class="w"> </span>error
+</span><span id="__span-48-6"><a id="__codelineno-48-6" name="__codelineno-48-6" href="#__codelineno-48-6"></a>
+</span><span id="__span-48-7"><a id="__codelineno-48-7" name="__codelineno-48-7" href="#__codelineno-48-7"></a><span class="c1"># Look for specific query</span>
+</span><span id="__span-48-8"><a id="__codelineno-48-8" name="__codelineno-48-8" href="#__codelineno-48-8"></a>kubectl<span class="w"> </span>logs<span class="w"> </span>-n<span class="w"> </span>kube-system<span class="w"> </span>-l<span class="w"> </span>k8s-app<span class="o">=</span>kube-dns<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span><span class="s2">&quot;nginx.default&quot;</span>
+</span></code></pre></div></p>
+<p><strong>Enable query logging</strong> (debugging only - high volume):
+<div class="language-yaml highlight"><pre><span></span><code><span id="__span-49-1"><a id="__codelineno-49-1" name="__codelineno-49-1" href="#__codelineno-49-1"></a><span class="c1"># Add to Corefile</span>
+</span><span id="__span-49-2"><a id="__codelineno-49-2" name="__codelineno-49-2" href="#__codelineno-49-2"></a><span class="l l-Scalar l-Scalar-Plain">.:53 {</span>
+</span><span id="__span-49-3"><a id="__codelineno-49-3" name="__codelineno-49-3" href="#__codelineno-49-3"></a><span class="w">    </span><span class="l l-Scalar l-Scalar-Plain">log</span><span class="w">  </span><span class="c1"># Enable query logging</span>
+</span><span id="__span-49-4"><a id="__codelineno-49-4" name="__codelineno-49-4" href="#__codelineno-49-4"></a><span class="w">    </span><span class="l l-Scalar l-Scalar-Plain">errors</span>
+</span><span id="__span-49-5"><a id="__codelineno-49-5" name="__codelineno-49-5" href="#__codelineno-49-5"></a><span class="w">    </span><span class="l l-Scalar l-Scalar-Plain"># ... rest of config</span>
+</span><span id="__span-49-6"><a id="__codelineno-49-6" name="__codelineno-49-6" href="#__codelineno-49-6"></a><span class="l l-Scalar l-Scalar-Plain">}</span>
+</span></code></pre></div></p>
+<p><strong>Common Error Patterns</strong>:
+<div class="language-text highlight"><pre><span></span><code><span id="__span-50-1"><a id="__codelineno-50-1" name="__codelineno-50-1" href="#__codelineno-50-1"></a>[ERROR] plugin/errors: 2 example.com. A: read udp 10.96.0.10:53-&gt;8.8.8.8:53: i/o timeout
+</span><span id="__span-50-2"><a id="__codelineno-50-2" name="__codelineno-50-2" href="#__codelineno-50-2"></a>→ Upstream DNS unreachable
+</span><span id="__span-50-3"><a id="__codelineno-50-3" name="__codelineno-50-3" href="#__codelineno-50-3"></a>
+</span><span id="__span-50-4"><a id="__codelineno-50-4" name="__codelineno-50-4" href="#__codelineno-50-4"></a>[ERROR] plugin/errors: 2 nginx.default.svc.cluster.local. A: no such service
+</span><span id="__span-50-5"><a id="__codelineno-50-5" name="__codelineno-50-5" href="#__codelineno-50-5"></a>→ Service doesn&#39;t exist
+</span><span id="__span-50-6"><a id="__codelineno-50-6" name="__codelineno-50-6" href="#__codelineno-50-6"></a>
+</span><span id="__span-50-7"><a id="__codelineno-50-7" name="__codelineno-50-7" href="#__codelineno-50-7"></a>[INFO] NXDOMAIN: nginx.production.svc.cluster.local. A: 127.0.0.1:53
+</span><span id="__span-50-8"><a id="__codelineno-50-8" name="__codelineno-50-8" href="#__codelineno-50-8"></a>→ Service not found (check namespace, service name)
+</span></code></pre></div></p>
+<hr />
+<h2 id="advanced-dns-topics">Advanced DNS Topics<a class="headerlink" href="#advanced-dns-topics" title="Link to this section">&para;</a></h2>
+<h3 id="nodelocal-dnscache-2025-best-practice">NodeLocal DNSCache (2025 Best Practice)<a class="headerlink" href="#nodelocal-dnscache-2025-best-practice" title="Link to this section">&para;</a></h3>
+<p>NodeLocal DNSCache is a DaemonSet that runs a DNS caching agent on cluster nodes, significantly improving DNS performance and reliability by:</p>
+<ul>
+<li>Reducing CoreDNS load (especially in large clusters)</li>
+<li>Minimizing DNS query latency (queries stay on local node)</li>
+<li>Improving reliability (local cache survives CoreDNS pod restarts)</li>
+<li>Reducing network hops (no DNAT traversal)</li>
+</ul>
+<p><strong>Architecture</strong>:</p>
+<pre class="mermaid"><code>graph TB
+    subgraph "Node 1"
+        Pod1[Application Pod]
+        NodeCache1[NodeLocal DNSCache&lt;br/&gt;169.254.20.10]
+        Kubelet1[kubelet]
+    end
+
+    subgraph "Node 2"
+        Pod2[Application Pod]
+        NodeCache2[NodeLocal DNSCache&lt;br/&gt;169.254.20.10]
+        Kubelet2[kubelet]
+    end
+
+    subgraph "kube-system Namespace"
+        CoreDNS1[CoreDNS Pod]
+        CoreDNS2[CoreDNS Pod]
+    end
+
+    Pod1 --&gt;|DNS Query| NodeCache1
+    Pod2 --&gt;|DNS Query| NodeCache2
+
+    NodeCache1 --&gt;|Cache Miss| CoreDNS1
+    NodeCache1 --&gt;|Cache Miss| CoreDNS2
+    NodeCache2 --&gt;|Cache Miss| CoreDNS1
+    NodeCache2 --&gt;|Cache Miss| CoreDNS2
+
+    Kubelet1 -.-&gt;|Configures&lt;br/&gt;169.254.20.10| Pod1
+    Kubelet2 -.-&gt;|Configures&lt;br/&gt;169.254.20.10| Pod2
+
+    style Pod1 fill:#e1f5ff
+    style Pod2 fill:#e1f5ff
+    style NodeCache1 fill:#d4edda
+    style NodeCache2 fill:#d4edda
+    style CoreDNS1 fill:#fff4e1
+    style CoreDNS2 fill:#fff4e1</code></pre>
+<p><strong>Installation</strong> (Kubernetes 1.18+):
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-51-1"><a id="__codelineno-51-1" name="__codelineno-51-1" href="#__codelineno-51-1"></a><span class="c1"># Download NodeLocal DNSCache manifest</span>
+</span><span id="__span-51-2"><a id="__codelineno-51-2" name="__codelineno-51-2" href="#__codelineno-51-2"></a>kubectl<span class="w"> </span>apply<span class="w"> </span>-f<span class="w"> </span>https://k8s.io/examples/admin/dns/nodelocaldns.yaml
+</span><span id="__span-51-3"><a id="__codelineno-51-3" name="__codelineno-51-3" href="#__codelineno-51-3"></a>
+</span><span id="__span-51-4"><a id="__codelineno-51-4" name="__codelineno-51-4" href="#__codelineno-51-4"></a><span class="c1"># Verify DaemonSet running on all nodes</span>
+</span><span id="__span-51-5"><a id="__codelineno-51-5" name="__codelineno-51-5" href="#__codelineno-51-5"></a>kubectl<span class="w"> </span>get<span class="w"> </span>daemonset<span class="w"> </span>node-local-dns<span class="w"> </span>-n<span class="w"> </span>kube-system
+</span><span id="__span-51-6"><a id="__codelineno-51-6" name="__codelineno-51-6" href="#__codelineno-51-6"></a>NAME<span class="w">             </span>DESIRED<span class="w">   </span>CURRENT<span class="w">   </span>READY<span class="w">   </span>UP-TO-DATE<span class="w">   </span>AVAILABLE
+</span><span id="__span-51-7"><a id="__codelineno-51-7" name="__codelineno-51-7" href="#__codelineno-51-7"></a>node-local-dns<span class="w">   </span><span class="m">3</span><span class="w">         </span><span class="m">3</span><span class="w">         </span><span class="m">3</span><span class="w">       </span><span class="m">3</span><span class="w">            </span><span class="m">3</span>
+</span></code></pre></div></p>
+<p><strong>How It Works</strong>:
+- NodeLocal DNSCache listens on link-local IP <code>169.254.20.10</code>
+- kubelet configures pods to use <code>169.254.20.10</code> as nameserver
+- Cache miss queries are forwarded to ClusterIP <code>10.96.0.10</code> (CoreDNS)
+- Cache hit queries are served immediately from node-local cache</p>
+<p><strong>Performance Benefits</strong>:
+- 50-90% reduction in DNS query latency
+- 70% reduction in CoreDNS CPU usage
+- Improved reliability during CoreDNS pod restarts</p>
+<h3 id="dns-policies">DNS Policies<a class="headerlink" href="#dns-policies" title="Link to this section">&para;</a></h3>
+<p>Pods can use different DNS policies to control DNS resolution behavior:</p>
+<div class="language-yaml highlight"><pre><span></span><code><span id="__span-52-1"><a id="__codelineno-52-1" name="__codelineno-52-1" href="#__codelineno-52-1"></a><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">v1</span>
+</span><span id="__span-52-2"><a id="__codelineno-52-2" name="__codelineno-52-2" href="#__codelineno-52-2"></a><span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Pod</span>
+</span><span id="__span-52-3"><a id="__codelineno-52-3" name="__codelineno-52-3" href="#__codelineno-52-3"></a><span class="nt">metadata</span><span class="p">:</span>
+</span><span id="__span-52-4"><a id="__codelineno-52-4" name="__codelineno-52-4" href="#__codelineno-52-4"></a><span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">dns-example</span>
+</span><span id="__span-52-5"><a id="__codelineno-52-5" name="__codelineno-52-5" href="#__codelineno-52-5"></a><span class="nt">spec</span><span class="p">:</span>
+</span><span id="__span-52-6"><a id="__codelineno-52-6" name="__codelineno-52-6" href="#__codelineno-52-6"></a><span class="w">  </span><span class="nt">dnsPolicy</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ClusterFirst</span><span class="w">  </span><span class="c1"># Default</span>
+</span><span id="__span-52-7"><a id="__codelineno-52-7" name="__codelineno-52-7" href="#__codelineno-52-7"></a><span class="w">  </span><span class="nt">containers</span><span class="p">:</span>
+</span><span id="__span-52-8"><a id="__codelineno-52-8" name="__codelineno-52-8" href="#__codelineno-52-8"></a><span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">test</span>
+</span><span id="__span-52-9"><a id="__codelineno-52-9" name="__codelineno-52-9" href="#__codelineno-52-9"></a><span class="w">    </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">nginx</span>
+</span></code></pre></div>
+<p><strong>DNS Policy Options</strong>:</p>
+<table>
+<thead>
+<tr>
+<th>Policy</th>
+<th>Behavior</th>
+<th>Use Case</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>ClusterFirst</strong></td>
+<td>Use cluster DNS (CoreDNS), fallback to node's DNS for non-cluster domains</td>
+<td>Default, most common</td>
+</tr>
+<tr>
+<td><strong>ClusterFirstWithHostNet</strong></td>
+<td>Like ClusterFirst but for pods with <code>hostNetwork: true</code></td>
+<td>Pods using host networking</td>
+</tr>
+<tr>
+<td><strong>Default</strong></td>
+<td>Inherit DNS config from node's <code>/etc/resolv.conf</code></td>
+<td>Legacy workloads</td>
+</tr>
+<tr>
+<td><strong>None</strong></td>
+<td>No DNS configuration (must specify <code>dnsConfig</code>)</td>
+<td>Custom DNS setup</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Custom DNS Configuration</strong>:
+<div class="language-yaml highlight"><pre><span></span><code><span id="__span-53-1"><a id="__codelineno-53-1" name="__codelineno-53-1" href="#__codelineno-53-1"></a><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">v1</span>
+</span><span id="__span-53-2"><a id="__codelineno-53-2" name="__codelineno-53-2" href="#__codelineno-53-2"></a><span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Pod</span>
+</span><span id="__span-53-3"><a id="__codelineno-53-3" name="__codelineno-53-3" href="#__codelineno-53-3"></a><span class="nt">metadata</span><span class="p">:</span>
+</span><span id="__span-53-4"><a id="__codelineno-53-4" name="__codelineno-53-4" href="#__codelineno-53-4"></a><span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">custom-dns</span>
+</span><span id="__span-53-5"><a id="__codelineno-53-5" name="__codelineno-53-5" href="#__codelineno-53-5"></a><span class="nt">spec</span><span class="p">:</span>
+</span><span id="__span-53-6"><a id="__codelineno-53-6" name="__codelineno-53-6" href="#__codelineno-53-6"></a><span class="w">  </span><span class="nt">dnsPolicy</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">None</span>
+</span><span id="__span-53-7"><a id="__codelineno-53-7" name="__codelineno-53-7" href="#__codelineno-53-7"></a><span class="w">  </span><span class="nt">dnsConfig</span><span class="p">:</span>
+</span><span id="__span-53-8"><a id="__codelineno-53-8" name="__codelineno-53-8" href="#__codelineno-53-8"></a><span class="w">    </span><span class="nt">nameservers</span><span class="p">:</span>
+</span><span id="__span-53-9"><a id="__codelineno-53-9" name="__codelineno-53-9" href="#__codelineno-53-9"></a><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1.1.1.1</span>
+</span><span id="__span-53-10"><a id="__codelineno-53-10" name="__codelineno-53-10" href="#__codelineno-53-10"></a><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">8.8.8.8</span>
+</span><span id="__span-53-11"><a id="__codelineno-53-11" name="__codelineno-53-11" href="#__codelineno-53-11"></a><span class="w">    </span><span class="nt">searches</span><span class="p">:</span>
+</span><span id="__span-53-12"><a id="__codelineno-53-12" name="__codelineno-53-12" href="#__codelineno-53-12"></a><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">my-namespace.svc.cluster.local</span>
+</span><span id="__span-53-13"><a id="__codelineno-53-13" name="__codelineno-53-13" href="#__codelineno-53-13"></a><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">svc.cluster.local</span>
+</span><span id="__span-53-14"><a id="__codelineno-53-14" name="__codelineno-53-14" href="#__codelineno-53-14"></a><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">cluster.local</span>
+</span><span id="__span-53-15"><a id="__codelineno-53-15" name="__codelineno-53-15" href="#__codelineno-53-15"></a><span class="w">    </span><span class="nt">options</span><span class="p">:</span>
+</span><span id="__span-53-16"><a id="__codelineno-53-16" name="__codelineno-53-16" href="#__codelineno-53-16"></a><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ndots</span>
+</span><span id="__span-53-17"><a id="__codelineno-53-17" name="__codelineno-53-17" href="#__codelineno-53-17"></a><span class="w">        </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;2&quot;</span>
+</span><span id="__span-53-18"><a id="__codelineno-53-18" name="__codelineno-53-18" href="#__codelineno-53-18"></a><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">timeout</span>
+</span><span id="__span-53-19"><a id="__codelineno-53-19" name="__codelineno-53-19" href="#__codelineno-53-19"></a><span class="w">        </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;5&quot;</span>
+</span><span id="__span-53-20"><a id="__codelineno-53-20" name="__codelineno-53-20" href="#__codelineno-53-20"></a><span class="w">  </span><span class="nt">containers</span><span class="p">:</span>
+</span><span id="__span-53-21"><a id="__codelineno-53-21" name="__codelineno-53-21" href="#__codelineno-53-21"></a><span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">test</span>
+</span><span id="__span-53-22"><a id="__codelineno-53-22" name="__codelineno-53-22" href="#__codelineno-53-22"></a><span class="w">    </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">nginx</span>
+</span></code></pre></div></p>
+<h3 id="ndots-configuration-tuning">ndots Configuration Tuning<a class="headerlink" href="#ndots-configuration-tuning" title="Link to this section">&para;</a></h3>
+<p>The <code>ndots:5</code> default can cause performance issues for external domain queries, as the DNS resolver tries all search domains before the direct query:</p>
+<p><strong>Problem</strong>:
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-54-1"><a id="__codelineno-54-1" name="__codelineno-54-1" href="#__codelineno-54-1"></a><span class="c1"># Query: api.example.com (1 dot, less than ndots:5)</span>
+</span><span id="__span-54-2"><a id="__codelineno-54-2" name="__codelineno-54-2" href="#__codelineno-54-2"></a><span class="c1"># DNS queries attempted:</span>
+</span><span id="__span-54-3"><a id="__codelineno-54-3" name="__codelineno-54-3" href="#__codelineno-54-3"></a><span class="m">1</span>.<span class="w"> </span>api.example.com.default.svc.cluster.local<span class="w"> </span><span class="o">(</span>NXDOMAIN<span class="o">)</span>
+</span><span id="__span-54-4"><a id="__codelineno-54-4" name="__codelineno-54-4" href="#__codelineno-54-4"></a><span class="m">2</span>.<span class="w"> </span>api.example.com.svc.cluster.local<span class="w"> </span><span class="o">(</span>NXDOMAIN<span class="o">)</span>
+</span><span id="__span-54-5"><a id="__codelineno-54-5" name="__codelineno-54-5" href="#__codelineno-54-5"></a><span class="m">3</span>.<span class="w"> </span>api.example.com.cluster.local<span class="w"> </span><span class="o">(</span>NXDOMAIN<span class="o">)</span>
+</span><span id="__span-54-6"><a id="__codelineno-54-6" name="__codelineno-54-6" href="#__codelineno-54-6"></a><span class="m">4</span>.<span class="w"> </span>api.example.com<span class="w"> </span><span class="o">(</span>SUCCESS<span class="o">)</span>
+</span></code></pre></div></p>
+<p>This creates 3 unnecessary queries!</p>
+<p><strong>Solution 1: Reduce ndots</strong>:
+<div class="language-yaml highlight"><pre><span></span><code><span id="__span-55-1"><a id="__codelineno-55-1" name="__codelineno-55-1" href="#__codelineno-55-1"></a><span class="nt">spec</span><span class="p">:</span>
+</span><span id="__span-55-2"><a id="__codelineno-55-2" name="__codelineno-55-2" href="#__codelineno-55-2"></a><span class="w">  </span><span class="nt">dnsConfig</span><span class="p">:</span>
+</span><span id="__span-55-3"><a id="__codelineno-55-3" name="__codelineno-55-3" href="#__codelineno-55-3"></a><span class="w">    </span><span class="nt">options</span><span class="p">:</span>
+</span><span id="__span-55-4"><a id="__codelineno-55-4" name="__codelineno-55-4" href="#__codelineno-55-4"></a><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ndots</span>
+</span><span id="__span-55-5"><a id="__codelineno-55-5" name="__codelineno-55-5" href="#__codelineno-55-5"></a><span class="w">        </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;2&quot;</span><span class="w">  </span><span class="c1"># Reduce from 5 to 2</span>
+</span></code></pre></div></p>
+<p><strong>Solution 2: Use FQDNs with trailing dot</strong>:
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-56-1"><a id="__codelineno-56-1" name="__codelineno-56-1" href="#__codelineno-56-1"></a><span class="c1"># Application code - always use trailing dot for external domains</span>
+</span><span id="__span-56-2"><a id="__codelineno-56-2" name="__codelineno-56-2" href="#__codelineno-56-2"></a>curl<span class="w"> </span>http://api.example.com./data
+</span></code></pre></div></p>
+<p><strong>Recommendation</strong>: For microservices making many external API calls, reducing ndots to 2-3 can significantly improve DNS performance.</p>
+<hr />
+<h2 id="cka-exam-dns-skills">CKA Exam DNS Skills<a class="headerlink" href="#cka-exam-dns-skills" title="Link to this section">&para;</a></h2>
+<h3 id="fast-dns-testing-techniques">Fast DNS Testing Techniques<a class="headerlink" href="#fast-dns-testing-techniques" title="Link to this section">&para;</a></h3>
+<p><strong>Quick service resolution test</strong>:
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-57-1"><a id="__codelineno-57-1" name="__codelineno-57-1" href="#__codelineno-57-1"></a><span class="c1"># From any pod, test service DNS</span>
+</span><span id="__span-57-2"><a id="__codelineno-57-2" name="__codelineno-57-2" href="#__codelineno-57-2"></a>kubectl<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>-it<span class="w"> </span>&lt;pod-name&gt;<span class="w"> </span>--<span class="w"> </span>nslookup<span class="w"> </span>kubernetes.default
+</span><span id="__span-57-3"><a id="__codelineno-57-3" name="__codelineno-57-3" href="#__codelineno-57-3"></a>
+</span><span id="__span-57-4"><a id="__codelineno-57-4" name="__codelineno-57-4" href="#__codelineno-57-4"></a><span class="c1"># Create temporary debug pod</span>
+</span><span id="__span-57-5"><a id="__codelineno-57-5" name="__codelineno-57-5" href="#__codelineno-57-5"></a>kubectl<span class="w"> </span>run<span class="w"> </span>tmp<span class="w"> </span>--image<span class="o">=</span>nicolaka/netshoot<span class="w"> </span>--rm<span class="w"> </span>-it<span class="w"> </span>--<span class="w"> </span>nslookup<span class="w"> </span>nginx.production
+</span></code></pre></div></p>
+<p><strong>One-liner DNS verification</strong>:
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-58-1"><a id="__codelineno-58-1" name="__codelineno-58-1" href="#__codelineno-58-1"></a><span class="c1"># Test multiple DNS names quickly</span>
+</span><span id="__span-58-2"><a id="__codelineno-58-2" name="__codelineno-58-2" href="#__codelineno-58-2"></a><span class="k">for</span><span class="w"> </span>svc<span class="w"> </span><span class="k">in</span><span class="w"> </span>kubernetes<span class="w"> </span>nginx<span class="w"> </span>backend<span class="p">;</span><span class="w"> </span><span class="k">do</span>
+</span><span id="__span-58-3"><a id="__codelineno-58-3" name="__codelineno-58-3" href="#__codelineno-58-3"></a><span class="w">  </span>kubectl<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>-it<span class="w"> </span>&lt;pod-name&gt;<span class="w"> </span>--<span class="w"> </span>nslookup<span class="w"> </span><span class="nv">$svc</span><span class="w"> </span><span class="m">2</span>&gt;<span class="p">&amp;</span><span class="m">1</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-E<span class="w"> </span><span class="s2">&quot;Name:|Address:&quot;</span>
+</span><span id="__span-58-4"><a id="__codelineno-58-4" name="__codelineno-58-4" href="#__codelineno-58-4"></a><span class="k">done</span>
+</span></code></pre></div></p>
+<p><strong>Check DNS end-to-end</strong>:
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-59-1"><a id="__codelineno-59-1" name="__codelineno-59-1" href="#__codelineno-59-1"></a><span class="c1"># Verify full DNS chain: pod → CoreDNS → service → endpoint</span>
+</span><span id="__span-59-2"><a id="__codelineno-59-2" name="__codelineno-59-2" href="#__codelineno-59-2"></a>kubectl<span class="w"> </span>run<span class="w"> </span><span class="nb">test</span><span class="w"> </span>--image<span class="o">=</span>busybox<span class="w"> </span>--rm<span class="w"> </span>-it<span class="w"> </span>--<span class="w"> </span>wget<span class="w"> </span>-O-<span class="w"> </span>http://nginx.default.svc.cluster.local
+</span></code></pre></div></p>
+<h3 id="common-cka-exam-scenarios">Common CKA Exam Scenarios<a class="headerlink" href="#common-cka-exam-scenarios" title="Link to this section">&para;</a></h3>
+<p><strong>Scenario 1</strong>: "Application can't connect to database service"</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-60-1"><a id="__codelineno-60-1" name="__codelineno-60-1" href="#__codelineno-60-1"></a><span class="c1"># Fast troubleshooting workflow</span>
+</span><span id="__span-60-2"><a id="__codelineno-60-2" name="__codelineno-60-2" href="#__codelineno-60-2"></a><span class="c1"># 1. Verify service exists</span>
+</span><span id="__span-60-3"><a id="__codelineno-60-3" name="__codelineno-60-3" href="#__codelineno-60-3"></a>kubectl<span class="w"> </span>get<span class="w"> </span>svc<span class="w"> </span>database
+</span><span id="__span-60-4"><a id="__codelineno-60-4" name="__codelineno-60-4" href="#__codelineno-60-4"></a>
+</span><span id="__span-60-5"><a id="__codelineno-60-5" name="__codelineno-60-5" href="#__codelineno-60-5"></a><span class="c1"># 2. Check endpoints</span>
+</span><span id="__span-60-6"><a id="__codelineno-60-6" name="__codelineno-60-6" href="#__codelineno-60-6"></a>kubectl<span class="w"> </span>get<span class="w"> </span>endpoints<span class="w"> </span>database
+</span><span id="__span-60-7"><a id="__codelineno-60-7" name="__codelineno-60-7" href="#__codelineno-60-7"></a>
+</span><span id="__span-60-8"><a id="__codelineno-60-8" name="__codelineno-60-8" href="#__codelineno-60-8"></a><span class="c1"># 3. Test DNS from application pod</span>
+</span><span id="__span-60-9"><a id="__codelineno-60-9" name="__codelineno-60-9" href="#__codelineno-60-9"></a>kubectl<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>-it<span class="w"> </span>app-pod<span class="w"> </span>--<span class="w"> </span>nslookup<span class="w"> </span>database
+</span><span id="__span-60-10"><a id="__codelineno-60-10" name="__codelineno-60-10" href="#__codelineno-60-10"></a>
+</span><span id="__span-60-11"><a id="__codelineno-60-11" name="__codelineno-60-11" href="#__codelineno-60-11"></a><span class="c1"># 4. If DNS fails, check CoreDNS</span>
+</span><span id="__span-60-12"><a id="__codelineno-60-12" name="__codelineno-60-12" href="#__codelineno-60-12"></a>kubectl<span class="w"> </span>get<span class="w"> </span>pods<span class="w"> </span>-n<span class="w"> </span>kube-system<span class="w"> </span>-l<span class="w"> </span>k8s-app<span class="o">=</span>kube-dns
+</span><span id="__span-60-13"><a id="__codelineno-60-13" name="__codelineno-60-13" href="#__codelineno-60-13"></a>kubectl<span class="w"> </span>logs<span class="w"> </span>-n<span class="w"> </span>kube-system<span class="w"> </span>-l<span class="w"> </span>k8s-app<span class="o">=</span>kube-dns<span class="w"> </span>--tail<span class="o">=</span><span class="m">50</span>
+</span></code></pre></div>
+<p><strong>Scenario 2</strong>: "Fix CoreDNS configuration to use custom upstream DNS"</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-61-1"><a id="__codelineno-61-1" name="__codelineno-61-1" href="#__codelineno-61-1"></a><span class="c1"># Edit Corefile</span>
+</span><span id="__span-61-2"><a id="__codelineno-61-2" name="__codelineno-61-2" href="#__codelineno-61-2"></a>kubectl<span class="w"> </span>edit<span class="w"> </span>configmap<span class="w"> </span>coredns<span class="w"> </span>-n<span class="w"> </span>kube-system
+</span><span id="__span-61-3"><a id="__codelineno-61-3" name="__codelineno-61-3" href="#__codelineno-61-3"></a>
+</span><span id="__span-61-4"><a id="__codelineno-61-4" name="__codelineno-61-4" href="#__codelineno-61-4"></a><span class="c1"># Change forward plugin</span>
+</span><span id="__span-61-5"><a id="__codelineno-61-5" name="__codelineno-61-5" href="#__codelineno-61-5"></a><span class="c1"># FROM:</span>
+</span><span id="__span-61-6"><a id="__codelineno-61-6" name="__codelineno-61-6" href="#__codelineno-61-6"></a>forward<span class="w"> </span>.<span class="w"> </span>/etc/resolv.conf
+</span><span id="__span-61-7"><a id="__codelineno-61-7" name="__codelineno-61-7" href="#__codelineno-61-7"></a>
+</span><span id="__span-61-8"><a id="__codelineno-61-8" name="__codelineno-61-8" href="#__codelineno-61-8"></a><span class="c1"># TO:</span>
+</span><span id="__span-61-9"><a id="__codelineno-61-9" name="__codelineno-61-9" href="#__codelineno-61-9"></a>forward<span class="w"> </span>.<span class="w"> </span><span class="m">8</span>.8.8.8<span class="w"> </span><span class="m">1</span>.1.1.1
+</span><span id="__span-61-10"><a id="__codelineno-61-10" name="__codelineno-61-10" href="#__codelineno-61-10"></a>
+</span><span id="__span-61-11"><a id="__codelineno-61-11" name="__codelineno-61-11" href="#__codelineno-61-11"></a><span class="c1"># CoreDNS auto-reloads (no restart needed with reload plugin)</span>
+</span></code></pre></div>
+<p><strong>Scenario 3</strong>: "Create headless service for StatefulSet"</p>
+<div class="language-yaml highlight"><pre><span></span><code><span id="__span-62-1"><a id="__codelineno-62-1" name="__codelineno-62-1" href="#__codelineno-62-1"></a><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">v1</span>
+</span><span id="__span-62-2"><a id="__codelineno-62-2" name="__codelineno-62-2" href="#__codelineno-62-2"></a><span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Service</span>
+</span><span id="__span-62-3"><a id="__codelineno-62-3" name="__codelineno-62-3" href="#__codelineno-62-3"></a><span class="nt">metadata</span><span class="p">:</span>
+</span><span id="__span-62-4"><a id="__codelineno-62-4" name="__codelineno-62-4" href="#__codelineno-62-4"></a><span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">mongo</span>
+</span><span id="__span-62-5"><a id="__codelineno-62-5" name="__codelineno-62-5" href="#__codelineno-62-5"></a><span class="nt">spec</span><span class="p">:</span>
+</span><span id="__span-62-6"><a id="__codelineno-62-6" name="__codelineno-62-6" href="#__codelineno-62-6"></a><span class="w">  </span><span class="nt">clusterIP</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">None</span><span class="w">  </span><span class="c1"># Headless!</span>
+</span><span id="__span-62-7"><a id="__codelineno-62-7" name="__codelineno-62-7" href="#__codelineno-62-7"></a><span class="w">  </span><span class="nt">selector</span><span class="p">:</span>
+</span><span id="__span-62-8"><a id="__codelineno-62-8" name="__codelineno-62-8" href="#__codelineno-62-8"></a><span class="w">    </span><span class="nt">app</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">mongo</span>
+</span><span id="__span-62-9"><a id="__codelineno-62-9" name="__codelineno-62-9" href="#__codelineno-62-9"></a><span class="w">  </span><span class="nt">ports</span><span class="p">:</span>
+</span><span id="__span-62-10"><a id="__codelineno-62-10" name="__codelineno-62-10" href="#__codelineno-62-10"></a><span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">port</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">27017</span>
+</span><span id="__span-62-11"><a id="__codelineno-62-11" name="__codelineno-62-11" href="#__codelineno-62-11"></a><span class="w">    </span><span class="nt">targetPort</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">27017</span>
+</span></code></pre></div>
+<h3 id="time-saving-tips">Time-Saving Tips<a class="headerlink" href="#time-saving-tips" title="Link to this section">&para;</a></h3>
+<ol>
+<li><strong>Use short names within namespace</strong>: <code>curl http://backend</code> instead of <code>backend.default.svc.cluster.local</code></li>
+<li><strong>Keep debug pod ready</strong>: <code>kubectl run debug --image=nicolaka/netshoot --rm -it -- /bin/bash</code></li>
+<li><strong>Alias common checks</strong>:
+   <div class="language-bash highlight"><pre><span></span><code><span id="__span-63-1"><a id="__codelineno-63-1" name="__codelineno-63-1" href="#__codelineno-63-1"></a><span class="nb">alias</span><span class="w"> </span><span class="nv">kdns</span><span class="o">=</span><span class="s1">&#39;kubectl get pods -n kube-system -l k8s-app=kube-dns&#39;</span>
+</span><span id="__span-63-2"><a id="__codelineno-63-2" name="__codelineno-63-2" href="#__codelineno-63-2"></a><span class="nb">alias</span><span class="w"> </span><span class="nv">kdnslogs</span><span class="o">=</span><span class="s1">&#39;kubectl logs -n kube-system -l k8s-app=kube-dns --tail=100&#39;</span>
+</span></code></pre></div></li>
+<li><strong>Know CoreDNS restart</strong>: <code>kubectl rollout restart deployment coredns -n kube-system</code></li>
+<li><strong>Test DNS quickly</strong>: <code>kubectl exec -it &lt;pod&gt; -- nslookup kubernetes.default</code></li>
+</ol>
+<hr />
+<h2 id="conclusion">Conclusion<a class="headerlink" href="#conclusion" title="Link to this section">&para;</a></h2>
+<p>DNS and service discovery are the invisible glue that makes Kubernetes networking seamless. CoreDNS automatically creates DNS records for every Service and Pod, enabling applications to discover each other using simple, memorable names instead of ephemeral IP addresses. Understanding CoreDNS architecture, configuration, and troubleshooting is essential for both the CKA exam and production Kubernetes operations.</p>
+<p><strong>Key Takeaways</strong>:</p>
+<p>✅ <strong>CoreDNS is Kubernetes' DNS server</strong>, running as a Deployment in kube-system with plugin-based configuration
+✅ <strong>Service DNS follows predictable patterns</strong>: <code>&lt;service&gt;.&lt;namespace&gt;.svc.&lt;cluster.local&gt;</code>
+✅ <strong>Headless services return pod IPs</strong> instead of ClusterIP, enabling direct pod-to-pod communication
+✅ <strong>Search domains enable short names</strong> within namespaces, but can impact external query performance
+✅ <strong>Corefile configuration</strong> defines DNS behavior through plugin chains (kubernetes, forward, cache, etc.)
+✅ <strong>Systematic troubleshooting</strong> follows the DNS resolution flow: pod → CoreDNS → API → endpoints
+✅ <strong>NodeLocal DNSCache</strong> (2025 best practice) dramatically improves DNS performance and reliability
+✅ <strong>CKA exam success</strong> requires fast DNS testing skills and confident troubleshooting workflows</p>
+<p><strong>Practice Exercises</strong>:</p>
+<ol>
+<li>Create a ClusterIP service and test DNS resolution from different namespaces</li>
+<li>Deploy a headless service with StatefulSet and verify individual pod DNS names</li>
+<li>Modify Corefile to use custom upstream DNS servers (1.1.1.1, 8.8.8.8)</li>
+<li>Troubleshoot a broken DNS scenario (intentionally delete CoreDNS pods)</li>
+<li>Configure custom DNS policy with reduced ndots value</li>
+<li>Deploy NodeLocal DNSCache and verify improved query latency</li>
+<li>Use dig/nslookup to inspect SRV records for service port discovery</li>
+</ol>
+<p><strong>Further Learning</strong>:</p>
+<ul>
+<li><a href="https://coredns.io/manual/toc/">CoreDNS Official Documentation</a></li>
+<li><a href="https://kubernetes.io/docs/concepts/services-networking/dns-pod-service/">Kubernetes DNS Specification</a></li>
+<li><a href="https://kubernetes.io/docs/tasks/administer-cluster/nodelocaldns/">NodeLocal DNSCache Guide</a></li>
+<li><a href="https://kubernetes.io/docs/concepts/services-networking/dns-pod-service/#dns-performance-considerations">DNS Performance Best Practices</a></li>
+</ul>
+<p>Master CoreDNS and service discovery, and you'll have the confidence to troubleshoot any DNS issue in your CKA exam or production environment. DNS is fundamental—get it right, and everything else becomes easier. Now go practice with real clusters and build that muscle memory!</p>
+
+
+
+
+
+
+
+  
+  
+
+
+
+  
+
+
+  
+
+
+  <form class="md-feedback" name="feedback" hidden>
+    <fieldset>
+      <legend class="md-feedback__title">
+        Was this page helpful?
+      </legend>
+      <div class="md-feedback__inner">
+        <div class="md-feedback__list">
+          
+            <button class="md-feedback__icon md-icon" type="submit" title="This page was helpful" data-md-value="1">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 12a8 8 0 0 0-8-8 8 8 0 0 0-8 8 8 8 0 0 0 8 8 8 8 0 0 0 8-8m2 0a10 10 0 0 1-10 10A10 10 0 0 1 2 12 10 10 0 0 1 12 2a10 10 0 0 1 10 10M10 9.5c0 .8-.7 1.5-1.5 1.5S7 10.3 7 9.5 7.7 8 8.5 8s1.5.7 1.5 1.5m7 0c0 .8-.7 1.5-1.5 1.5S14 10.3 14 9.5 14.7 8 15.5 8s1.5.7 1.5 1.5m-5 7.73c-1.75 0-3.29-.73-4.19-1.81L9.23 14c.45.72 1.52 1.23 2.77 1.23s2.32-.51 2.77-1.23l1.42 1.42c-.9 1.08-2.44 1.81-4.19 1.81"/></svg>
+            </button>
+          
+            <button class="md-feedback__icon md-icon" type="submit" title="This page could be improved" data-md-value="0">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 12a8 8 0 0 0-8-8 8 8 0 0 0-8 8 8 8 0 0 0 8 8 8 8 0 0 0 8-8m2 0a10 10 0 0 1-10 10A10 10 0 0 1 2 12 10 10 0 0 1 12 2a10 10 0 0 1 10 10m-6.5-4c.8 0 1.5.7 1.5 1.5s-.7 1.5-1.5 1.5-1.5-.7-1.5-1.5.7-1.5 1.5-1.5M10 9.5c0 .8-.7 1.5-1.5 1.5S7 10.3 7 9.5 7.7 8 8.5 8s1.5.7 1.5 1.5m2 4.5c1.75 0 3.29.72 4.19 1.81l-1.42 1.42C14.32 16.5 13.25 16 12 16s-2.32.5-2.77 1.23l-1.42-1.42C8.71 14.72 10.25 14 12 14"/></svg>
+            </button>
+          
+        </div>
+        <div class="md-feedback__note">
+          
+            <div data-md-value="1" hidden>
+              
+              
+                
+              
+              
+              
+                
+                
+              
+              Thanks for your feedback!
+            </div>
+          
+            <div data-md-value="0" hidden>
+              
+              
+                
+              
+              
+              
+                
+                
+              
+              Thanks for your feedback!
+            </div>
+          
+        </div>
+      </div>
+    </fieldset>
+  </form>
+
+
+      
+    </article>
+  </div>
+
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+        
+<div class="md-social">
+  
+    
+    
+    
+    
+      
+      
+    
+    <a href="https://github.com/alf" target="_blank" rel="noopener" title="github.com" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      <script id="__config" type="application/json">{"base": "../../../../..", "features": ["navigation.instant", "navigation.tracking", "navigation.tabs", "navigation.tabs.sticky", "navigation.indexes", "toc.integrate", "navigation.top", "search.suggest", "search.highlight", "content.code.annotate", "content.code.copy", "content.action.edit", "content.action.view"], "search": "../../../../../assets/javascripts/workers/search.973d3a69.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../../../../assets/javascripts/bundle.f55a23d4.min.js"></script>
+      
+    
+  </body>
+</html>
