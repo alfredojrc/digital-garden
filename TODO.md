@@ -1,16 +1,16 @@
 # Kubernetes CKA Mastery - Implementation TODO
 
 **Created**: 2025-11-11
-**Status**: In Progress (14/22 posts complete - Phase 1, 2, 3 & 4 Complete ✅)
+**Status**: In Progress (17/22 posts complete - Phase 1, 2, 3, 4 & 5 Complete ✅)
 **Project**: Digital Garden - Kubernetes CKA Learning Series
 
 ---
 
 ## 📊 Progress Overview
 
-- ✅ **Complete**: 14 posts (Phase 1, 2, 3 & 4 complete)
+- ✅ **Complete**: 17 posts (Phase 1, 2, 3, 4 & 5 complete)
 - 🔄 **In Progress**: 0 posts
-- ⏳ **Pending**: 8 posts
+- ⏳ **Pending**: 5 posts
 - **Total**: 22 posts
 
 ---
@@ -156,52 +156,29 @@
 
 ## Phase 5: Security & Configuration (3 posts)
 
-### ⏳ Post 15: RBAC
-- **Status**: Pending
+### ✅ Post 15: RBAC
+- **Status**: Complete
 - **File**: `docs/blog/posts/kubernetes-rbac.md`
+- **Published**: 2025-11-11
+- **Read Time**: 14 min
 - **Slug**: `rbac-role-based-access-control`
-- **Target Read Time**: 14 min
-- **Key Topics**:
-  - Roles and ClusterRoles
-  - RoleBindings and ClusterRoleBindings
-  - ServiceAccounts
-  - API groups and resources
-  - Verbs and permissions
-  - Least privilege principle
-- **Diagrams Needed**:
-  - RBAC authorization flow
-  - Role hierarchy
+- **Content**: Roles, ClusterRoles, RoleBindings, ServiceAccounts, authorization patterns
 
-### ⏳ Post 16: Security Contexts and Pod Security
-- **Status**: Pending
+### ✅ Post 16: Security Contexts and Pod Security
+- **Status**: Complete
 - **File**: `docs/blog/posts/security-contexts-pod-security.md`
+- **Published**: 2025-11-11
+- **Read Time**: 13 min
 - **Slug**: `security-contexts-pod-security-standards`
-- **Target Read Time**: 13 min
-- **Key Topics**:
-  - SecurityContext
-  - Pod Security Admission
-  - Privileged containers
-  - Capabilities
-  - Pod Security Standards (PSS)
-  - runAsUser, fsGroup
-- **Diagrams Needed**:
-  - Security context levels
-  - PSS enforcement modes
+- **Content**: SecurityContext, Pod Security Standards (PSS), privileged containers, capabilities, SELinux, AppArmor
 
-### ⏳ Post 17: Custom Resources and Operators
-- **Status**: Pending
+### ✅ Post 17: Custom Resources and Operators
+- **Status**: Complete
 - **File**: `docs/blog/posts/custom-resources-operators.md`
+- **Published**: 2025-11-11
+- **Read Time**: 12 min
 - **Slug**: `custom-resources-operators-crds`
-- **Target Read Time**: 12 min
-- **Key Topics**:
-  - CustomResourceDefinitions (CRDs)
-  - Custom controllers
-  - Operators pattern
-  - CRD inspection
-  - Operator Framework
-- **Diagrams Needed**:
-  - Operator control loop
-  - CRD → Controller → Resource flow
+- **Content**: CustomResourceDefinitions (CRDs), operators pattern, CRD inspection, schema validation
 
 ---
 

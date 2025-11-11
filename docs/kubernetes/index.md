@@ -187,17 +187,17 @@ ConfigMaps, Secrets, volume mounts, environment variables, projected volumes
 
 Secure your cluster with RBAC, security contexts, and extensibility.
 
-### 15. [RBAC: Role-Based Access Control](#)
+### 15. [RBAC: Role-Based Access Control](../blog/2025/11/11/rbac-role-based-access-control/)
 Roles, ClusterRoles, RoleBindings, ClusterRoleBindings, ServiceAccounts
 **Tags**: `kubernetes` `rbac` `security` `access-control`
 **Domain**: Cluster Architecture (25%)
 
-### 16. [Security Contexts and Pod Security Standards](#)
+### 16. [Security Contexts and Pod Security Standards](../blog/2025/11/11/security-contexts-pod-security-standards/)
 SecurityContext, Pod Security Admission, privileged containers, capabilities, PSS
 **Tags**: `kubernetes` `security` `pod-security` `hardening`
 **Domain**: Cluster Architecture (25%)
 
-### 17. [Custom Resources and Operators (CRDs)](#)
+### 17. [Custom Resources and Operators (CRDs)](../blog/2025/11/11/custom-resources-operators-crds/)
 CustomResourceDefinitions, custom controllers, Operators, CRD inspection
 **Tags**: `kubernetes` `crds` `operators` `extensibility`
 **Domain**: Cluster Architecture (25%)
