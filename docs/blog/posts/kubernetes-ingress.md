@@ -38,6 +38,8 @@ For the CKA exam, you'll need to demonstrate hands-on competency with Ingress re
 
 The landscape is evolving. While traditional Ingress remains the standard (and what's tested on the CKA), the **Gateway API** represents Kubernetes networking's future—offering role-oriented design, better extensibility, and more expressive routing rules. Understanding both is essential for modern Kubernetes practitioners.
 
+<!-- more -->
+
 ```mermaid
 graph TB
     subgraph "External Traffic"
