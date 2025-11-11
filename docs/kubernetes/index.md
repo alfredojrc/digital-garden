@@ -108,12 +108,12 @@ Master kubectl commands, aliases, output formats, context switching, imperative 
 **Tags**: `kubernetes` `kubectl` `cli` `basics`
 **Domain**: All (foundational skill)
 
-### 4. [Understanding Kubernetes Objects and YAML Manifests](#)
+### 4. [Understanding Kubernetes Objects and YAML Manifests](../blog/2025/11/11/kubernetes-objects-yaml-manifests/)
 API objects, YAML syntax, metadata, spec, status, labels, annotations, selectors
 **Tags**: `kubernetes` `yaml` `objects` `manifests`
 **Domain**: All (foundational skill)
 
-### 5. [Namespaces and Resource Quotas](#)
+### 5. [Namespaces and Resource Quotas](../blog/2025/11/11/namespaces-resource-quotas/)
 Namespace isolation, resource quotas, limit ranges, default namespace management
 **Tags**: `kubernetes` `namespaces` `resource-management`
 **Domain**: Cluster Architecture (25%)
