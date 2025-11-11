@@ -1,16 +1,16 @@
 # Kubernetes CKA Mastery - Implementation TODO
 
 **Created**: 2025-11-11
-**Status**: In Progress (8/22 posts complete - Phase 1 & 2 Complete ✅)
+**Status**: In Progress (12/22 posts complete - Phase 1, 2 & 3 Complete ✅)
 **Project**: Digital Garden - Kubernetes CKA Learning Series
 
 ---
 
 ## 📊 Progress Overview
 
-- ✅ **Complete**: 8 posts (Phase 1 & 2 complete)
+- ✅ **Complete**: 12 posts (Phase 1, 2 & 3 complete)
 - 🔄 **In Progress**: 0 posts
-- ⏳ **Pending**: 14 posts
+- ⏳ **Pending**: 10 posts
 - **Total**: 22 posts
 
 ---
@@ -81,62 +81,33 @@
 
 ## Phase 3: Services & Networking (4 posts)
 
-### ⏳ Post 9: Kubernetes Services
-- **Status**: Pending
+### ✅ Post 9: Kubernetes Services
+- **Status**: Complete
 - **File**: `docs/blog/posts/kubernetes-services.md`
-- **Slug**: `kubernetes-services-exposing-applications`
-- **Target Read Time**: 13 min
-- **Key Topics**:
-  - ClusterIP, NodePort, LoadBalancer
-  - ExternalName services
-  - Service discovery
-  - Endpoints and EndpointSlices
-  - Headless services
-- **Diagrams Needed**:
-  - Service types comparison
-  - Service discovery flow
+- **Published**: 2025-11-11
+- **Read Time**: 14 min
+- **Content**: ClusterIP, NodePort, LoadBalancer, ExternalName, service discovery, endpoints, EndpointSlices (2025), headless services, kube-proxy modes
 
-### ⏳ Post 10: Ingress and Gateway API
-- **Status**: Pending
-- **File**: `docs/blog/posts/ingress-gateway-api.md`
-- **Slug**: `ingress-gateway-api-traffic-management`
-- **Target Read Time**: 14 min
-- **Key Topics**:
-  - Ingress controllers
-  - Ingress rules and paths
-  - TLS termination
-  - Gateway API (new standard)
-  - GatewayClass, Gateway, HTTPRoute
-- **Diagrams Needed**:
-  - Ingress architecture
-  - Gateway API resource relationships
+### ✅ Post 10: Ingress and Gateway API
+- **Status**: Complete
+- **File**: `docs/blog/posts/kubernetes-ingress.md`
+- **Published**: 2025-11-11
+- **Read Time**: 15 min
+- **Content**: Ingress controllers comparison, YAML structure, Gateway API v1.4.0, cert-manager integration, TLS termination, troubleshooting
 
-### ⏳ Post 11: Network Policies
-- **Status**: Pending
-- **File**: `docs/blog/posts/network-policies.md`
-- **Slug**: `network-policies-securing-pod-communication`
-- **Target Read Time**: 12 min
-- **Key Topics**:
-  - NetworkPolicy resources
-  - Ingress/egress rules
-  - Pod/namespace selectors
-  - Default deny policies
-  - Network isolation strategies
-- **Diagrams Needed**:
-  - Network policy flow
-  - Isolation patterns
+### ✅ Post 11: Network Policies
+- **Status**: Complete
+- **File**: `docs/blog/posts/kubernetes-network-policies.md`
+- **Published**: 2025-11-11
+- **Read Time**: 12 min
+- **Content**: NetworkPolicy resources, ingress/egress rules, AND vs OR selector logic, namespace isolation, multi-tier security, CNI plugins
 
-### ⏳ Post 12: CoreDNS and Service Discovery
-- **Status**: Pending
-- **File**: `docs/blog/posts/coredns-service-discovery.md`
-- **Slug**: `coredns-service-discovery-deep-dive`
-- **Target Read Time**: 11 min
-- **Key Topics**:
-  - CoreDNS configuration
-  - DNS for Services
-  - DNS for Pods
-  - Troubleshooting DNS issues
-  - Custom DNS entries
+### ✅ Post 12: CoreDNS and Service Discovery
+- **Status**: Complete
+- **File**: `docs/blog/posts/kubernetes-coredns.md`
+- **Published**: 2025-11-11
+- **Read Time**: 11 min
+- **Content**: CoreDNS architecture, Corefile configuration, DNS resolution, service discovery patterns, troubleshooting, NodeLocal DNSCache (2025)
 - **Diagrams Needed**:
   - DNS resolution flow
   - Service DNS naming

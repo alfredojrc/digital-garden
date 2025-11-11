@@ -144,6 +144,14 @@ plugins:
         - tolerations
         - affinity
         - node-selector
+        - service-discovery
+        - endpoints
+        - gateway-api
+        - traffic-management
+        - network-policies
+        - isolation
+        - coredns
+        - dns
 
 # Extensions (for console-style syntax highlighting)
 markdown_extensions:

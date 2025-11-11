@@ -145,22 +145,22 @@ Node selectors, taints/tolerations, node/pod affinity, anti-affinity, priority c
 
 Deep dive into Kubernetes networking, service discovery, and traffic management.
 
-### 9. [Kubernetes Services: Exposing Your Applications](#)
+### 9. [Kubernetes Services: Exposing Your Applications](../blog/2025/11/11/kubernetes-services-exposing-applications/)
 ClusterIP, NodePort, LoadBalancer, ExternalName, service discovery, endpoints
 **Tags**: `kubernetes` `services` `networking` `service-discovery`
 **Domain**: Services & Networking (20%)
 
-### 10. [Ingress and Gateway API: Modern Traffic Management](#)
+### 10. [Ingress and Gateway API: Modern Traffic Management](../blog/2025/11/11/kubernetes-ingress-gateway-api/)
 Ingress controllers, Ingress rules, Gateway API (GatewayClass, Gateway, HTTPRoute)
 **Tags**: `kubernetes` `ingress` `gateway-api` `traffic-management`
 **Domain**: Services & Networking (20%)
 
-### 11. [Network Policies: Securing Pod Communication](#)
+### 11. [Network Policies: Securing Pod Communication](../blog/2025/11/11/kubernetes-network-policies/)
 NetworkPolicy resources, ingress/egress rules, pod/namespace selectors, isolation
 **Tags**: `kubernetes` `network-policies` `security` `networking`
 **Domain**: Services & Networking (20%)
 
-### 12. [CoreDNS and Service Discovery Deep Dive](#)
+### 12. [CoreDNS and Service Discovery Deep Dive](../blog/2025/11/11/kubernetes-coredns-service-discovery/)
 CoreDNS configuration, DNS for Services and Pods, troubleshooting DNS issues
 **Tags**: `kubernetes` `dns` `coredns` `service-discovery`
 **Domain**: Services & Networking (20%)
