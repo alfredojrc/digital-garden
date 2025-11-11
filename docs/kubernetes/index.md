@@ -224,17 +224,17 @@ Kustomize bases, overlays, patches, transformers, generators, GitOps patterns
 
 Become an expert at diagnosing and resolving Kubernetes issues.
 
-### 20. [Troubleshooting Clusters, Nodes, and Components](#)
+### 20. [Troubleshooting Clusters, Nodes, and Components](../blog/2025/11/11/troubleshooting-clusters-nodes-components/)
 Node issues, control plane debugging, certificate problems, etcd health checks
 **Tags**: `kubernetes` `troubleshooting` `debugging` `cluster-health`
 **Domain**: Troubleshooting (30%)
 
-### 21. [Application Troubleshooting and Log Analysis](#)
+### 21. [Application Troubleshooting and Log Analysis](../blog/2025/11/11/application-troubleshooting-log-analysis/)
 Pod debugging, container logs, exec commands, ephemeral containers, event analysis
 **Tags**: `kubernetes` `troubleshooting` `logs` `debugging`
 **Domain**: Troubleshooting (30%)
 
-### 22. [Monitoring, Metrics, and Resource Management](#)
+### 22. [Monitoring, Metrics, and Resource Management](../blog/2025/11/11/monitoring-metrics-resource-management/)
 Metrics Server, resource requests/limits, HPA, VPA, monitoring stack integration
 **Tags**: `kubernetes` `monitoring` `metrics` `autoscaling`
 **Domain**: Troubleshooting (30%)
@@ -303,6 +303,6 @@ Good luck with your CKA certification! 🎓
 
 ---
 
-**Last Updated**: 2025-11-10
-**Series Status**: In Progress (Post 1 available)
-**Total Posts**: 22 planned
+**Last Updated**: 2025-11-11
+**Series Status**: Complete (All 22 posts published ✅🎉)
+**Total Posts**: 22
