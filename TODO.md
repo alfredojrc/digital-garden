@@ -1,16 +1,16 @@
 # Kubernetes CKA Mastery - Implementation TODO
 
 **Created**: 2025-11-11
-**Status**: In Progress (12/22 posts complete - Phase 1, 2 & 3 Complete ✅)
+**Status**: In Progress (14/22 posts complete - Phase 1, 2, 3 & 4 Complete ✅)
 **Project**: Digital Garden - Kubernetes CKA Learning Series
 
 ---
 
 ## 📊 Progress Overview
 
-- ✅ **Complete**: 12 posts (Phase 1, 2 & 3 complete)
+- ✅ **Complete**: 14 posts (Phase 1, 2, 3 & 4 complete)
 - 🔄 **In Progress**: 0 posts
-- ⏳ **Pending**: 10 posts
+- ⏳ **Pending**: 8 posts
 - **Total**: 22 posts
 
 ---
@@ -116,9 +116,11 @@
 
 ## Phase 4: Storage (2 posts)
 
-### ⏳ Post 13: Persistent Volumes and Claims
-- **Status**: Pending
+### ✅ Post 13: Persistent Volumes and Claims
+- **Status**: Complete
 - **File**: `docs/blog/posts/persistent-volumes-claims.md`
+- **Published**: 2025-11-11
+- **Read Time**: 13 min
 - **Slug**: `persistent-volumes-claims-stateful-storage`
 - **Target Read Time**: 13 min
 - **Key Topics**:
@@ -132,9 +134,11 @@
   - PV/PVC binding lifecycle
   - Dynamic provisioning flow
 
-### ⏳ Post 14: ConfigMaps and Secrets
-- **Status**: Pending
+### ✅ Post 14: ConfigMaps and Secrets
+- **Status**: Complete
 - **File**: `docs/blog/posts/configmaps-secrets.md`
+- **Published**: 2025-11-11
+- **Read Time**: 12 min
 - **Slug**: `configmaps-secrets-volume-mounts`
 - **Target Read Time**: 12 min
 - **Key Topics**:

@@ -171,12 +171,12 @@ CoreDNS configuration, DNS for Services and Pods, troubleshooting DNS issues
 
 Understand persistent storage and configuration management in Kubernetes.
 
-### 13. [Persistent Volumes and Claims: Stateful Storage](#)
+### 13. [Persistent Volumes and Claims: Stateful Storage](../blog/2025/11/11/persistent-volumes-claims-stateful-storage/)
 PV, PVC, StorageClass, access modes, reclaim policies, dynamic provisioning
 **Tags**: `kubernetes` `storage` `persistent-volumes` `stateful`
 **Domain**: Storage (10%)
 
-### 14. [ConfigMaps, Secrets, and Volume Mounts](#)
+### 14. [ConfigMaps, Secrets, and Volume Mounts](../blog/2025/11/11/configmaps-secrets-volume-mounts/)
 ConfigMaps, Secrets, volume mounts, environment variables, projected volumes
 **Tags**: `kubernetes` `configmaps` `secrets` `configuration`
 **Domain**: Storage (10%)

@@ -114,6 +114,9 @@ plugins:
         - services
         - networking
         - storage
+        - persistent-volumes
+        - stateful
+        - configuration
         - rbac
         - security-contexts
         - helm
