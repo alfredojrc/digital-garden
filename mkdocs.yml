@@ -121,6 +121,7 @@ plugins:
         - security-contexts
         - helm
         - kustomize
+        - gitops
         - troubleshooting
         - monitoring
         - security
