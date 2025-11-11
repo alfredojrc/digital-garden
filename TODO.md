@@ -1,16 +1,16 @@
 # Kubernetes CKA Mastery - Implementation TODO
 
 **Created**: 2025-11-11
-**Status**: In Progress (5/22 posts complete - Phase 1 Complete ✅)
+**Status**: In Progress (8/22 posts complete - Phase 1 & 2 Complete ✅)
 **Project**: Digital Garden - Kubernetes CKA Learning Series
 
 ---
 
 ## 📊 Progress Overview
 
-- ✅ **Complete**: 5 posts (Phase 1 complete)
+- ✅ **Complete**: 8 posts (Phase 1 & 2 complete)
 - 🔄 **In Progress**: 0 posts
-- ⏳ **Pending**: 17 posts
+- ⏳ **Pending**: 14 posts
 - **Total**: 22 posts
 
 ---
@@ -56,53 +56,26 @@
 
 ## Phase 2: Workloads & Scheduling (3 posts)
 
-### ⏳ Post 6: Pods - The Atomic Unit
-- **Status**: Pending
+### ✅ Post 6: Pods - The Atomic Unit
+- **Status**: Complete
 - **File**: `docs/blog/posts/kubernetes-pods.md`
-- **Slug**: `kubernetes-pods-atomic-unit`
-- **Target Read Time**: 14 min
-- **Key Topics**:
-  - Pod lifecycle
-  - Init containers
-  - Sidecar patterns
-  - Multi-container pods
-  - Container communication
-  - Ephemeral containers
-- **Diagrams Needed**:
-  - Pod lifecycle states
-  - Multi-container communication
+- **Published**: 2025-11-11
+- **Read Time**: 14 min
+- **Content**: Pod lifecycle, init containers, sidecar/adapter/ambassador patterns, health probes, troubleshooting
 
-### ⏳ Post 7: Deployments and ReplicaSets
-- **Status**: Pending
-- **File**: `docs/blog/posts/deployments-replicasets.md`
-- **Slug**: `deployments-replicasets-rolling-updates`
-- **Target Read Time**: 13 min
-- **Key Topics**:
-  - Deployments
-  - ReplicaSets
-  - DaemonSets
-  - StatefulSets
-  - Rollout strategies
-  - Rollback procedures
-- **Diagrams Needed**:
-  - Deployment → ReplicaSet → Pod hierarchy
-  - Rolling update process
+### ✅ Post 7: Deployments and ReplicaSets
+- **Status**: Complete
+- **File**: `docs/blog/posts/kubernetes-deployments.md`
+- **Published**: 2025-11-11
+- **Read Time**: 15 min
+- **Content**: Deployment hierarchy, ReplicaSets, rolling updates, rollback, DaemonSets, StatefulSets, Jobs, CronJobs
 
-### ⏳ Post 8: Advanced Scheduling
-- **Status**: Pending
-- **File**: `docs/blog/posts/advanced-scheduling.md`
-- **Slug**: `advanced-scheduling-taints-tolerations-affinity`
-- **Target Read Time**: 13 min
-- **Key Topics**:
-  - Node selectors
-  - Taints and tolerations
-  - Node affinity/anti-affinity
-  - Pod affinity/anti-affinity
-  - Priority classes
-  - Resource requests and limits
-- **Diagrams Needed**:
-  - Scheduling decision tree
-  - Affinity rules visualization
+### ✅ Post 8: Advanced Scheduling
+- **Status**: Complete
+- **File**: `docs/blog/posts/kubernetes-scheduling.md`
+- **Published**: 2025-11-11
+- **Read Time**: 13 min
+- **Content**: Scheduler algorithm, node selectors, taints/tolerations, node/pod affinity, priority classes
 
 ---
 

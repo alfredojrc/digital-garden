@@ -124,17 +124,17 @@ Namespace isolation, resource quotas, limit ranges, default namespace management
 
 Master pod management, deployments, and advanced scheduling techniques.
 
-### 6. [Pods: The Atomic Unit of Kubernetes](#)
+### 6. [Pods: The Atomic Unit of Kubernetes](../blog/2025/11/11/kubernetes-pods-atomic-unit/)
 Pod lifecycle, init containers, sidecar patterns, multi-container communication
 **Tags**: `kubernetes` `pods` `workloads` `containers`
 **Domain**: Workloads & Scheduling (15%)
 
-### 7. [Deployments, ReplicaSets, and Rolling Updates](#)
+### 7. [Deployments, ReplicaSets, and Rolling Updates](../blog/2025/11/11/kubernetes-deployments-replicasets/)
 Deployments, ReplicaSets, DaemonSets, StatefulSets, rollouts, rollback strategies
 **Tags**: `kubernetes` `deployments` `replicasets` `workloads`
 **Domain**: Workloads & Scheduling (15%)
 
-### 8. [Advanced Scheduling: Taints, Tolerations, and Affinity](#)
+### 8. [Advanced Scheduling: Taints, Tolerations, and Affinity](../blog/2025/11/11/kubernetes-advanced-scheduling/)
 Node selectors, taints/tolerations, node/pod affinity, anti-affinity, priority classes
 **Tags**: `kubernetes` `scheduling` `advanced` `affinity`
 **Domain**: Workloads & Scheduling (15%)
