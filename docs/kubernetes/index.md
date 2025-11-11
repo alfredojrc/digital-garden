@@ -208,12 +208,12 @@ CustomResourceDefinitions, custom controllers, Operators, CRD inspection
 
 Master Helm and Kustomize for production-grade configuration management.
 
-### 18. [Helm: Kubernetes Package Manager](#)
+### 18. [Helm: Kubernetes Package Manager](../blog/2025/11/11/helm-kubernetes-package-manager/)
 Helm charts, templating, values files, releases, hooks, chart repositories
 **Tags**: `kubernetes` `helm` `package-management` `charts`
 **Domain**: Cluster Architecture (25%)
 
-### 19. [Kustomize: Template-Free Configuration Management](#)
+### 19. [Kustomize: Template-Free Configuration Management](../blog/2025/11/11/kustomize-template-free-configuration/)
 Kustomize bases, overlays, patches, transformers, generators, GitOps patterns
 **Tags**: `kubernetes` `kustomize` `configuration` `gitops`
 **Domain**: Cluster Architecture (25%)
