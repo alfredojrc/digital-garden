@@ -2,9 +2,9 @@
 
 <div style="text-align: center; margin: 2rem 0;">
   <img src="../assets/images/alf_bg.jpg" alt="Alfredo Jimenez" style="border-radius: 50%; width: 200px; height: 200px; object-fit: cover; border: 3px solid var(--md-primary-fg-color);">
-  <h2 style="margin-top: 1rem;">Alfredo Jimenez Roa Cano</h2>
+  <h2 style="margin-top: 1rem;">Alfredo Jimenez Ronssin du Chatelle</h2>
   <p style="font-size: 1.2rem; color: var(--md-primary-fg-color);">DevOps Engineer & Infrastructure Specialist</p>
-  <p style="font-size: 0.9rem; opacity: 0.8;">📍 Bogotá, Colombia</p>
+  <p style="font-size: 0.9rem; opacity: 0.8;">📍 Zurich, Switzerland</p>
 </div>
 
 ---
