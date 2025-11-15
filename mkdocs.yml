@@ -216,6 +216,7 @@ nav:
     - Knowledge Base: kb/index.md
     - Principles: principles/index.md
     - Journal: journal/index.md
+  - About: about/index.md
 
 # Extra
 extra:
