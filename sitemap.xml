@@ -2,162 +2,198 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
     <url>
          <loc>https://digital-garden.atmy.casa/</loc>
-         <lastmod>2025-11-11</lastmod>
+         <lastmod>2025-11-15</lastmod>
+    </url>
+    <url>
+         <loc>https://digital-garden.atmy.casa/about/</loc>
+         <lastmod>2025-11-15</lastmod>
     </url>
     <url>
          <loc>https://digital-garden.atmy.casa/blog/</loc>
-         <lastmod>2025-11-11</lastmod>
+         <lastmod>2025-11-15</lastmod>
     </url>
     <url>
          <loc>https://digital-garden.atmy.casa/blog/tags/</loc>
-         <lastmod>2025-11-11</lastmod>
+         <lastmod>2025-11-15</lastmod>
+    </url>
+    <url>
+         <loc>https://digital-garden.atmy.casa/blog/2025/11/11/application-troubleshooting-log-analysis/</loc>
+         <lastmod>2025-11-15</lastmod>
+    </url>
+    <url>
+         <loc>https://digital-garden.atmy.casa/blog/2025/11/11/troubleshooting-clusters-nodes-components/</loc>
+         <lastmod>2025-11-15</lastmod>
     </url>
     <url>
          <loc>https://digital-garden.atmy.casa/blog/2025/11/11/configmaps-secrets-volume-mounts/</loc>
-         <lastmod>2025-11-11</lastmod>
+         <lastmod>2025-11-15</lastmod>
     </url>
     <url>
          <loc>https://digital-garden.atmy.casa/blog/2025/11/11/custom-resources-operators-crds/</loc>
-         <lastmod>2025-11-11</lastmod>
+         <lastmod>2025-11-15</lastmod>
     </url>
     <url>
          <loc>https://digital-garden.atmy.casa/blog/2025/11/11/kubectl-essentials/</loc>
-         <lastmod>2025-11-11</lastmod>
+         <lastmod>2025-11-15</lastmod>
     </url>
     <url>
          <loc>https://digital-garden.atmy.casa/blog/2025/11/11/kubernetes-architecture-fundamentals/</loc>
-         <lastmod>2025-11-11</lastmod>
+         <lastmod>2025-11-15</lastmod>
     </url>
     <url>
          <loc>https://digital-garden.atmy.casa/blog/2025/11/11/kubernetes-coredns-service-discovery/</loc>
-         <lastmod>2025-11-11</lastmod>
+         <lastmod>2025-11-15</lastmod>
     </url>
     <url>
          <loc>https://digital-garden.atmy.casa/blog/2025/11/11/kubernetes-deployments-replicasets/</loc>
-         <lastmod>2025-11-11</lastmod>
+         <lastmod>2025-11-15</lastmod>
     </url>
     <url>
          <loc>https://digital-garden.atmy.casa/blog/2025/11/11/helm-kubernetes-package-manager/</loc>
-         <lastmod>2025-11-11</lastmod>
+         <lastmod>2025-11-15</lastmod>
     </url>
     <url>
          <loc>https://digital-garden.atmy.casa/blog/2025/11/11/kubernetes-ingress-gateway-api/</loc>
-         <lastmod>2025-11-11</lastmod>
+         <lastmod>2025-11-15</lastmod>
     </url>
     <url>
          <loc>https://digital-garden.atmy.casa/blog/2025/11/11/kustomize-template-free-configuration/</loc>
-         <lastmod>2025-11-11</lastmod>
+         <lastmod>2025-11-15</lastmod>
     </url>
     <url>
          <loc>https://digital-garden.atmy.casa/blog/2025/11/11/setting-up-kubernetes-lab/</loc>
-         <lastmod>2025-11-11</lastmod>
+         <lastmod>2025-11-15</lastmod>
     </url>
     <url>
          <loc>https://digital-garden.atmy.casa/blog/2025/11/11/kubernetes-network-policies/</loc>
-         <lastmod>2025-11-11</lastmod>
+         <lastmod>2025-11-15</lastmod>
     </url>
     <url>
          <loc>https://digital-garden.atmy.casa/blog/2025/11/11/kubernetes-objects-yaml-manifests/</loc>
-         <lastmod>2025-11-11</lastmod>
+         <lastmod>2025-11-15</lastmod>
     </url>
     <url>
          <loc>https://digital-garden.atmy.casa/blog/2025/11/11/kubernetes-pods-atomic-unit/</loc>
-         <lastmod>2025-11-11</lastmod>
+         <lastmod>2025-11-15</lastmod>
     </url>
     <url>
          <loc>https://digital-garden.atmy.casa/blog/2025/11/11/rbac-role-based-access-control/</loc>
-         <lastmod>2025-11-11</lastmod>
+         <lastmod>2025-11-15</lastmod>
     </url>
     <url>
          <loc>https://digital-garden.atmy.casa/blog/2025/11/11/kubernetes-advanced-scheduling/</loc>
-         <lastmod>2025-11-11</lastmod>
+         <lastmod>2025-11-15</lastmod>
     </url>
     <url>
          <loc>https://digital-garden.atmy.casa/blog/2025/11/11/kubernetes-services-exposing-applications/</loc>
-         <lastmod>2025-11-11</lastmod>
+         <lastmod>2025-11-15</lastmod>
+    </url>
+    <url>
+         <loc>https://digital-garden.atmy.casa/blog/2025/11/11/monitoring-metrics-resource-management/</loc>
+         <lastmod>2025-11-15</lastmod>
     </url>
     <url>
          <loc>https://digital-garden.atmy.casa/blog/2025/11/11/namespaces-resource-quotas/</loc>
-         <lastmod>2025-11-11</lastmod>
+         <lastmod>2025-11-15</lastmod>
     </url>
     <url>
          <loc>https://digital-garden.atmy.casa/blog/2025/11/11/persistent-volumes-claims-stateful-storage/</loc>
-         <lastmod>2025-11-11</lastmod>
+         <lastmod>2025-11-15</lastmod>
     </url>
     <url>
          <loc>https://digital-garden.atmy.casa/blog/2025/11/10/pnfs-distributed-storage-architecture/</loc>
-         <lastmod>2025-11-11</lastmod>
+         <lastmod>2025-11-15</lastmod>
     </url>
     <url>
          <loc>https://digital-garden.atmy.casa/blog/2025/11/11/security-contexts-pod-security-standards/</loc>
-         <lastmod>2025-11-11</lastmod>
+         <lastmod>2025-11-15</lastmod>
     </url>
     <url>
          <loc>https://digital-garden.atmy.casa/journal/</loc>
-         <lastmod>2025-11-11</lastmod>
+         <lastmod>2025-11-15</lastmod>
     </url>
     <url>
          <loc>https://digital-garden.atmy.casa/kb/</loc>
-         <lastmod>2025-11-11</lastmod>
+         <lastmod>2025-11-15</lastmod>
     </url>
     <url>
          <loc>https://digital-garden.atmy.casa/kubernetes/</loc>
-         <lastmod>2025-11-11</lastmod>
+         <lastmod>2025-11-15</lastmod>
     </url>
     <url>
          <loc>https://digital-garden.atmy.casa/principles/</loc>
-         <lastmod>2025-11-11</lastmod>
+         <lastmod>2025-11-15</lastmod>
     </url>
     <url>
          <loc>https://digital-garden.atmy.casa/blog/archive/2025/</loc>
-         <lastmod>2025-11-11</lastmod>
+         <lastmod>2025-11-15</lastmod>
     </url>
     <url>
          <loc>https://digital-garden.atmy.casa/blog/category/kubernetes/</loc>
-         <lastmod>2025-11-11</lastmod>
+         <lastmod>2025-11-15</lastmod>
+    </url>
+    <url>
+         <loc>https://digital-garden.atmy.casa/blog/category/troubleshooting/</loc>
+         <lastmod>2025-11-15</lastmod>
     </url>
     <url>
          <loc>https://digital-garden.atmy.casa/blog/category/configuration/</loc>
-         <lastmod>2025-11-11</lastmod>
+         <lastmod>2025-11-15</lastmod>
     </url>
     <url>
          <loc>https://digital-garden.atmy.casa/blog/category/architecture/</loc>
-         <lastmod>2025-11-11</lastmod>
+         <lastmod>2025-11-15</lastmod>
     </url>
     <url>
          <loc>https://digital-garden.atmy.casa/blog/category/cli/</loc>
-         <lastmod>2025-11-11</lastmod>
+         <lastmod>2025-11-15</lastmod>
     </url>
     <url>
          <loc>https://digital-garden.atmy.casa/blog/category/networking/</loc>
-         <lastmod>2025-11-11</lastmod>
+         <lastmod>2025-11-15</lastmod>
     </url>
     <url>
          <loc>https://digital-garden.atmy.casa/blog/category/workloads/</loc>
-         <lastmod>2025-11-11</lastmod>
+         <lastmod>2025-11-15</lastmod>
     </url>
     <url>
          <loc>https://digital-garden.atmy.casa/blog/category/infrastructure/</loc>
-         <lastmod>2025-11-11</lastmod>
+         <lastmod>2025-11-15</lastmod>
     </url>
     <url>
          <loc>https://digital-garden.atmy.casa/blog/category/security/</loc>
-         <lastmod>2025-11-11</lastmod>
+         <lastmod>2025-11-15</lastmod>
+    </url>
+    <url>
+         <loc>https://digital-garden.atmy.casa/blog/category/monitoring/</loc>
+         <lastmod>2025-11-15</lastmod>
     </url>
     <url>
          <loc>https://digital-garden.atmy.casa/blog/category/storage/</loc>
-         <lastmod>2025-11-11</lastmod>
+         <lastmod>2025-11-15</lastmod>
     </url>
     <url>
          <loc>https://digital-garden.atmy.casa/blog/page/2/</loc>
-         <lastmod>2025-11-11</lastmod>
+         <lastmod>2025-11-15</lastmod>
+    </url>
+    <url>
+         <loc>https://digital-garden.atmy.casa/blog/page/3/</loc>
+         <lastmod>2025-11-15</lastmod>
     </url>
     <url>
          <loc>https://digital-garden.atmy.casa/blog/archive/2025/page/2/</loc>
-         <lastmod>2025-11-11</lastmod>
+         <lastmod>2025-11-15</lastmod>
+    </url>
+    <url>
+         <loc>https://digital-garden.atmy.casa/blog/archive/2025/page/3/</loc>
+         <lastmod>2025-11-15</lastmod>
     </url>
     <url>
          <loc>https://digital-garden.atmy.casa/blog/category/kubernetes/page/2/</loc>
-         <lastmod>2025-11-11</lastmod>
+         <lastmod>2025-11-15</lastmod>
+    </url>
+    <url>
+         <loc>https://digital-garden.atmy.casa/blog/category/kubernetes/page/3/</loc>
+         <lastmod>2025-11-15</lastmod>
     </url>
 </urlset>
