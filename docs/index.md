@@ -1,126 +1,150 @@
-# Digital Garden
+# About Me
 
-> A living knowledge base for distributed systems, storage architecture, and infrastructure engineering
-
----
-
-## 📝 Latest Posts
-
-[➡️ View All Posts](blog/index.md){ .md-button .md-button--primary }
-
-### [kubectl Essentials: Your Kubernetes Swiss Army Knife](blog/2025/11/11/kubectl-essentials/)
-
-**Kubernetes** · 13 min read
-
-Master kubectl commands, output formats, and productivity patterns essential for CKA exam success. Learn imperative vs declarative approaches, JSONPath queries, context management, and time-saving aliases for Kubernetes cluster management.
-
-**Topics**: kubernetes, k8s, cka-prep, kubectl
-
-[Read more →](blog/2025/11/11/kubectl-essentials/){ .md-button }
-
-### [Setting Up Your Kubernetes Lab Environment](blog/2025/11/11/setting-up-kubernetes-lab/)
-
-**Kubernetes · Infrastructure** · 12 min read
-
-Complete guide to setting up Kubernetes lab environments for CKA preparation. Covers kubeadm cluster setup, Minikube for local development, kind for testing, kubectl installation, and kubeconfig management with practical examples.
-
-**Topics**: kubernetes, k8s, cka-prep, kubeadm, kubectl, minikube
-
-[Read more →](blog/2025/11/11/setting-up-kubernetes-lab/){ .md-button }
-
-### [Kubernetes Architecture Fundamentals](blog/2025/11/11/kubernetes-architecture-fundamentals/)
-
-**Kubernetes · Architecture** · 15 min read
-
-Deep dive into Kubernetes cluster architecture, control plane components, and the distributed systems design that powers container orchestration at scale. Essential foundations for CKA certification with comprehensive diagrams, kubectl commands, and hands-on practice exercises.
-
-**Topics**: kubernetes, k8s, cka-prep, architecture, control-plane, kubectl
-
-[Read more →](blog/2025/11/11/kubernetes-architecture-fundamentals/){ .md-button }
-
-### [High-Performance pNFS v4.2 Distributed Storage Architecture](blog/2025/11/10/pnfs-distributed-storage-architecture/)
-
-**Storage · Architecture** · 12 min read
-
-A deep dive into building a clustered, high-availability parallel NFS storage system with load-balanced metadata servers, NVMe-backed storage nodes, and low-latency interconnects. Features production-grade architecture with InfiniBand/RoCE fabrics, active-active MDS clustering, and parallel data paths achieving 28 GB/s aggregate throughput.
-
-**Topics**: pNFS v4.2, distributed storage, NVMe, InfiniBand, RoCE, high availability, load balancing, metadata clustering
-
-[Read more →](blog/2025/11/10/pnfs-distributed-storage-architecture/){ .md-button }
+<div style="text-align: center; margin: 2rem 0;">
+  <img src="assets/images/alf_bg.jpg" alt="Alfredo Jiménez" style="border-radius: 50%; width: 200px; height: 200px; object-fit: cover; border: 3px solid var(--md-primary-fg-color);">
+  <h2 style="margin-top: 1rem;">Alfredo Jiménez Ronssin du Chatelle</h2>
+  <p style="font-size: 1.2rem; color: var(--md-primary-fg-color);">Senior IT Engineer</p>
+  <p style="font-size: 0.9rem; opacity: 0.8;">📍 Zürich, Switzerland</p>
+</div>
 
 ---
 
-## 🗂️ Browse by Theme
+## Hey there! 👋
+
+I'm a Senior IT Engineer with over 20 years of experience designing, building, and securing enterprise infrastructure across the globe. From troubleshooting network issues in Madrid to architecting multi-cloud solutions in Zürich, I've been fortunate to work with some incredible teams at companies like Roche, Swisscom, elipsLife, and Solera.
+
+These days, I'm deep into AI and LLM technologies—exploring everything from prompt engineering with Claude Code and Cursor to building AI agent workflows with LangChain and LangGraph. I believe in infrastructure as code, security by design, and automation that makes life easier for everyone.
+
+When I'm not experimenting with local LLMs or fine-tuning vector databases, you'll find me here in my digital garden—sharing what I learn, documenting my journey, and connecting the dots between traditional infrastructure and the AI-powered future.
+
+---
+
+## What I Do
 
 <div class="grid cards" markdown>
 
--   :material-kubernetes: **Kubernetes CKA Mastery**
+-   :material-cloud:{ .lg .middle } **Cloud Architecture**
 
     ---
 
-    Complete CKA certification prep with 22 comprehensive posts
+    Multi-cloud expertise across Azure, AWS, and hybrid environments. Infrastructure as Code with Terraform, ARM, Bicep, and Ansible. Cost optimization and cloud-native design patterns.
 
-    [Explore Kubernetes →](kubernetes/index.md)
-
--   :material-robot-outline: **AI & Automation**
+-   :material-security:{ .lg .middle } **Cybersecurity**
 
     ---
 
-    Agents, MCP servers, tool orchestration, LLM workflows
+    Security hardening, threat modeling, and compliance. SPOC experience with SOC/SRC teams. Firewall management (Fortigate), WAF, ZScaler proxy, and security-first infrastructure design.
 
-    [Explore AI →](blog/index.md)
-
--   :material-cloud: **Cloud Infrastructure**
+-   :material-robot:{ .lg .middle } **AI & Automation**
 
     ---
 
-    GCP, Azure, AWS, multi-cloud architectures
+    Python development with LangChain, LangGraph, and AI Hive Agents. Prompt engineering, RAG systems, knowledge graphs, and vector databases (Qdrant). Local LLM deployment and API integration.
 
-    [Explore Cloud →](blog/index.md)
-
--   :material-code-braces: **Infrastructure as Code**
+-   :material-server:{ .lg .middle } **Infrastructure Engineering**
 
     ---
 
-    Terraform, Ansible, GitOps, automation
+    VMware virtualization at scale (managed 25K+ VMs globally). Linux and Microsoft services. Storage solutions (Pure, 3PAR, CEPH, Kaminario). Backup and disaster recovery (Veeam, NetBackup, SRM).
 
-    [Explore IaC →](blog/index.md)
-
--   :material-server-network: **On-Premise Systems**
+-   :material-lan:{ .lg .middle } **Networking & Storage**
 
     ---
 
-    Bare metal, datacenter, networking, storage
+    LAN/SDN architecture and implementation. SAN/NAS storage design. Network security with firewalls, proxies, and VPNs. Performance tuning and troubleshooting at enterprise scale.
 
-    [Explore On-Prem →](blog/index.md)
-
--   :material-shield-lock: **Cybersecurity**
+-   :material-code-braces:{ .lg .middle } **DevOps & Scripting**
 
     ---
 
-    Security architecture, hardening, compliance
-
-    [Explore Security →](blog/index.md)
-
--   :material-database: **Storage & Networking**
-
-    ---
-
-    File systems, protocols, high-performance I/O
-
-    [Explore Storage →](blog/index.md)
+    PowerShell, Bash, Python, and CLI automation. CI/CD pipelines, GitHub Actions, configuration management. Process optimization and operational excellence.
 
 </div>
 
 ---
 
-## 🧭 Additional Resources
+## Current Focus
 
-- **[Knowledge Base](kb/index.md)**: Curated reference material and evergreen documentation
-- **[Principles](principles/index.md)**: Engineering principles and design patterns
-- **[Journal](journal/index.md)**: Progress logs and learning notes
-- **[Tags](blog/tags.md)**: Browse all content by tag
+**:material-brain: AI & LLM Exploration**: Currently on a sabbatical diving deep into AI technologies—Python development, prompt engineering with Claude Code and Cursor, building knowledge graphs, working with vector databases, and deploying local LLMs. Experimenting with AI agent workflows and context engineering.
+
+**:material-sprout: Knowledge Sharing**: Growing this digital garden as a living knowledge base. Documenting learnings about Kubernetes (CKA prep), distributed systems, storage architectures, and the intersection of traditional infrastructure with AI/ML workloads.
+
+**:material-account-group: Community**: Inter-team collaboration, knowledge sharing, and mentoring. I believe the best solutions come from diverse perspectives and open communication.
 
 ---
 
-<small>This garden grows continuously · [Follow on GitHub](https://github.com/alfredojrc/digital-garden) · [RSS Feed](feed_rss_created.xml)</small>
+## Professional Highlights
+
+**Global Scale Experience**:
+- Managed infrastructure across 11+ countries (CH, DE, US, CN, SG, BR, MX, AU, JP, ES, IT, UK, RU)
+- Led virtualization platforms supporting 25,000+ VMs globally at Roche
+- Architected and operated multi-datacenter environments with 99.9%+ uptime
+
+**Security Leadership**:
+- SPOC for Engineering/Operations teams with SOC and SRC at elipsLife
+- Security hardening, compliance, and threat mitigation specialist
+- Designed and implemented security-focused private/public cloud projects
+
+**Entrepreneurship**:
+- Co-founded IT Encore S.L., designed and implemented replicated/balanced dual-datacenter infrastructure
+- Managed vendors, services, and complete technology stack on limited budgets
+
+---
+
+## Technical Expertise
+
+**Cloud & Virtualization**: Azure, AWS, VMware ESXi/vSphere, SRM, Horizon/VDI, KVM, OpenStack
+
+**Infrastructure as Code**: Terraform, ARM, Bicep, Ansible, Foreman, HPOO
+
+**AI & Development**: Python, LangChain, LangGraph, AI Hive Agents, Vector DBs (Qdrant), Knowledge Graphs, Local LLMs (LM Studio, Llama.cpp, Ollama)
+
+**Operating Systems**: Linux (RHEL, Ubuntu, CentOS), Microsoft Windows Server, Active Directory
+
+**Storage**: Pure Storage, HPE 3PAR, Dell EMC VMAX, Kaminario, CEPH, GlusterFS, DRBD
+
+**Networking**: Cisco, Fortigate, pfSense, Juniper, SDN, LAN/WAN design, VPN, 802.1x
+
+**Security**: WAF, ZScaler, Fortigate, ISA/TMG, Barracuda, Security hardening, PKI/CA
+
+**Monitoring & Backup**: ELK Stack, Icinga, Nagios, Veeam, NetBackup, Bacula
+
+**Scripting**: PowerShell, Bash, Python, PowerCLI, advanced automation
+
+**Databases**: MSSQL, MySQL, Oracle SQL
+
+**Services**: Exchange, IIS, DNS, WSUS, File Services, Terminal Services
+
+---
+
+## Certifications
+
+- **2023**: HashiCorp Terraform Associate
+- **2015**: Red Hat OpenStack Administrator (RHCSA-RHOS)
+- **2014**: VMware VCAP5-DCV
+- **2013**: VMware VCP5-DCV | ITIL Foundation
+- **2012**: Red Hat RHCSA
+- **2007**: Microsoft MCSE
+- **2004**: Microsoft MCSA | CompTIA Security+
+
+---
+
+## Languages
+
+- **Spanish**: Native
+- **English**: C2 (Fluent)
+- **French**: B2 (Intermediate)
+
+---
+
+## Let's Connect
+
+This digital garden is where I share my journey through technology—from enterprise infrastructure to AI experimentation. If you're exploring similar paths, working on interesting problems, or just want to chat about infrastructure, automation, or AI—I'd love to connect.
+
+**:fontawesome-brands-github: GitHub**: [github.com/alfredojrc](https://github.com/alfredojrc)
+
+---
+
+<div style="text-align: center; opacity: 0.7; margin-top: 3rem; font-size: 0.9rem;">
+  <p>This garden is always growing. Come back often to see what's new! 🌱</p>
+</div>
