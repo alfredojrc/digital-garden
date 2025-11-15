@@ -143,10 +143,6 @@ This digital garden is where I share my journey through technology—from enterp
 
 **:fontawesome-brands-github: GitHub**: [github.com/alfredojrc](https://github.com/alfredojrc)
 
-**:material-email: Email**: alfredo.jrc@gmail.com
-
-**:material-phone: Phone**: +41 79 939 57 77
-
 ---
 
 <div style="text-align: center; opacity: 0.7; margin-top: 3rem; font-size: 0.9rem;">
