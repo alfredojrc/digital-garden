@@ -159,6 +159,11 @@ plugins:
         - isolation
         - coredns
         - dns
+        - cluster-health
+        - autoscaling
+        - metrics
+        - debugging
+        - logs
 
 # Extensions (for console-style syntax highlighting)
 markdown_extensions:
