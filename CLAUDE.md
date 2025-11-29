@@ -14,6 +14,10 @@ A personal digital garden, knowledge base, and technical journal built with MkDo
   - Tracking: See [TODO.md](TODO.md) for detailed progress
   - Purpose: Complete Certified Kubernetes Administrator exam preparation
   - Structure: 7 phases covering 100% of CKA curriculum
+- **AI & MCP Integration** (3-post series on Claude Code tooling)
+  - Claude Code Profiles: Token-optimized MCP configurations
+  - Building a Gemini MCP Server: AI-to-AI integration
+  - Multi-Agent Workflows with claude-flow: Swarm orchestration
 
 ## Development Commands
 
@@ -57,7 +61,7 @@ mkdocs gh-deploy
 ### Content Organization
 ```
 docs/                          # All content lives here
-├── index.md                   # Homepage (MANUAL post listings)
+├── home.md                    # Homepage at /home/ (MANUAL post listings)
 ├── blog/                      # Blog managed by Material blog plugin
 │   ├── index.md              # Auto-generated blog index (DO NOT EDIT)
 │   ├── tags.md               # Tag browser page
@@ -66,7 +70,10 @@ docs/                          # All content lives here
 │       ├── kubernetes-architecture-fundamentals.md
 │       ├── kubernetes-lab-setup.md
 │       ├── kubectl-essentials.md
-│       └── pnfs-distributed-storage-architecture.md
+│       ├── pnfs-distributed-storage-architecture.md
+│       ├── claude-code-profiles-architecture.md      # AI series
+│       ├── building-gemini-mcp-server.md             # AI series
+│       └── claude-flow-multi-agent-workflows.md      # AI series
 ├── kubernetes/                # Kubernetes CKA theme landing page
 │   └── index.md              # Overview and navigation for 22-post series
 ├── kb/                        # Knowledge Base section
@@ -115,9 +122,10 @@ The site uses **Material for MkDocs blog plugin** which auto-generates blog func
 **CRITICAL RULES**:
 1. **ALL blog posts MUST go in `docs/blog/posts/`** - No exceptions
 2. **`docs/blog/index.md` is AUTO-GENERATED** - Never edit directly
-3. **Homepage (`docs/index.md`) has MANUAL post listings** - Must update when adding posts
+3. **Homepage (`docs/home.md`) has MANUAL post listings** - Must update when adding posts
 4. **Tags must be in `mkdocs.yml` → `tags_allowed`** - Build fails otherwise
 5. **Categories must be in `mkdocs.yml` → `categories_allowed`** - Build fails otherwise
+6. **USE ABSOLUTE PATHS for cross-section links** - See URL Rules below
 
 ### Blog Post Front Matter (Required)
 ```yaml
@@ -147,8 +155,8 @@ Full post content here...
 1. Create `docs/blog/posts/your-post-name.md` with proper front matter
 2. Add any new tags to `mkdocs.yml` → `plugins.blog.tags_allowed`
 3. Add any new categories to `mkdocs.yml` → `plugins.blog.categories_allowed`
-4. Update `docs/index.md` "Latest Posts" section manually
-5. If new theme: Update `docs/index.md` "Browse by Theme" section
+4. Update `docs/home.md` "Latest Posts" section manually (USE ABSOLUTE PATHS!)
+5. If new theme: Update `docs/home.md` "Browse by Theme" section
 6. If series post: Update theme landing page (e.g., `docs/kubernetes/index.md`)
 7. **VERIFY POST COMPLETENESS** (see checklist below)
 8. Commit and push - GitHub Actions will deploy
@@ -209,6 +217,7 @@ mkdocs build --strict
 - [ ] Post filename follows convention: `topic-name.md` (lowercase, hyphens)
 - [ ] Post is in `docs/blog/posts/` directory
 - [ ] If part of series: Landing page link updated (e.g., `kubernetes/index.md`)
+- [ ] **Homepage links use ABSOLUTE paths** (`/blog/...` not `blog/...`)
 
 ### Theme Landing Pages vs Blog Posts
 - **Landing Pages** (e.g., `kubernetes/index.md`): Overview, navigation, series structure
@@ -223,10 +232,36 @@ mkdocs build --strict
 - **Fix**: Add `X` to `mkdocs.yml` → `plugins.blog.categories_allowed`
 
 **Error**: "Posts not appearing on homepage"
-- **Fix**: Manually add post preview to `docs/index.md` "Latest Posts" section
+- **Fix**: Manually add post preview to `docs/home.md` "Latest Posts" section
 
 **Error**: "Post doesn't appear in blog"
 - **Fix**: Ensure post is in `docs/blog/posts/` (not elsewhere)
+
+**Error**: "Links lead to 404 pages (e.g., /home/blog/...)"
+- **Cause**: Using relative paths (`blog/...`) from pages not at root
+- **Fix**: Use absolute paths starting with `/` (e.g., `/blog/2025/11/29/slug/`)
+
+### URL Path Rules (CRITICAL)
+
+**Problem**: `home.md` renders at `/home/`. Relative links like `blog/...` resolve to `/home/blog/...` = 404!
+
+**Rule**: Always use **absolute paths** for cross-section links:
+```markdown
+# ❌ WRONG - Relative paths break from non-root pages
+[Read more →](blog/2025/11/29/post-slug/)
+
+# ✅ CORRECT - Absolute paths always work
+[Read more →](/blog/2025/11/29/post-slug/)
+```
+
+**Where this applies**:
+- `docs/home.md` → Use `/blog/...`, `/kubernetes/...`, `/kb/...`
+- `docs/kubernetes/index.md` → Use `/blog/...` for post links
+- Any page not at the site root
+
+**Safe relative paths** (within same section):
+- From `blog/posts/foo.md` to `../tags.md` → OK (same section)
+- From `kubernetes/index.md` to `../home.md` → OK (going up)
 
 ## Content Creation Patterns
 
