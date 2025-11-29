@@ -915,6 +915,10 @@
       
         
       
+        
+      
+        
+      
     
     
     
@@ -957,6 +961,36 @@
 
           </label>
           <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+    
+  
+  
+    <li class="md-nav__item">
+      <a href="../../category/ai/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    AI
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
             
               
                 
@@ -1035,6 +1069,36 @@
     
   
     Configuration
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+  
+  
+    <li class="md-nav__item">
+      <a href="../../category/devops/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    DevOps
   
 
     
@@ -1537,6 +1601,170 @@
             in
             
               <a href="../../category/kubernetes/" class="md-meta__link">Kubernetes</a>, 
+              <a href="../../category/workloads/" class="md-meta__link">Workloads</a></li>
+        
+        
+          
+          <li class="md-meta__item">
+            
+              15 min read
+            
+          </li>
+        
+        
+      </ul>
+      
+    </div>
+  </header>
+  <div class="md-post__content md-typeset">
+    <h2 id="deployments-replicasets-and-rolling-updates"><a class="toclink" href="../../2025/11/11/kubernetes-deployments-replicasets/">Deployments, ReplicaSets, and Rolling Updates</a></h2>
+<p>Master Kubernetes workload controllers for production-grade application management. Learn deployment strategies, rolling updates, rollback procedures, and the complete controller hierarchy essential for CKA exam success.</p>
+
+    
+      <nav class="md-post__action">
+        <a href="../../2025/11/11/kubernetes-deployments-replicasets/">
+          Continue reading
+        </a>
+      </nav>
+    
+    
+  </div>
+</article>
+      
+        <article class="md-post md-post--excerpt">
+  <header class="md-post__header">
+    
+      <nav class="md-post__authors md-typeset">
+        
+          <span class="md-author">
+            <img src="https://github.com/alfredojrc.png" alt="Alf">
+          </span>
+        
+      </nav>
+    
+    <div class="md-post__meta md-meta">
+      <ul class="md-meta__list">
+        <li class="md-meta__item">
+          <time datetime="2025-11-11 00:00:00+00:00">November 11, 2025</time></li>
+        
+          <li class="md-meta__item">
+            in
+            
+              <a href="../../category/kubernetes/" class="md-meta__link">Kubernetes</a>, 
+              <a href="../../category/configuration/" class="md-meta__link">Configuration</a></li>
+        
+        
+          
+          <li class="md-meta__item">
+            
+              13 min read
+            
+          </li>
+        
+        
+      </ul>
+      
+    </div>
+  </header>
+  <div class="md-post__content md-typeset">
+    <h2 id="helm-kubernetes-package-manager"><a class="toclink" href="../../2025/11/11/helm-kubernetes-package-manager/">Helm: Kubernetes Package Manager</a></h2>
+<p><strong>Simplify application deployment with charts, releases, and templating</strong></p>
+<p>Helm is the de facto package manager for Kubernetes, enabling you to define, install, and upgrade complex applications using reusable packages called charts. For the CKA exam, you'll need to understand Helm's architecture, work with charts and releases, troubleshoot deployments, and use Helm commands effectively. This guide covers Helm 3 fundamentals, chart structure, templating with values, release management, and practical troubleshooting techniques to help you master Kubernetes application packaging.</p>
+<p><strong>CKA Exam Relevance</strong>: Cluster Architecture, Installation &amp; Configuration (25% of exam weight)</p>
+
+    
+      <nav class="md-post__action">
+        <a href="../../2025/11/11/helm-kubernetes-package-manager/">
+          Continue reading
+        </a>
+      </nav>
+    
+    
+  </div>
+</article>
+      
+        <article class="md-post md-post--excerpt">
+  <header class="md-post__header">
+    
+      <nav class="md-post__authors md-typeset">
+        
+          <span class="md-author">
+            <img src="https://github.com/alfredojrc.png" alt="Alf">
+          </span>
+        
+      </nav>
+    
+    <div class="md-post__meta md-meta">
+      <ul class="md-meta__list">
+        <li class="md-meta__item">
+          <time datetime="2025-11-11 00:00:00+00:00">November 11, 2025</time></li>
+        
+          <li class="md-meta__item">
+            in
+            
+              <a href="../../category/kubernetes/" class="md-meta__link">Kubernetes</a>, 
+              <a href="../../category/networking/" class="md-meta__link">Networking</a></li>
+        
+        
+          
+          <li class="md-meta__item">
+            
+              15 min read
+            
+          </li>
+        
+        
+      </ul>
+      
+    </div>
+  </header>
+  <div class="md-post__content md-typeset">
+    <h2 id="ingress-and-gateway-api-modern-traffic-management"><a class="toclink" href="../../2025/11/11/kubernetes-ingress-gateway-api/">Ingress and Gateway API: Modern Traffic Management</a></h2>
+<p>In production Kubernetes environments, managing external access to your services is critical. While Services handle internal cluster networking, <strong>Ingress</strong> provides sophisticated HTTP/HTTPS routing from the outside world. This guide covers everything you need to know for the CKA exam and production deployments, including the modern Gateway API that's reshaping Kubernetes networking in 2025.</p>
+<h3 id="why-ingress-matters"><a class="toclink" href="../../2025/11/11/kubernetes-ingress-gateway-api/#why-ingress-matters">Why Ingress Matters</a></h3>
+<p>Imagine running 50 microservices in your cluster. Without Ingress, you'd need 50 LoadBalancer Services—each with its own expensive cloud load balancer and public IP address. That's not just costly; it's operationally nightmarish.</p>
+<p>Ingress solves this by providing:</p>
+<ul>
+<li><strong>Cost efficiency</strong>: One load balancer for multiple services</li>
+<li><strong>Advanced routing</strong>: Path-based, host-based, header-based routing</li>
+<li><strong>SSL/TLS termination</strong>: Centralized certificate management</li>
+<li><strong>Name-based virtual hosting</strong>: Multiple domains on one IP</li>
+<li><strong>Protocol support</strong>: HTTP, HTTPS, WebSocket, gRPC</li>
+</ul>
+<p>For the CKA exam, you'll need to demonstrate hands-on competency with Ingress resources, troubleshoot misconfigurations, and understand controller selection. In production, mastering Ingress means the difference between elegant traffic management and a tangled mess of load balancers.</p>
+<p>The landscape is evolving. While traditional Ingress remains the standard (and what's tested on the CKA), the <strong>Gateway API</strong> represents Kubernetes networking's future—offering role-oriented design, better extensibility, and more expressive routing rules. Understanding both is essential for modern Kubernetes practitioners.</p>
+
+    
+      <nav class="md-post__action">
+        <a href="../../2025/11/11/kubernetes-ingress-gateway-api/">
+          Continue reading
+        </a>
+      </nav>
+    
+    
+  </div>
+</article>
+      
+        <article class="md-post md-post--excerpt">
+  <header class="md-post__header">
+    
+      <nav class="md-post__authors md-typeset">
+        
+          <span class="md-author">
+            <img src="https://github.com/alfredojrc.png" alt="Alf">
+          </span>
+        
+      </nav>
+    
+    <div class="md-post__meta md-meta">
+      <ul class="md-meta__list">
+        <li class="md-meta__item">
+          <time datetime="2025-11-11 00:00:00+00:00">November 11, 2025</time></li>
+        
+          <li class="md-meta__item">
+            in
+            
+              <a href="../../category/kubernetes/" class="md-meta__link">Kubernetes</a>, 
               <a href="../../category/configuration/" class="md-meta__link">Configuration</a></li>
         
         
@@ -1869,157 +2097,6 @@
     
       <nav class="md-post__action">
         <a href="../../2025/11/11/kubernetes-advanced-scheduling/">
-          Continue reading
-        </a>
-      </nav>
-    
-    
-  </div>
-</article>
-      
-        <article class="md-post md-post--excerpt">
-  <header class="md-post__header">
-    
-      <nav class="md-post__authors md-typeset">
-        
-          <span class="md-author">
-            <img src="https://github.com/alfredojrc.png" alt="Alf">
-          </span>
-        
-      </nav>
-    
-    <div class="md-post__meta md-meta">
-      <ul class="md-meta__list">
-        <li class="md-meta__item">
-          <time datetime="2025-11-11 00:00:00+00:00">November 11, 2025</time></li>
-        
-          <li class="md-meta__item">
-            in
-            
-              <a href="../../category/kubernetes/" class="md-meta__link">Kubernetes</a>, 
-              <a href="../../category/networking/" class="md-meta__link">Networking</a></li>
-        
-        
-          
-          <li class="md-meta__item">
-            
-              14 min read
-            
-          </li>
-        
-        
-      </ul>
-      
-    </div>
-  </header>
-  <div class="md-post__content md-typeset">
-    <h2 id="kubernetes-services-exposing-your-applications"><a class="toclink" href="../../2025/11/11/kubernetes-services-exposing-applications/">Kubernetes Services: Exposing Your Applications</a></h2>
-<p>Kubernetes Services are the cornerstone of networking in modern containerized applications. They provide stable, reliable access to dynamic sets of Pods, abstracting away the complexity of Pod IP management and enabling seamless communication between application components. For anyone preparing for the Certified Kubernetes Administrator (CKA) exam, mastering Services is essential—they represent 20% of the exam's Services &amp; Networking domain.</p>
-<p>In this comprehensive guide, we'll explore how Services work, when to use each type, and the practical kubectl commands you need to succeed in both the exam and production environments.</p>
-
-    
-      <nav class="md-post__action">
-        <a href="../../2025/11/11/kubernetes-services-exposing-applications/">
-          Continue reading
-        </a>
-      </nav>
-    
-    
-  </div>
-</article>
-      
-        <article class="md-post md-post--excerpt">
-  <header class="md-post__header">
-    
-      <nav class="md-post__authors md-typeset">
-        
-          <span class="md-author">
-            <img src="https://github.com/alfredojrc.png" alt="Alf">
-          </span>
-        
-      </nav>
-    
-    <div class="md-post__meta md-meta">
-      <ul class="md-meta__list">
-        <li class="md-meta__item">
-          <time datetime="2025-11-11 00:00:00+00:00">November 11, 2025</time></li>
-        
-          <li class="md-meta__item">
-            in
-            
-              <a href="../../category/kubernetes/" class="md-meta__link">Kubernetes</a>, 
-              <a href="../../category/monitoring/" class="md-meta__link">Monitoring</a></li>
-        
-        
-          
-          <li class="md-meta__item">
-            
-              13 min read
-            
-          </li>
-        
-        
-      </ul>
-      
-    </div>
-  </header>
-  <div class="md-post__content md-typeset">
-    <h2 id="kubernetes-monitoring-metrics-and-resource-management"><a class="toclink" href="../../2025/11/11/monitoring-metrics-resource-management/">Kubernetes Monitoring, Metrics, and Resource Management</a></h2>
-<p>Master Metrics Server, resource requests/limits, Horizontal Pod Autoscaler (HPA), Vertical Pod Autoscaler (VPA), and kubectl top - essential skills for resource management and monitoring in Kubernetes.</p>
-
-    
-      <nav class="md-post__action">
-        <a href="../../2025/11/11/monitoring-metrics-resource-management/">
-          Continue reading
-        </a>
-      </nav>
-    
-    
-  </div>
-</article>
-      
-        <article class="md-post md-post--excerpt">
-  <header class="md-post__header">
-    
-      <nav class="md-post__authors md-typeset">
-        
-          <span class="md-author">
-            <img src="https://github.com/alfredojrc.png" alt="Alf">
-          </span>
-        
-      </nav>
-    
-    <div class="md-post__meta md-meta">
-      <ul class="md-meta__list">
-        <li class="md-meta__item">
-          <time datetime="2025-11-11 00:00:00+00:00">November 11, 2025</time></li>
-        
-          <li class="md-meta__item">
-            in
-            
-              <a href="../../category/kubernetes/" class="md-meta__link">Kubernetes</a>, 
-              <a href="../../category/infrastructure/" class="md-meta__link">Infrastructure</a></li>
-        
-        
-          
-          <li class="md-meta__item">
-            
-              11 min read
-            
-          </li>
-        
-        
-      </ul>
-      
-    </div>
-  </header>
-  <div class="md-post__content md-typeset">
-    <h2 id="kubernetes-namespaces-and-resource-quotas"><a class="toclink" href="../../2025/11/11/namespaces-resource-quotas/">Kubernetes Namespaces and Resource Quotas</a></h2>
-<p>Master namespace isolation and resource management for CKA exam success. Learn how to partition clusters, enforce resource limits, and prevent resource exhaustion in multi-tenant environments.</p>
-
-    
-      <nav class="md-post__action">
-        <a href="../../2025/11/11/namespaces-resource-quotas/">
           Continue reading
         </a>
       </nav>
