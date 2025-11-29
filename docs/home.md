@@ -72,6 +72,36 @@
 
 [➡️ View All Posts](blog/index.md){ .md-button .md-button--primary }
 
+### [Multi-Agent AI Workflows with claude-flow](blog/2025/11/29/claude-flow-multi-agent-workflows/)
+
+**AI · Architecture** · 12 min read
+
+claude-flow enables orchestrated multi-agent swarms within Claude Code, allowing complex tasks to be broken down and executed in parallel by specialized agents. Explore the architecture, practical patterns, and production configurations for AI-to-AI collaboration.
+
+**Topics**: claude-code, mcp, ai-agents, multi-agent, swarm, automation
+
+[Read more →](blog/2025/11/29/claude-flow-multi-agent-workflows/){ .md-button }
+
+### [Building a Gemini MCP Server](blog/2025/11/29/building-gemini-mcp-server/)
+
+**AI · Architecture · DevOps** · 15 min read
+
+Architecture and implementation of a production-ready MCP server that wraps Google's Gemini CLI, enabling Claude Code to leverage Gemini as an adjacent AI for deep analysis, code review, and structured AI-to-AI debates. Features 93% token reduction through tool consolidation.
+
+**Topics**: claude-code, mcp, gemini, ai-agents, docker, automation
+
+[Read more →](blog/2025/11/29/building-gemini-mcp-server/){ .md-button }
+
+### [Claude Code Profiles: Optimizing Token Usage](blog/2025/11/29/claude-code-profiles-architecture/)
+
+**AI · CLI · Configuration** · 12 min read
+
+Claude Code's MCP enables powerful integrations, but loading all servers can consume 100k+ tokens. This post explores a profile-based architecture that optimizes token usage while maintaining full capabilities when needed.
+
+**Topics**: claude-code, mcp, ai-agents, context-management, prompt-engineering
+
+[Read more →](blog/2025/11/29/claude-code-profiles-architecture/){ .md-button }
+
 ### [kubectl Essentials: Your Kubernetes Swiss Army Knife](blog/2025/11/11/kubectl-essentials/)
 
 **Kubernetes** · 13 min read
