@@ -221,6 +221,7 @@ nav:
     - blog/index.md
     - Tags: blog/tags.md
     - Categories:
+      - AI: blog/index.md#ai
       - Storage: blog/index.md#storage
       - Networking: blog/index.md#networking
       - Architecture: blog/index.md#architecture
@@ -230,6 +231,7 @@ nav:
       - Performance: blog/index.md#performance
       - Kubernetes: blog/index.md#kubernetes
   - By Theme:
+    - AI & MCP Integration: ai/index.md
     - Kubernetes CKA Mastery: kubernetes/index.md
   - Resources:
     - Knowledge Base: kb/index.md

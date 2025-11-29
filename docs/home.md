@@ -16,13 +16,13 @@
 
     [Explore Kubernetes →](kubernetes/index.md)
 
--   :material-robot-outline: **AI & Automation**
+-   :material-robot-outline: **AI & MCP Integration**
 
     ---
 
-    Agents, MCP servers, tool orchestration, LLM workflows
+    Claude Code profiles, MCP servers, multi-agent swarms, AI-to-AI workflows
 
-    [Explore AI →](/blog/)
+    [Explore AI →](/ai/)
 
 -   :material-cloud: **Cloud Infrastructure**
 
