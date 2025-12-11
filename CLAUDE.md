@@ -75,7 +75,12 @@ docs/                          # All content lives here
 │       ├── pnfs-distributed-storage-architecture.md
 │       ├── claude-code-profiles-architecture.md      # AI series
 │       ├── building-gemini-mcp-server.md             # AI series
-│       └── claude-flow-multi-agent-workflows.md      # AI series
+│       ├── claude-flow-multi-agent-workflows.md      # AI series
+│       └── gemini-mcp-debate-swarm-architecture.md   # AI series
+├── themes/                    # By Theme section landing page
+│   └── index.md              # SECTION INDEX - lists all themes (REQUIRED!)
+├── ai/                        # AI theme landing page
+│   └── index.md              # Overview for AI series (UPDATE when adding AI posts!)
 ├── kubernetes/                # Kubernetes CKA theme landing page
 │   └── index.md              # Overview and navigation for 22-post series
 ├── kb/                        # Knowledge Base section
@@ -90,6 +95,32 @@ docs/                          # All content lives here
 └── stylesheets/
     └── extra.css             # Custom styling (console glow effects)
 ```
+
+### Navigation Section Indexes (CRITICAL)
+
+With `navigation.indexes` enabled in mkdocs.yml, nav sections need their own index pages:
+
+**The Problem**: Without a section index, clicking "By Theme" navigates to the first child item, but the sidebar shows the parent label instead of the child label.
+
+**The Solution**: Every nav section with children MUST have its own index.md:
+
+```yaml
+# ✅ CORRECT - Section has its own index
+- By Theme:
+    - themes/index.md              # Section index (first item, no label = uses section title)
+    - AI & MCP Integration: ai/index.md
+    - Kubernetes CKA Mastery: kubernetes/index.md
+
+# ❌ WRONG - No section index causes label display issues
+- By Theme:
+    - AI & MCP Integration: ai/index.md
+    - Kubernetes CKA Mastery: kubernetes/index.md
+```
+
+**When Adding New Nav Sections**:
+1. Create a section index page: `docs/section-name/index.md`
+2. Add it as the FIRST item under the section (without a label)
+3. Add child items with their labels
 
 ### Configuration Philosophy
 - **Single source of truth**: `mkdocs.yml` defines all site structure, theme, navigation
