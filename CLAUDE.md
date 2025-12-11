@@ -173,6 +173,7 @@ tags:
   - tag-name                # Must be in tags_allowed
 readtime: XX                # Minutes
 slug: url-friendly-slug    # URL identifier
+social_image: assets/images/blog/custom-image.jpg  # Optional: custom social preview
 ---
 
 # Post Title
@@ -182,6 +183,87 @@ Excerpt text before the fold.
 <!-- more -->
 
 Full post content here...
+```
+
+### Social Media Preview Images (LinkedIn, Twitter, etc.)
+
+The site uses Open Graph meta tags for social media previews. Configuration is in `overrides/main.html`.
+
+**Default behavior**: All pages use `assets/social-card.png` (cactus logo)
+
+**Custom per-post image**: Add `social_image` to front matter:
+```yaml
+social_image: assets/images/blog/your-custom-image.jpg
+```
+
+#### LinkedIn Image Requirements (CRITICAL)
+
+LinkedIn is strict about image dimensions. Images that don't meet requirements will NOT display.
+
+| Requirement | Value | Notes |
+|-------------|-------|-------|
+| **Minimum dimensions** | 1200 x 627 px | MUST meet both width AND height |
+| **Recommended ratio** | 1.91:1 | Exactly 1200x627 or proportional |
+| **Maximum file size** | 5 MB | Keep under 1MB for fast loading |
+| **Format** | JPEG, PNG | JPEG recommended for photos |
+| **Color mode** | RGB | Not CMYK |
+
+**Common issue**: Images smaller than 1200x627 will show as tiny thumbnails or not at all!
+
+#### Creating LinkedIn-Compatible Images
+
+```bash
+# Verify image meets LinkedIn requirements
+python3 << 'EOF'
+from PIL import Image
+import os
+img_path = 'docs/assets/images/blog/your-image.jpg'
+img = Image.open(img_path)
+size_mb = os.path.getsize(img_path) / (1024 * 1024)
+print(f"Dimensions: {img.width}x{img.height}")
+print(f"✅ Width >= 1200: {img.width >= 1200}")
+print(f"✅ Height >= 627: {img.height >= 627}")
+print(f"✅ Size < 5MB: {size_mb:.2f}MB")
+EOF
+
+# Resize image to LinkedIn specs (if needed)
+python3 << 'EOF'
+from PIL import Image
+img = Image.open('input.jpg')
+# Scale to 1200 width, maintaining aspect ratio
+scale = 1200 / img.width
+new_size = (1200, int(img.height * scale))
+img_resized = img.resize(new_size, Image.Resampling.LANCZOS)
+# If height < 627, add dark padding
+if img_resized.height < 627:
+    canvas = Image.new('RGB', (1200, 627), (15, 23, 42))
+    y_offset = (627 - img_resized.height) // 2
+    canvas.paste(img_resized, (0, y_offset))
+    canvas.save('output.jpg', quality=95)
+else:
+    img_resized.save('output.jpg', quality=95)
+EOF
+```
+
+#### Testing Social Previews
+
+1. **LinkedIn Post Inspector**: https://www.linkedin.com/post-inspector/
+   - Enter URL, click "Inspect"
+   - Forces cache refresh
+   - Shows preview and any errors
+
+2. **Verify OG tags in HTML**:
+```bash
+curl -s "https://digital-garden.atmy.casa/blog/..." | grep "og:image"
+```
+
+#### File Locations
+
+```
+docs/assets/
+├── social-card.png              # Default (1200x630, cactus logo)
+└── images/blog/
+    └── custom-post-image.jpg    # Per-post custom images
 ```
 
 ### Adding New Blog Posts
