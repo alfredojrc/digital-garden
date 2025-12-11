@@ -14,10 +14,12 @@ A personal digital garden, knowledge base, and technical journal built with MkDo
   - Tracking: See [TODO.md](TODO.md) for detailed progress
   - Purpose: Complete Certified Kubernetes Administrator exam preparation
   - Structure: 7 phases covering 100% of CKA curriculum
-- **AI & MCP Integration** (3-post series on Claude Code tooling)
+- **AI & MCP Integration** (4-post series on Claude Code tooling)
   - Claude Code Profiles: Token-optimized MCP configurations
   - Building a Gemini MCP Server: AI-to-AI integration
   - Multi-Agent Workflows with claude-flow: Swarm orchestration
+  - AI-to-AI Debates and Multi-Agent Swarms: Debate systems, voting, orchestration
+  - **Landing Page**: `docs/ai/index.md` (UPDATE when adding AI posts!)
 
 ## Development Commands
 
@@ -157,7 +159,11 @@ Full post content here...
 3. Add any new categories to `mkdocs.yml` → `plugins.blog.categories_allowed`
 4. Update `docs/home.md` "Latest Posts" section manually (USE ABSOLUTE PATHS!)
 5. If new theme: Update `docs/home.md` "Browse by Theme" section
-6. If series post: Update theme landing page (e.g., `docs/kubernetes/index.md`)
+6. **If part of a series: Update the theme landing page** (CRITICAL - often forgotten!)
+   - AI series → Update `docs/ai/index.md` with new post entry
+   - Kubernetes series → Update `docs/kubernetes/index.md` with new post entry
+   - Include: Title, link, description, key topics, tags
+   - Update "Last Updated" date and "Total Posts" count
 7. **VERIFY POST COMPLETENESS** (see checklist below)
 8. Commit and push - GitHub Actions will deploy
 
@@ -216,7 +222,10 @@ mkdocs build --strict
 - [ ] All categories exist in `mkdocs.yml` → `categories_allowed`
 - [ ] Post filename follows convention: `topic-name.md` (lowercase, hyphens)
 - [ ] Post is in `docs/blog/posts/` directory
-- [ ] If part of series: Landing page link updated (e.g., `kubernetes/index.md`)
+- [ ] **If part of series: Theme landing page updated** (e.g., `ai/index.md`, `kubernetes/index.md`)
+  - [ ] New post entry added with title, link, description, key topics, tags
+  - [ ] "Last Updated" date updated
+  - [ ] "Total Posts" count incremented
 - [ ] **Homepage links use ABSOLUTE paths** (`/blog/...` not `blog/...`)
 
 ### Theme Landing Pages vs Blog Posts

@@ -72,6 +72,16 @@
 
 [➡️ View All Posts](/blog/){ .md-button .md-button--primary }
 
+### [AI-to-AI Debates and Multi-Agent Swarms](/blog/2025/12/11/gemini-mcp-debate-swarm-architecture/)
+
+**AI · Architecture** · 25 min read
+
+Deep dive into the debate system, swarm orchestration, voting mechanisms, and information flow patterns in the Gemini MCP architecture. Covers collaborative/adversarial/socratic debate strategies, dynamic agent spawning, confidence-weighted voting, and the Tool Bridge pattern for multi-agent coordination.
+
+**Topics**: claude-code, mcp, gemini, ai-agents, multi-agent, swarm, llm
+
+[Read more →](/blog/2025/12/11/gemini-mcp-debate-swarm-architecture/){ .md-button }
+
 ### [Multi-Agent AI Workflows with claude-flow](/blog/2025/11/29/claude-flow-multi-agent-workflows/)
 
 **AI · Architecture** · 12 min read

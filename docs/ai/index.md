@@ -87,6 +87,23 @@ Orchestrated multi-agent swarms within Claude Code for complex task decompositio
 
 ---
 
+### 4. [AI-to-AI Debates and Multi-Agent Swarms](/blog/2025/12/11/gemini-mcp-debate-swarm-architecture/)
+
+Deep dive into the debate system, swarm orchestration, voting mechanisms, and information flow patterns in the Gemini MCP architecture.
+
+**Key Topics**:
+- Debate strategies (collaborative, adversarial, socratic, devil's advocate)
+- Convergence detection and consensus scoring
+- Swarm topologies (hierarchical, sequential, parallel, consensus)
+- Dynamic agent spawning and persona system
+- Adjudication with confidence-weighted voting
+- Tool Bridge pattern for internal execution
+- Context isolation for parallel operations
+
+**Tags**: `claude-code` `mcp` `gemini` `ai-agents` `multi-agent` `swarm` `automation` `llm`
+
+---
+
 ## Architecture Overview
 
 ### MCP Server Ecosystem
@@ -184,6 +201,6 @@ claude-pro
 
 ---
 
-**Last Updated**: 2025-11-29
-**Series Status**: Active (3 posts published)
-**Total Posts**: 3
+**Last Updated**: 2025-12-11
+**Series Status**: Active (4 posts published)
+**Total Posts**: 4
