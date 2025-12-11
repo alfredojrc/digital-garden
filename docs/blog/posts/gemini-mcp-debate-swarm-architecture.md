@@ -18,6 +18,7 @@ tags:
   - prompt-engineering
 readtime: 25
 slug: gemini-mcp-debate-swarm-architecture
+social_image: assets/images/blog/ai-debate-gemini-mcp-swarm.jpg
 ---
 
 # AI-to-AI Debates and Multi-Agent Swarms: Deep Dive into Gemini MCP Architecture
