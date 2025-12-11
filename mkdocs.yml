@@ -231,6 +231,7 @@ nav:
       - Performance: blog/index.md#performance
       - Kubernetes: blog/index.md#kubernetes
   - By Theme:
+    - themes/index.md
     - AI & MCP Integration: ai/index.md
     - Kubernetes CKA Mastery: kubernetes/index.md
   - Resources:
