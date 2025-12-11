@@ -249,13 +249,36 @@ EOF
 
 1. **LinkedIn Post Inspector**: https://www.linkedin.com/post-inspector/
    - Enter URL, click "Inspect"
-   - Forces cache refresh
+   - Forces cache refresh (LinkedIn caches for up to 7 days!)
    - Shows preview and any errors
 
 2. **Verify OG tags in HTML**:
 ```bash
 curl -s "https://digital-garden.atmy.casa/blog/..." | grep "og:image"
 ```
+
+3. **Force Cache Refresh** (if image still doesn't appear):
+   - Add `?v=1` to the URL when sharing: `https://.../?v=1`
+   - This tricks LinkedIn into treating it as a new page
+   - After first share with `?v=1`, regular URL should work
+
+#### Troubleshooting LinkedIn Images
+
+**Image not showing at all**:
+1. Verify image meets minimum 1200x627 dimensions
+2. Use LinkedIn Post Inspector to clear cache
+3. Check image is accessible: `curl -I "https://...image.jpg"`
+4. Ensure og:image URL is absolute (starts with `https://`)
+
+**Wrong image showing**:
+1. LinkedIn caches for up to 7 days
+2. Use Post Inspector to force re-crawl
+3. Try sharing with `?v=1` query parameter
+
+**Deployment timing**:
+- GitHub Actions typically deploys in 2-3 minutes
+- Wait for deployment before testing with Post Inspector
+- Check GitHub Actions tab for deployment status
 
 #### File Locations
 
