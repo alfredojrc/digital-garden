@@ -1,0 +1,2744 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="A digital garden, knowledge base, and technical journal focused on distributed systems, storage architecture, and infrastructure engineering.">
+      
+      
+        <meta name="author" content="Alf">
+      
+      
+        <link rel="canonical" href="https://digital-garden.atmy.casa/blog/2025/12/24/building-home-lab-trading-system/">
+      
+      
+        <link rel="prev" href="../../11/gemini-mcp-debate-swarm-architecture/">
+      
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../../../../assets/logos/cactus.svg">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.1">
+    
+    
+      
+        <title>Building a Home Lab Trading System: Architecture of a Personal Market Intelligence Platform - Digital Garden</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../../../../assets/stylesheets/main.484c7ddc.min.css">
+      
+        
+        <link rel="stylesheet" href="../../../../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../../../../stylesheets/extra.css">
+    
+    <script>__md_scope=new URL("../../../../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+  
+
+
+    
+    
+  
+  
+    
+  
+
+  <!-- Open Graph / LinkedIn -->
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://digital-garden.atmy.casa/blog/2025/12/24/building-home-lab-trading-system/">
+  <meta property="og:title" content="Building a Home Lab Trading System: Architecture of a Personal Market Intelligence Platform - Digital Garden">
+  <meta property="og:description" content="A digital garden, knowledge base, and technical journal focused on distributed systems, storage architecture, and infrastructure engineering.">
+  <meta property="og:image" content="https://digital-garden.atmy.casa/assets/social-card.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="627">
+  <meta property="og:site_name" content="Digital Garden">
+
+  <!-- Twitter -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Building a Home Lab Trading System: Architecture of a Personal Market Intelligence Platform - Digital Garden">
+  <meta name="twitter:description" content="A digital garden, knowledge base, and technical journal focused on distributed systems, storage architecture, and infrastructure engineering.">
+  <meta name="twitter:image" content="https://digital-garden.atmy.casa/assets/social-card.png">
+
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="cyan">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#building-a-home-lab-trading-system-architecture-of-a-personal-market-intelligence-platform" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow md-header--lifted" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../../../../.." title="Digital Garden" class="md-header__button md-logo" aria-label="Digital Garden" data-md-component="logo">
+      
+  <img src="../../../../../assets/logos/cactus.svg" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Digital Garden
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Building a Home Lab Trading System: Architecture of a Personal Market Intelligence Platform
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="cyan"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m17.75 4.09-2.53 1.94.91 3.06-2.63-1.81-2.63 1.81.91-3.06-2.53-1.94L12.44 4l1.06-3 1.06 3zm3.5 6.91-1.64 1.25.59 1.98-1.7-1.17-1.7 1.17.59-1.98L15.75 11l2.06-.05L18.5 9l.69 1.95zm-2.28 4.95c.83-.08 1.72 1.1 1.19 1.85-.32.45-.66.87-1.08 1.27C15.17 23 8.84 23 4.94 19.07c-3.91-3.9-3.91-10.24 0-14.14.4-.4.82-.76 1.27-1.08.75-.53 1.93.36 1.85 1.19-.27 2.86.69 5.83 2.89 8.02a9.96 9.96 0 0 0 8.02 2.89m-1.64 2.02a12.08 12.08 0 0 1-7.8-3.47c-2.17-2.19-3.33-5-3.49-7.82-2.81 3.14-2.7 7.96.31 10.98 3.02 3.01 7.84 3.12 10.98.31"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="cyan"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 7a5 5 0 0 1 5 5 5 5 0 0 1-5 5 5 5 0 0 1-5-5 5 5 0 0 1 5-5m0 2a3 3 0 0 0-3 3 3 3 0 0 0 3 3 3 3 0 0 0 3-3 3 3 0 0 0-3-3m0-7 2.39 3.42C13.65 5.15 12.84 5 12 5s-1.65.15-2.39.42zM3.34 7l4.16-.35A7.2 7.2 0 0 0 5.94 8.5c-.44.74-.69 1.5-.83 2.29zm.02 10 1.76-3.77a7.131 7.131 0 0 0 2.38 4.14zM20.65 7l-1.77 3.79a7.02 7.02 0 0 0-2.38-4.15zm-.01 10-4.14.36c.59-.51 1.12-1.14 1.54-1.86.42-.73.69-1.5.83-2.29zM12 22l-2.41-3.44c.74.27 1.55.44 2.41.44.82 0 1.63-.17 2.37-.44z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/alfredojrc/digital-garden" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+    
+      
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../../../../home/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Home
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+    
+  
+  
+    
+    
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../../../../" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Blog
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../../../../themes/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  By Theme
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../../../../kb/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Resources
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ul>
+  </div>
+</nav>
+    
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+                
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" hidden>
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+  
+
+<nav class="md-nav md-nav--primary md-nav--lifted md-nav--integrated" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../../../../.." title="Digital Garden" class="md-nav__button md-logo" aria-label="Digital Garden" data-md-component="logo">
+      
+  <img src="../../../../../assets/logos/cactus.svg" alt="logo">
+
+    </a>
+    Digital Garden
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/alfredojrc/digital-garden" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../../home/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" checked>
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../../../" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Blog
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_2" id="__nav_2_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Blog
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../tags/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Tags
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_3" id="__nav_2_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Categories
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Categories
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../index.md#ai" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    AI
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../index.md#storage" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Storage
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../index.md#networking" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Networking
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../index.md#architecture" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Architecture
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../index.md#infrastructure" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Infrastructure
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../index.md#devops" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    DevOps
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../index.md#security" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Security
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../index.md#performance" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Performance
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../index.md#kubernetes" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Kubernetes
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_4" id="__nav_2_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Archive
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Archive
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+    
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../archive/2025/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    December 2025
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_5" id="__nav_2_5_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Categories
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Categories
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+    
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../category/ai/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    AI
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../category/architecture/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Architecture
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../category/cli/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    CLI
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../category/configuration/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Configuration
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../category/devops/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    DevOps
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../category/infrastructure/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Infrastructure
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../category/kubernetes/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Kubernetes
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../category/monitoring/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Monitoring
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../category/networking/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Networking
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../category/security/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Security
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../category/storage/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Storage
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../category/troubleshooting/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Troubleshooting
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../category/workloads/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Workloads
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../../../../themes/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    By Theme
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_3" id="__nav_3_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    By Theme
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../../ai/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    AI & MCP Integration
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../../kubernetes/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Kubernetes CKA Mastery
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../../../../kb/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Resources
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_4" id="__nav_4_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Resources
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../../principles/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Principles
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../../journal/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Journal
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+          
+          
+  <div class="md-content md-content--post" data-md-component="content">
+    <div class="md-sidebar md-sidebar--post" data-md-component="sidebar" data-md-type="navigation">
+      <div class="md-sidebar__scrollwrap">
+        <div class="md-sidebar__inner md-post">
+          <nav class="md-nav md-nav--primary">
+            <div class="md-post__back">
+              <div class="md-nav__title md-nav__container">
+                <a href="../../../../" class="md-nav__link">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+                  <span class="md-ellipsis">
+                    Back to index
+                  </span>
+                </a>
+              </div>
+            </div>
+            
+              <div class="md-post__authors md-typeset">
+                
+                  <div class="md-profile md-post__profile">
+                    <span class="md-author md-author--long">
+                      <img src="https://github.com/alfredojrc.png" alt="Alf">
+                    </span>
+                    <span class="md-profile__description">
+                      <strong>
+                        
+                          Alf
+                        
+                      </strong>
+                      <br>
+                      Infrastructure engineer, distributed systems enthusiast
+                    </span>
+                  </div>
+                
+              </div>
+            
+            <ul class="md-post__meta md-nav__list">
+              <li class="md-nav__item md-nav__item--section">
+                <div class="md-post__title">
+                  <span class="md-ellipsis">
+                    Metadata
+                  </span>
+                </div>
+                <nav class="md-nav">
+                  <ul class="md-nav__list">
+                    <li class="md-nav__item">
+                      <div class="md-nav__link">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 19H5V8h14m-3-7v2H8V1H6v2H5c-1.11 0-2 .89-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2h-1V1m-1 11h-5v5h5z"/></svg>
+                        <time datetime="2025-12-24 00:00:00+00:00" class="md-ellipsis">December 24, 2025</time>
+                      </div>
+                    </li>
+                    
+                    
+                      <li class="md-nav__item">
+                        <div class="md-nav__link">
+                          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9 3v15h3V3zm3 2 4 13 3-1-4-13zM5 5v13h3V5zM3 19v2h18v-2z"/></svg>
+                          <span class="md-ellipsis">
+                            in
+                            
+                              <a href="../../../../category/architecture/">Architecture</a>, 
+                              <a href="../../../../category/infrastructure/">Infrastructure</a></span>
+                        </div>
+                      </li>
+                    
+                    
+                      
+                      <li class="md-nav__item">
+                        <div class="md-nav__link">
+                          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 20a8 8 0 0 0 8-8 8 8 0 0 0-8-8 8 8 0 0 0-8 8 8 8 0 0 0 8 8m0-18a10 10 0 0 1 10 10 10 10 0 0 1-10 10C6.47 22 2 17.5 2 12A10 10 0 0 1 12 2m.5 5v5.25l4.5 2.67-.75 1.23L11 13V7z"/></svg>
+                          <span class="md-ellipsis">
+                            
+                              18 min read
+                            
+                          </span>
+                        </div>
+                      </li>
+                    
+                  </ul>
+                </nav>
+              </li>
+            </ul>
+            
+          </nav>
+          
+            
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#the-vision-personal-market-intelligence" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Vision: Personal Market Intelligence
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#high-level-architecture" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        High-Level Architecture
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#the-data-ingestion-challenge" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Data Ingestion Challenge
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="The Data Ingestion Challenge">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#real-time-websocket-streams" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Real-time WebSocket Streams
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#historical-data-management" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Historical Data Management
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#the-signal-processing-engine" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Signal Processing Engine
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="The Signal Processing Engine">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#signal-categories" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Signal Categories
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#the-base-signal-pattern" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Base Signal Pattern
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#multi-timeframe-analysis" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Multi-Timeframe Analysis
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#the-ml-pipeline" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The ML Pipeline
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="The ML Pipeline">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#architecture" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Architecture
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#feature-engineering" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Feature Engineering
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#training-infrastructure" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Training Infrastructure
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#the-split-brain-cloud-architecture" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The "Split Brain" Cloud Architecture
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="The &#34;Split Brain&#34; Cloud Architecture">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#the-problem" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Problem
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#the-solution" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Solution
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#monitoring-and-observability" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Monitoring and Observability
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Monitoring and Observability">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#the-watchtower-pattern" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Watchtower Pattern
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#lessons-learned" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Lessons Learned
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Lessons Learned">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#what-worked-well" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What Worked Well
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#challenges-encountered" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Challenges Encountered
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#future-directions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Future Directions
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#conclusion" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Conclusion
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+          
+        </div>
+      </div>
+    </div>
+    <article class="md-content__inner md-typeset">
+      
+        
+  
+
+
+  <nav class="md-tags" >
+    
+      
+      
+      
+      
+        <a href="../../../../tags/#tag:ai-agents" class="md-tag">ai-agents</a>
+      
+    
+      
+      
+      
+      
+        <a href="../../../../tags/#tag:architecture" class="md-tag">architecture</a>
+      
+    
+      
+      
+      
+      
+        <a href="../../../../tags/#tag:docker" class="md-tag">docker</a>
+      
+    
+      
+      
+      
+      
+        <a href="../../../../tags/#tag:home-lab" class="md-tag">home-lab</a>
+      
+    
+      
+      
+      
+      
+        <a href="../../../../tags/#tag:machine-learning" class="md-tag">machine-learning</a>
+      
+    
+      
+      
+      
+      
+        <a href="../../../../tags/#tag:microservices" class="md-tag">microservices</a>
+      
+    
+      
+      
+      
+      
+        <a href="../../../../tags/#tag:monitoring" class="md-tag">monitoring</a>
+      
+    
+      
+      
+      
+      
+        <a href="../../../../tags/#tag:real-time" class="md-tag">real-time</a>
+      
+    
+      
+      
+      
+      
+        <a href="../../../../tags/#tag:trading" class="md-tag">trading</a>
+      
+    
+  </nav>
+
+
+  
+    <a href="https://github.com/alfredojrc/digital-garden/edit/main/docs/blog/posts/building-a-home-lab-trading-system.md" title="Edit this page" class="md-content__button md-icon" rel="edit">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20H6V4h7v5h5v3.1l2-2V8l-6-6H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h4zm10.2-7c.1 0 .3.1.4.2l1.3 1.3c.2.2.2.6 0 .8l-1 1-2.1-2.1 1-1c.1-.1.2-.2.4-.2m0 3.9L14.1 23H12v-2.1l6.1-6.1z"/></svg>
+    </a>
+  
+  
+    
+      
+    
+    <a href="https://github.com/alfredojrc/digital-garden/raw/main/docs/blog/posts/building-a-home-lab-trading-system.md" title="View source of this page" class="md-content__button md-icon">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M17 18c.56 0 1 .44 1 1s-.44 1-1 1-1-.44-1-1 .44-1 1-1m0-3c-2.73 0-5.06 1.66-6 4 .94 2.34 3.27 4 6 4s5.06-1.66 6-4c-.94-2.34-3.27-4-6-4m0 6.5a2.5 2.5 0 0 1-2.5-2.5 2.5 2.5 0 0 1 2.5-2.5 2.5 2.5 0 0 1 2.5 2.5 2.5 2.5 0 0 1-2.5 2.5M9.27 20H6V4h7v5h5v4.07c.7.08 1.36.25 2 .49V8l-6-6H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h4.5a8.2 8.2 0 0 1-1.23-2"/></svg>
+    </a>
+  
+
+
+<h1 id="building-a-home-lab-trading-system-architecture-of-a-personal-market-intelligence-platform">Building a Home Lab Trading System: Architecture of a Personal Market Intelligence Platform<a class="headerlink" href="#building-a-home-lab-trading-system-architecture-of-a-personal-market-intelligence-platform" title="Link to this section">&para;</a></h1>
+<p>A deep dive into the architecture of a personal cryptocurrency market intelligence system built for a home lab environment. This post explores the design decisions, technical challenges, and lessons learned from building a real-time data processing pipeline that combines microservices, machine learning, and cloud-hybrid execution.</p>
+<!-- more -->
+
+<h2 id="the-vision-personal-market-intelligence">The Vision: Personal Market Intelligence<a class="headerlink" href="#the-vision-personal-market-intelligence" title="Link to this section">&para;</a></h2>
+<p>The cryptocurrency market operates 24/7, generating millions of data points per day. Professional trading firms spend millions on infrastructure to process this data in real-time. But what if you could build a sophisticated market intelligence system in your own home lab?</p>
+<p>This project, which I've been developing over the past several months, attempts to answer that question. The goal wasn't to build a "get rich quick" trading bot, but rather to create a comprehensive platform for:</p>
+<ul>
+<li><strong>Real-time market data ingestion</strong> from multiple exchanges</li>
+<li><strong>Signal processing</strong> with 60+ technical and microstructure indicators</li>
+<li><strong>Machine learning inference</strong> for market regime detection</li>
+<li><strong>Risk management</strong> with position sizing and circuit breakers</li>
+<li><strong>Full observability</strong> through monitoring and alerting</li>
+</ul>
+<h2 id="high-level-architecture">High-Level Architecture<a class="headerlink" href="#high-level-architecture" title="Link to this section">&para;</a></h2>
+<p>The system follows a microservices architecture pattern, running entirely in Docker containers on a single home server with a dedicated GPU for ML training.</p>
+<pre class="mermaid"><code>flowchart TB
+    subgraph External["External Data Sources"]
+        EX1[("Exchange APIs&lt;br/&gt;(WebSocket)")]
+        EX2[("Market Data&lt;br/&gt;(REST)")]
+        EX3[("Sentiment&lt;br/&gt;Feeds")]
+    end
+
+    subgraph Ingestion["Data Ingestion Layer"]
+        COL1["Real-time&lt;br/&gt;Collectors"]
+        COL2["Historical&lt;br/&gt;Backfill"]
+        COL3["Macro Data&lt;br/&gt;Collector"]
+    end
+
+    subgraph Processing["Processing Layer"]
+        REDIS[("Redis&lt;br/&gt;Hot State")]
+        SIG["Signal&lt;br/&gt;Engine"]
+        RISK["Risk&lt;br/&gt;Engine"]
+    end
+
+    subgraph Storage["Persistence Layer"]
+        PG[("TimescaleDB&lt;br/&gt;Cold Storage")]
+        PERSIST["Persister&lt;br/&gt;Service"]
+    end
+
+    subgraph ML["ML Pipeline"]
+        TRAIN["Model&lt;br/&gt;Training"]
+        INF["Real-time&lt;br/&gt;Inference"]
+        GPU["GPU&lt;br/&gt;(CUDA)"]
+    end
+
+    subgraph App["Application Layer"]
+        API["REST API&lt;br/&gt;(FastAPI)"]
+        UI["Dashboard&lt;br/&gt;(Next.js)"]
+    end
+
+    subgraph Monitoring["Observability"]
+        PROM["Prometheus"]
+        GRAF["Grafana"]
+        ALERT["Discord/Telegram&lt;br/&gt;Alerts"]
+    end
+
+    EX1 &amp; EX2 &amp; EX3 --&gt; COL1 &amp; COL2 &amp; COL3
+    COL1 &amp; COL2 &amp; COL3 --&gt; REDIS
+    REDIS --&gt; SIG
+    SIG --&gt; RISK
+    SIG --&gt; PERSIST
+    PERSIST --&gt; PG
+    REDIS &lt;--&gt; INF
+    PG --&gt; TRAIN
+    TRAIN --&gt; GPU
+    TRAIN --&gt; INF
+    INF --&gt; RISK
+    REDIS --&gt; API
+    PG --&gt; API
+    API --&gt; UI
+    SIG &amp; RISK &amp; INF --&gt; PROM
+    PROM --&gt; GRAF
+    RISK --&gt; ALERT</code></pre>
+<h2 id="the-data-ingestion-challenge">The Data Ingestion Challenge<a class="headerlink" href="#the-data-ingestion-challenge" title="Link to this section">&para;</a></h2>
+<h3 id="real-time-websocket-streams">Real-time WebSocket Streams<a class="headerlink" href="#real-time-websocket-streams" title="Link to this section">&para;</a></h3>
+<p>The first challenge was reliably ingesting real-time market data. Exchange WebSocket APIs provide tick-by-tick trade data, order book snapshots, and other market microstructure information.</p>
+<pre class="mermaid"><code>sequenceDiagram
+    participant Exchange
+    participant Collector
+    participant Redis
+    participant SignalEngine
+    participant Persister
+    participant DB
+
+    Exchange-&gt;&gt;Collector: WebSocket Stream&lt;br/&gt;(trades, depth, funding)
+
+    activate Collector
+    Collector-&gt;&gt;Redis: Publish to channels&lt;br/&gt;(market.trades.*, market.depth.*)
+    deactivate Collector
+
+    Redis--&gt;&gt;SignalEngine: Subscribe
+    Redis--&gt;&gt;Persister: Subscribe
+
+    activate SignalEngine
+    SignalEngine-&gt;&gt;SignalEngine: Calculate Indicators
+    SignalEngine-&gt;&gt;Redis: Publish signals&lt;br/&gt;(signals.*)
+    deactivate SignalEngine
+
+    activate Persister
+    Persister-&gt;&gt;Persister: Batch accumulation&lt;br/&gt;(5-second window)
+    Persister-&gt;&gt;DB: Bulk INSERT
+    deactivate Persister</code></pre>
+<p>Key design decisions for the ingestion layer:</p>
+<ol>
+<li><strong>Redis as the event bus</strong>: All real-time data flows through Redis Pub/Sub channels, decoupling producers from consumers</li>
+<li><strong>Batch persistence</strong>: Rather than writing every tick to the database, the persister accumulates data in 5-second windows before bulk inserting</li>
+<li><strong>Automatic reconnection</strong>: Collectors implement exponential backoff and automatic reconnection when WebSocket connections drop</li>
+<li><strong>Gap detection</strong>: A separate health monitor detects data gaps and triggers backfill jobs</li>
+</ol>
+<h3 id="historical-data-management">Historical Data Management<a class="headerlink" href="#historical-data-management" title="Link to this section">&para;</a></h3>
+<p>For machine learning, you need historical data - lots of it. The system maintains several years of minute-level price data, along with derived signals.</p>
+<pre class="mermaid"><code>flowchart LR
+    subgraph Sources["Data Sources"]
+        REST["Exchange REST API&lt;br/&gt;(Historical)"]
+        LOCAL["Local Archives&lt;br/&gt;(CSV/Parquet)"]
+    end
+
+    subgraph Pipeline["Backfill Pipeline"]
+        DETECT["Gap&lt;br/&gt;Detector"]
+        BACKFILL["Backfill&lt;br/&gt;Worker"]
+        VALIDATE["Data&lt;br/&gt;Validator"]
+    end
+
+    subgraph Storage["Storage"]
+        TS[("TimescaleDB&lt;br/&gt;Hypertables")]
+        COMPRESS["Compression&lt;br/&gt;Policies"]
+    end
+
+    REST --&gt; BACKFILL
+    LOCAL --&gt; BACKFILL
+    DETECT --&gt; BACKFILL
+    BACKFILL --&gt; VALIDATE
+    VALIDATE --&gt; TS
+    TS --&gt; COMPRESS
+
+    style COMPRESS fill:#4a90d9</code></pre>
+<p>TimescaleDB's hypertables and compression policies are essential here - without compression, several years of minute-level data would consume hundreds of gigabytes.</p>
+<h2 id="the-signal-processing-engine">The Signal Processing Engine<a class="headerlink" href="#the-signal-processing-engine" title="Link to this section">&para;</a></h2>
+<p>The heart of the system is the signal processing engine, which calculates 60+ indicators in real-time.</p>
+<h3 id="signal-categories">Signal Categories<a class="headerlink" href="#signal-categories" title="Link to this section">&para;</a></h3>
+<p>The signals are organized into functional categories:</p>
+<pre class="mermaid"><code>mindmap
+  root((Signal&lt;br/&gt;Engine))
+    Technical
+      Momentum
+        RSI
+        MACD
+        ADX
+      Volatility
+        ATR
+        Bollinger
+        Keltner
+      Volume
+        OBV
+        VWAP
+        Volume Profile
+    Microstructure
+      Order Flow
+        CVD
+        OFI
+        Taker Imbalance
+      Book Analysis
+        Depth Imbalance
+        Liquidity Levels
+    Research-Based
+      Statistical
+        Funding Z-Score
+        OI Divergence
+      Advanced
+        Hawkes Process
+        Conditional OI
+    Composite
+      Multi-Signal
+        Confluence Score
+        MTF Alignment</code></pre>
+<h3 id="the-base-signal-pattern">The Base Signal Pattern<a class="headerlink" href="#the-base-signal-pattern" title="Link to this section">&para;</a></h3>
+<p>Each signal inherits from a base class that provides:</p>
+<ul>
+<li>Standardized calculation interface</li>
+<li>Hyperparameter registration for optimization</li>
+<li>Redis caching for intermediate results</li>
+<li>Metrics exposure for monitoring</li>
+</ul>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="c1"># Conceptual pattern (simplified)</span>
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="k">class</span><span class="w"> </span><span class="nc">Signal</span><span class="p">:</span>
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>        <span class="bp">self</span><span class="o">.</span><span class="n">hyperparameters</span> <span class="o">=</span> <span class="p">[]</span>
+</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>
+</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>    <span class="k">def</span><span class="w"> </span><span class="nf">register_hyperparameters</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Define tunable parameters&quot;&quot;&quot;</span>
+</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>        <span class="k">pass</span>
+</span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>
+</span><span id="__span-0-10"><a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a>    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">calculate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">df</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+</span><span id="__span-0-11"><a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Core calculation logic&quot;&quot;&quot;</span>
+</span><span id="__span-0-12"><a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a>        <span class="k">raise</span> <span class="ne">NotImplementedError</span>
+</span></code></pre></div>
+<h3 id="multi-timeframe-analysis">Multi-Timeframe Analysis<a class="headerlink" href="#multi-timeframe-analysis" title="Link to this section">&para;</a></h3>
+<p>One of the more interesting patterns is multi-timeframe (MTF) confluence detection. The system calculates signals across multiple timeframes and looks for alignment:</p>
+<pre class="mermaid"><code>flowchart TB
+    subgraph Timeframes["Timeframe Hierarchy"]
+        TF1["1-minute&lt;br/&gt;(Tactical)"]
+        TF2["1-hour&lt;br/&gt;(Short-term)"]
+        TF3["4-hour&lt;br/&gt;(Medium-term)"]
+        TF4["Daily&lt;br/&gt;(Strategic)"]
+    end
+
+    subgraph Analysis["MTF Analysis"]
+        CALC["Signal&lt;br/&gt;Calculation"]
+        ALIGN["Alignment&lt;br/&gt;Detection"]
+        CONF["Confluence&lt;br/&gt;Score"]
+    end
+
+    TF1 &amp; TF2 &amp; TF3 &amp; TF4 --&gt; CALC
+    CALC --&gt; ALIGN
+    ALIGN --&gt; CONF
+
+    CONF --&gt;|"All timeframes&lt;br/&gt;aligned"| STRONG["Strong Signal&lt;br/&gt;(High confidence)"]
+    CONF --&gt;|"Mixed&lt;br/&gt;signals"| WEAK["Weak Signal&lt;br/&gt;(Low confidence)"]</code></pre>
+<h2 id="the-ml-pipeline">The ML Pipeline<a class="headerlink" href="#the-ml-pipeline" title="Link to this section">&para;</a></h2>
+<h3 id="architecture">Architecture<a class="headerlink" href="#architecture" title="Link to this section">&para;</a></h3>
+<p>The ML pipeline uses modern time-series forecasting techniques to predict market direction and volatility regimes.</p>
+<pre class="mermaid"><code>flowchart TB
+    subgraph Data["Data Preparation"]
+        RAW[("Historical&lt;br/&gt;Data")]
+        FE["Feature&lt;br/&gt;Engineering"]
+        SPLIT["Train/Val/Test&lt;br/&gt;Split"]
+    end
+
+    subgraph Training["Training Pipeline"]
+        LOADER["Data&lt;br/&gt;Loader"]
+        MODEL["Time-Series&lt;br/&gt;Model"]
+        OPT["Hyperparameter&lt;br/&gt;Optimization"]
+        TRACK["Experiment&lt;br/&gt;Tracking"]
+    end
+
+    subgraph Deploy["Deployment"]
+        REG["Model&lt;br/&gt;Registry"]
+        SERVE["Feature&lt;br/&gt;Store"]
+        INF["Inference&lt;br/&gt;Service"]
+    end
+
+    RAW --&gt; FE
+    FE --&gt; SPLIT
+    SPLIT --&gt; LOADER
+    LOADER --&gt; MODEL
+    MODEL &lt;--&gt; OPT
+    MODEL --&gt; TRACK
+    TRACK --&gt; REG
+    REG --&gt; INF
+    SERVE --&gt; INF
+
+    GPU["GPU&lt;br/&gt;(Training)"] -.-&gt; MODEL</code></pre>
+<h3 id="feature-engineering">Feature Engineering<a class="headerlink" href="#feature-engineering" title="Link to this section">&para;</a></h3>
+<p>The feature engineering pipeline transforms raw market data and signals into model-ready features:</p>
+<table>
+<thead>
+<tr>
+<th>Feature Type</th>
+<th>Examples</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Time-varying known</strong></td>
+<td>Hour of day, day of week, minutes to funding</td>
+<td>Temporal patterns</td>
+</tr>
+<tr>
+<td><strong>Time-varying unknown</strong></td>
+<td>Price, volume, signals</td>
+<td>Core predictive features</td>
+</tr>
+<tr>
+<td><strong>Static</strong></td>
+<td>Average daily volume, historical volatility</td>
+<td>Per-asset characteristics</td>
+</tr>
+</tbody>
+</table>
+<h3 id="training-infrastructure">Training Infrastructure<a class="headerlink" href="#training-infrastructure" title="Link to this section">&para;</a></h3>
+<p>Training runs on a dedicated GPU in the home lab. The system uses:</p>
+<ul>
+<li><strong>Experiment tracking</strong> for comparing model versions</li>
+<li><strong>Hyperparameter optimization</strong> with Bayesian search</li>
+<li><strong>Model versioning</strong> for rollback capability</li>
+</ul>
+<h2 id="the-split-brain-cloud-architecture">The "Split Brain" Cloud Architecture<a class="headerlink" href="#the-split-brain-cloud-architecture" title="Link to this section">&para;</a></h2>
+<p>One of the most interesting architectural decisions was the "Split Brain" pattern for execution.</p>
+<h3 id="the-problem">The Problem<a class="headerlink" href="#the-problem" title="Link to this section">&para;</a></h3>
+<p>The home lab has a GPU for training, but it's physically far from exchange servers. Low-latency execution requires proximity to exchange data centers.</p>
+<h3 id="the-solution">The Solution<a class="headerlink" href="#the-solution" title="Link to this section">&para;</a></h3>
+<p>Separate the "brain" (strategy/ML) from the "hands" (execution):</p>
+<pre class="mermaid"><code>flowchart TB
+    subgraph Home["Home Lab (Brain)"]
+        GPU["GPU Training"]
+        STRAT["Strategy&lt;br/&gt;Service"]
+        REGIME["Regime&lt;br/&gt;Detection"]
+    end
+
+    subgraph Cloud["Cloud (Hands)"]
+        EXEC["Execution&lt;br/&gt;Engine"]
+        OB["Order Book&lt;br/&gt;Processor"]
+        ORDERS["Order&lt;br/&gt;Management"]
+    end
+
+    subgraph Exchange["Exchange"]
+        WS["WebSocket&lt;br/&gt;Feed"]
+        API["Order&lt;br/&gt;API"]
+    end
+
+    subgraph Sync["State Synchronization"]
+        S3[("Object&lt;br/&gt;Storage")]
+    end
+
+    GPU --&gt; STRAT
+    STRAT --&gt; REGIME
+    REGIME --&gt;|"Push context&lt;br/&gt;(every 5 min)"| S3
+    S3 --&gt;|"Pull context"| EXEC
+
+    WS --&gt;|"Real-time&lt;br/&gt;L2 data"| OB
+    OB --&gt; EXEC
+    EXEC --&gt; ORDERS
+    ORDERS --&gt; API
+
+    style Home fill:#2d5a27
+    style Cloud fill:#1e3a5f</code></pre>
+<p>Key aspects:</p>
+<ol>
+<li><strong>The Brain</strong> runs ML inference and determines strategic bias (bullish/bearish/neutral)</li>
+<li><strong>The Hands</strong> receive real-time order book data and execute within the strategic context</li>
+<li><strong>State synchronization</strong> happens via object storage, with positions and context shared bidirectionally</li>
+<li><strong>Latency budget</strong>: The brain can be slow (seconds), but the hands must be fast (milliseconds)</li>
+</ol>
+<h2 id="monitoring-and-observability">Monitoring and Observability<a class="headerlink" href="#monitoring-and-observability" title="Link to this section">&para;</a></h2>
+<p>For a system running 24/7, observability is critical. The monitoring stack includes:</p>
+<pre class="mermaid"><code>flowchart LR
+    subgraph Services["Services"]
+        S1["Collectors"]
+        S2["Signal Engine"]
+        S3["ML Service"]
+        S4["API"]
+    end
+
+    subgraph Exporters["Metric Exporters"]
+        E1["Redis Exporter"]
+        E2["Postgres Exporter"]
+        E3["cAdvisor"]
+    end
+
+    subgraph Monitoring["Monitoring Stack"]
+        PROM["Prometheus"]
+        GRAF["Grafana"]
+        WATCH["Watchtower&lt;br/&gt;(Health Monitor)"]
+    end
+
+    subgraph Alerting["Alerting"]
+        DISCORD["Discord"]
+        TELEGRAM["Telegram"]
+    end
+
+    S1 &amp; S2 &amp; S3 &amp; S4 --&gt;|"/metrics"| PROM
+    E1 &amp; E2 &amp; E3 --&gt; PROM
+    PROM --&gt; GRAF
+    WATCH --&gt;|"Dead service&lt;br/&gt;detection"| DISCORD
+    PROM --&gt;|"Alert rules"| TELEGRAM
+
+    style Monitoring fill:#4a4a6a</code></pre>
+<h3 id="the-watchtower-pattern">The Watchtower Pattern<a class="headerlink" href="#the-watchtower-pattern" title="Link to this section">&para;</a></h3>
+<p>Services write heartbeats to Redis. A dedicated "Watchtower" service polls these heartbeats and flags services that haven't updated within the threshold:</p>
+<pre class="mermaid"><code>sequenceDiagram
+    participant Service
+    participant Redis
+    participant Watchtower
+    participant Discord
+
+    loop Every 5 seconds
+        Service-&gt;&gt;Redis: SET health:service-id:heartbeat&lt;br/&gt;(timestamp)
+    end
+
+    loop Every 30 seconds
+        Watchtower-&gt;&gt;Redis: GET health:*:heartbeat
+        Redis--&gt;&gt;Watchtower: All heartbeat timestamps
+
+        alt Heartbeat &gt; 30s old
+            Watchtower-&gt;&gt;Discord: ALERT: Service X is DOWN
+            Watchtower-&gt;&gt;Watchtower: Update Prometheus metric&lt;br/&gt;(service_health_status=0)
+        end
+    end</code></pre>
+<h2 id="lessons-learned">Lessons Learned<a class="headerlink" href="#lessons-learned" title="Link to this section">&para;</a></h2>
+<h3 id="what-worked-well">What Worked Well<a class="headerlink" href="#what-worked-well" title="Link to this section">&para;</a></h3>
+<ol>
+<li><strong>Redis as the central nervous system</strong>: Using Redis for both pub/sub and caching simplified the architecture significantly</li>
+<li><strong>Containerization from day one</strong>: Every service runs in Docker, making deployment and scaling straightforward</li>
+<li><strong>Comprehensive testing</strong>: With 900+ tests, refactoring is much less risky</li>
+<li><strong>Incremental development</strong>: Building signals and features incrementally allowed for continuous validation</li>
+</ol>
+<h3 id="challenges-encountered">Challenges Encountered<a class="headerlink" href="#challenges-encountered" title="Link to this section">&para;</a></h3>
+<ol>
+<li><strong>Data quality issues</strong>: "Garbage in, garbage out" is very real. Significant effort went into data validation and gap detection</li>
+<li><strong>Feature engineering</strong>: The ML model is only as good as its features - this required substantial iteration</li>
+<li><strong>Complexity management</strong>: With 20+ services, understanding the system requires good documentation</li>
+</ol>
+<h3 id="future-directions">Future Directions<a class="headerlink" href="#future-directions" title="Link to this section">&para;</a></h3>
+<p>The system continues to evolve. Current areas of exploration include:</p>
+<ul>
+<li><strong>Advanced order book modeling</strong>: Using Level 2 data for better execution</li>
+<li><strong>State-space models</strong>: Experimenting with newer architectures for time-series prediction</li>
+<li><strong>Reinforcement learning</strong>: For execution optimization rather than signal generation</li>
+</ul>
+<h2 id="conclusion">Conclusion<a class="headerlink" href="#conclusion" title="Link to this section">&para;</a></h2>
+<p>Building a personal trading system has been an incredible learning experience. It touches on:</p>
+<ul>
+<li>Distributed systems design</li>
+<li>Real-time data processing</li>
+<li>Machine learning pipelines</li>
+<li>DevOps and monitoring</li>
+<li>Financial data engineering</li>
+</ul>
+<p>Whether or not the system ever generates alpha, the engineering challenges alone make it a rewarding project. The architecture patterns developed here - event-driven microservices, split-brain cloud deployment, comprehensive observability - are applicable far beyond trading.</p>
+<p>If you're considering a similar project, my advice would be:</p>
+<ol>
+<li><strong>Start simple</strong>: Get data flowing before worrying about ML</li>
+<li><strong>Invest in observability early</strong>: You'll thank yourself later</li>
+<li><strong>Automate testing</strong>: With financial data, bugs can be expensive</li>
+<li><strong>Document as you go</strong>: Your future self is your most important reader</li>
+</ol>
+<hr />
+<p><em>This post describes a personal project built for educational purposes. Nothing here constitutes financial advice.</em></p>
+
+
+
+
+
+
+
+  
+  
+
+
+
+  
+
+
+  
+
+
+  <form class="md-feedback" name="feedback" hidden>
+    <fieldset>
+      <legend class="md-feedback__title">
+        Was this page helpful?
+      </legend>
+      <div class="md-feedback__inner">
+        <div class="md-feedback__list">
+          
+            <button class="md-feedback__icon md-icon" type="submit" title="This page was helpful" data-md-value="1">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 12a8 8 0 0 0-8-8 8 8 0 0 0-8 8 8 8 0 0 0 8 8 8 8 0 0 0 8-8m2 0a10 10 0 0 1-10 10A10 10 0 0 1 2 12 10 10 0 0 1 12 2a10 10 0 0 1 10 10M10 9.5c0 .8-.7 1.5-1.5 1.5S7 10.3 7 9.5 7.7 8 8.5 8s1.5.7 1.5 1.5m7 0c0 .8-.7 1.5-1.5 1.5S14 10.3 14 9.5 14.7 8 15.5 8s1.5.7 1.5 1.5m-5 7.73c-1.75 0-3.29-.73-4.19-1.81L9.23 14c.45.72 1.52 1.23 2.77 1.23s2.32-.51 2.77-1.23l1.42 1.42c-.9 1.08-2.44 1.81-4.19 1.81"/></svg>
+            </button>
+          
+            <button class="md-feedback__icon md-icon" type="submit" title="This page could be improved" data-md-value="0">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 12a8 8 0 0 0-8-8 8 8 0 0 0-8 8 8 8 0 0 0 8 8 8 8 0 0 0 8-8m2 0a10 10 0 0 1-10 10A10 10 0 0 1 2 12 10 10 0 0 1 12 2a10 10 0 0 1 10 10m-6.5-4c.8 0 1.5.7 1.5 1.5s-.7 1.5-1.5 1.5-1.5-.7-1.5-1.5.7-1.5 1.5-1.5M10 9.5c0 .8-.7 1.5-1.5 1.5S7 10.3 7 9.5 7.7 8 8.5 8s1.5.7 1.5 1.5m2 4.5c1.75 0 3.29.72 4.19 1.81l-1.42 1.42C14.32 16.5 13.25 16 12 16s-2.32.5-2.77 1.23l-1.42-1.42C8.71 14.72 10.25 14 12 14"/></svg>
+            </button>
+          
+        </div>
+        <div class="md-feedback__note">
+          
+            <div data-md-value="1" hidden>
+              
+              
+                
+              
+              
+              
+                
+                
+              
+              Thanks for your feedback!
+            </div>
+          
+            <div data-md-value="0" hidden>
+              
+              
+                
+              
+              
+              
+                
+                
+              
+              Thanks for your feedback!
+            </div>
+          
+        </div>
+      </div>
+    </fieldset>
+  </form>
+
+
+      
+    </article>
+  </div>
+
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+        
+<div class="md-social">
+  
+    
+    
+    
+    
+      
+      
+    
+    <a href="https://github.com/alf" target="_blank" rel="noopener" title="github.com" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../../../../..", "features": ["navigation.instant", "navigation.tracking", "navigation.tabs", "navigation.tabs.sticky", "navigation.indexes", "toc.integrate", "navigation.top", "search.suggest", "search.highlight", "content.code.annotate", "content.code.copy", "content.action.edit", "content.action.view"], "search": "../../../../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../../../../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+    
+  </body>
+</html>
