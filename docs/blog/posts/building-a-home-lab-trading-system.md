@@ -20,6 +20,7 @@ tags:
   - terraform
 slug: building-home-lab-trading-system
 readtime: 22
+social_image: assets/images/blog/AWS_ML_BTC_Trading.jpg
 ---
 
 # Building a Home Lab Trading System: Architecture of a Personal Market Intelligence Platform
