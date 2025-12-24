@@ -102,6 +102,11 @@ plugins:
         - data-engineering
         - redis
         - timescaledb
+        - rust
+        - aws
+        - terraform
+        - tokio
+        - onnx
         - pNFS
         - distributed-storage
         - NVMe

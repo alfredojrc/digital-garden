@@ -15,9 +15,11 @@ tags:
   - docker
   - architecture
   - monitoring
-  - ai-agents
+  - rust
+  - aws
+  - terraform
 slug: building-home-lab-trading-system
-readtime: 18
+readtime: 22
 ---
 
 # Building a Home Lab Trading System: Architecture of a Personal Market Intelligence Platform
@@ -339,11 +341,11 @@ One of the most interesting architectural decisions was the "Split Brain" patter
 
 ### The Problem
 
-The home lab has a GPU for training, but it's physically far from exchange servers. Low-latency execution requires proximity to exchange data centers.
+The home lab has a GPU for training, but it's physically far from exchange servers. Low-latency execution requires proximity to exchange data centers. Sending Level 2 order book data from Tokyo to a home lab introduces ~200ms of latency - an eternity in high-frequency trading.
 
 ### The Solution
 
-Separate the "brain" (strategy/ML) from the "hands" (execution):
+Separate the "brain" (strategy/ML) from the "hands" (execution), deploying a lightweight executor in AWS Tokyo (`ap-northeast-1`), close to exchange matching engines.
 
 ```mermaid
 flowchart TB
@@ -353,41 +355,133 @@ flowchart TB
         REGIME["Regime<br/>Detection"]
     end
 
-    subgraph Cloud["Cloud (Hands)"]
-        EXEC["Execution<br/>Engine"]
-        OB["Order Book<br/>Processor"]
-        ORDERS["Order<br/>Management"]
+    subgraph AWS["AWS Tokyo (Hands)"]
+        EC2["EC2 t4g.micro<br/>(ARM64/Graviton2)"]
+        RUST["Rust Executor<br/>(Tokio)"]
+        ONNX["ONNX Runtime<br/>(Inference)"]
     end
 
-    subgraph Exchange["Exchange"]
-        WS["WebSocket<br/>Feed"]
+    subgraph Exchange["Exchange (Tokyo)"]
+        WS["WebSocket<br/>L2 Data"]
         API["Order<br/>API"]
     end
 
     subgraph Sync["State Synchronization"]
-        S3[("Object<br/>Storage")]
+        S3[("S3 Bucket<br/>Models + Context")]
     end
 
     GPU --> STRAT
     STRAT --> REGIME
-    REGIME -->|"Push context<br/>(every 5 min)"| S3
-    S3 -->|"Pull context"| EXEC
+    REGIME -->|"Push context.json<br/>(every 5 min)"| S3
+    S3 -->|"Pull models<br/>+ context"| RUST
 
-    WS -->|"Real-time<br/>L2 data"| OB
-    OB --> EXEC
-    EXEC --> ORDERS
-    ORDERS --> API
+    WS -->|"Real-time<br/>depth data"| RUST
+    RUST --> ONNX
+    ONNX --> RUST
+    RUST -->|"<10ms"| API
 
     style Home fill:#2d5a27
-    style Cloud fill:#1e3a5f
+    style AWS fill:#1e3a5f
+    style Exchange fill:#5a2d27
 ```
 
-Key aspects:
+### AWS Infrastructure (Free Tier Friendly)
 
-1. **The Brain** runs ML inference and determines strategic bias (bullish/bearish/neutral)
-2. **The Hands** receive real-time order book data and execute within the strategic context
-3. **State synchronization** happens via object storage, with positions and context shared bidirectionally
-4. **Latency budget**: The brain can be slow (seconds), but the hands must be fast (milliseconds)
+The cloud infrastructure is managed with **Terraform** and designed for minimal cost:
+
+| Component | Choice | Rationale |
+|-----------|--------|-----------|
+| **Compute** | EC2 `t4g.micro` (ARM64) | Graviton2 efficiency, free tier eligible |
+| **Storage** | S3 Standard | ONNX models + context files |
+| **Container Registry** | ECR | Docker image storage |
+| **Access** | SSM Session Manager | Zero open ports (no SSH) |
+| **IP** | Elastic IP | Required for exchange API whitelisting |
+
+The infrastructure is **self-healing**: if the instance is terminated, Terraform recreates it and a User Data script automatically pulls the latest code bundle from S3 and restarts the executor.
+
+### The Rust Tokyo Executor
+
+The execution layer is written in **Rust** for maximum performance. Python is great for ML research, but for sub-millisecond tick processing, Rust's zero-cost abstractions and predictable latency are essential.
+
+```mermaid
+flowchart LR
+    subgraph DataSources["Market Data"]
+        BN["Binance<br/>WebSocket"]
+        CB["Coinbase<br/>WebSocket"]
+    end
+
+    subgraph RustExecutor["Rust Executor (Tokio)"]
+        AGG["Aggregator<br/>Actor"]
+        SIG["Signal<br/>Engine"]
+        TAM["TamTam<br/>Pipeline"]
+        INF["ONNX<br/>Inference"]
+        EXEC["Execution<br/>Actor"]
+    end
+
+    subgraph Output["Actions"]
+        ORD["Orders"]
+        MET["Metrics"]
+    end
+
+    BN & CB -->|"MicroTicks"| AGG
+    AGG --> SIG
+    AGG --> TAM
+    SIG --> INF
+    TAM -->|"Anomaly<br/>Detection"| EXEC
+    INF -->|"ML Signal"| EXEC
+    EXEC --> ORD
+    EXEC --> MET
+
+    style RustExecutor fill:#b7410e
+```
+
+**Key Rust Crates in the Workspace:**
+
+| Crate | Purpose |
+|-------|---------|
+| `core` | Domain types and shared logic |
+| `features` | Signal engine (RSI, Z-Score) ported to Rust |
+| `execution` | Main async runtime with Tokio actors |
+| `aggregator` | Tick aggregation and snapshot latching |
+| `reservoir` | Echo State Network for temporal patterns |
+| `detector` | Multivariate streaming anomaly detection |
+| `tamtam` | Novel pipeline combining ESN + Gaussian detector |
+
+**Performance Optimizations:**
+
+- **jemalloc**: Custom allocator for predictable memory behavior
+- **SIMD JSON**: Fast parsing of WebSocket messages
+- **Zero-allocation hot paths**: Pre-allocated buffers in the tick processing loop
+- **Actor model**: Tokio channels for concurrent, non-blocking data flow
+
+### The TamTam Pipeline
+
+One of the more experimental components is the "TamTam" pipeline - a combination of reservoir computing and streaming anomaly detection:
+
+```mermaid
+flowchart LR
+    TICK["Market<br/>Tick"] --> FEAT["Feature<br/>Extraction"]
+    FEAT --> ESN["Echo State<br/>Network"]
+    ESN -->|"Reservoir<br/>State"| GAUSS["Streaming<br/>Gaussian"]
+    GAUSS -->|"Anomaly<br/>Score > 3σ"| ALERT["Stealth<br/>Order Logic"]
+
+    style ESN fill:#4a4a6a
+    style GAUSS fill:#6a4a4a
+```
+
+The idea is to use the **Echo State Network** as a "tuning fork" that resonates with normal market patterns. When the market behaves unusually, the reservoir state deviates, and the **Multivariate Streaming Gaussian** detector flags it as an anomaly.
+
+### State Synchronization
+
+The Brain and Hands communicate asynchronously via S3:
+
+| Direction | File | Contents | Frequency |
+|-----------|------|----------|-----------|
+| Brain → Hands | `context.json` | Regime, bias, thresholds | Every 5 min |
+| Brain → Hands | `*.onnx` | ML models | On retrain |
+| Hands → Brain | `positions.json` | Current inventory | On change |
+
+This design means the executor can operate **autonomously** for extended periods, even if the home lab goes offline. It simply continues executing within its last-known strategic context.
 
 ## Monitoring and Observability
 

@@ -74,11 +74,11 @@
 
 ### [Building a Home Lab Trading System](/blog/2025/12/24/building-home-lab-trading-system/)
 
-**Architecture · Infrastructure** · 18 min read
+**Architecture · Infrastructure** · 22 min read
 
-A deep dive into building a personal cryptocurrency market intelligence system for a home lab. Explores microservices architecture, real-time data processing with Redis and TimescaleDB, ML pipelines for market regime detection, and the "Split Brain" cloud-hybrid execution pattern.
+A deep dive into building a personal cryptocurrency market intelligence system. Explores the "Split Brain" architecture with a home lab GPU for ML training and a Rust executor deployed to AWS Tokyo for low-latency execution. Covers microservices, real-time data processing, ONNX inference, and the experimental TamTam anomaly detection pipeline using Echo State Networks.
 
-**Topics**: home-lab, microservices, machine-learning, trading, architecture, monitoring
+**Topics**: home-lab, rust, aws, machine-learning, trading, architecture
 
 [Read more →](/blog/2025/12/24/building-home-lab-trading-system/){ .md-button }
 
