@@ -74,11 +74,11 @@
 
 ### [Building a Home Lab Trading System](/blog/2025/12/24/building-home-lab-trading-system/)
 
-**Architecture · Infrastructure** · 22 min read
+**Architecture · Infrastructure** · 25 min read
 
-A deep dive into building a personal cryptocurrency market intelligence system. Explores the "Split Brain" architecture with a home lab GPU for ML training and a Rust executor deployed to AWS Tokyo for low-latency execution. Covers microservices, real-time data processing, ONNX inference, and the experimental TamTam anomaly detection pipeline using Echo State Networks.
+A deep dive into building a personal cryptocurrency market intelligence system. Features the "Split Brain" architecture with home lab GPU training, Kaggle TPU v5e for Mamba state-space models, and a Rust executor on AWS Tokyo for low-latency execution. Covers the full stack: microservices, real-time data processing, and experimental anomaly detection with Echo State Networks.
 
-**Topics**: home-lab, rust, aws, machine-learning, trading, architecture
+**Topics**: home-lab, rust, aws, tpu, kaggle, mamba, trading
 
 [Read more →](/blog/2025/12/24/building-home-lab-trading-system/){ .md-button }
 

@@ -107,6 +107,10 @@ plugins:
         - terraform
         - tokio
         - onnx
+        - tpu
+        - kaggle
+        - mamba
+        - state-space-models
         - pNFS
         - distributed-storage
         - NVMe

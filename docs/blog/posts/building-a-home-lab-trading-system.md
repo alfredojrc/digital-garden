@@ -18,8 +18,11 @@ tags:
   - rust
   - aws
   - terraform
+  - tpu
+  - kaggle
+  - mamba
 slug: building-home-lab-trading-system
-readtime: 22
+readtime: 25
 social_image: assets/images/blog/AWS_ML_BTC_Trading.jpg
 ---
 
@@ -335,6 +338,108 @@ Training runs on a dedicated GPU in the home lab. The system uses:
 - **Experiment tracking** for comparing model versions
 - **Hyperparameter optimization** with Bayesian search
 - **Model versioning** for rollback capability
+
+### TPU Training on Kaggle: The Cloud Factory Pattern
+
+For computationally intensive experiments, the home GPU isn't always enough. The project leverages **Kaggle's free TPU v5e** (8-core) for training cutting-edge architectures that would take days on a single GPU.
+
+```mermaid
+flowchart LR
+    subgraph Home["Home Lab"]
+        RAW["Raw Data<br/>(15GB JSON)"]
+        CONVERT["Vectorized<br/>Parquet"]
+    end
+
+    subgraph Kaggle["Kaggle Cloud"]
+        DATASET[("Dataset<br/>mercuryg-lob-data")]
+        TPU["TPU v5e<br/>(8-core)"]
+        MAMBA["Mamba SSM<br/>Training"]
+        WANDB["W&B<br/>Monitoring"]
+    end
+
+    subgraph Output["Artifacts"]
+        WEIGHTS["Model<br/>Weights"]
+        ONNX["ONNX<br/>Export"]
+    end
+
+    RAW --> CONVERT
+    CONVERT -->|"Upload"| DATASET
+    DATASET --> TPU
+    TPU --> MAMBA
+    MAMBA --> WANDB
+    MAMBA --> WEIGHTS
+    WEIGHTS --> ONNX
+
+    style TPU fill:#4285f4
+    style Kaggle fill:#20beff22
+```
+
+The **"Cloud Factory" pattern** works as follows:
+
+1. **Local preprocessing**: Convert 15GB of raw order book JSON to 42 vectorized Parquet files (4.2M snapshots)
+2. **Upload to Kaggle**: The processed dataset becomes a reusable Kaggle dataset
+3. **TPU training**: Run training kernels on TPU v5e with `torch_xla`
+4. **Live monitoring**: Weights & Biases tracks loss curves and metrics
+5. **Download weights**: Retrieve the trained model for local ONNX conversion
+
+### The Mamba State Space Model
+
+The latest experiments use **Mamba**, a state-space model architecture that's particularly well-suited for sequential financial data:
+
+```mermaid
+flowchart TB
+    subgraph MambaBlock["Mamba Block"]
+        IN["Input"] --> PROJ["Linear Projection"]
+        PROJ --> CONV["1D Conv<br/>(Depthwise)"]
+        CONV --> SSM["State Space<br/>Model"]
+        SSM --> OUT["Output"]
+
+        PROJ -->|"Gate"| GATE["SiLU Gate"]
+        GATE --> OUT
+    end
+
+    subgraph SSM["Selective State Space"]
+        DT["Δt (Discretization)"]
+        A["A (State Matrix)"]
+        B["B (Input Matrix)"]
+        SCAN["Parallel<br/>Associative Scan"]
+    end
+
+    style SSM fill:#6a4a6a
+```
+
+**Why Mamba for trading?**
+
+| Property | Benefit for Trading |
+|----------|---------------------|
+| **Linear complexity** | O(L) vs O(L²) for Transformers - handles long sequences |
+| **Selective state** | Learns which past information to retain or forget |
+| **Hardware efficient** | Optimized for TPU/GPU with parallel scan algorithms |
+| **Continuous-time** | Natural fit for irregularly-sampled tick data |
+
+**TPU Optimizations:**
+
+The training script includes several TPU-specific optimizations:
+
+- **Parallel Associative Scan**: Hillis-Steele algorithm for O(log L) SSM computation
+- **XLA compilation**: `torch_xla` with PJRT runtime for TPU VM
+- **RMSNorm**: More stable than LayerNorm on TPU at scale
+- **Zero-allocation loops**: Pre-allocated buffers to avoid XLA recompilation
+
+```python
+# Hillis-Steele parallel scan (simplified)
+def parallel_scan_mamba(dA, dB, x):
+    """Autograd-safe parallel scan for TPU."""
+    i = 1
+    while i < seq_len:
+        # Recursive doubling - no in-place ops for XLA
+        new_b = dA[:, i:] * b[:, :-i] + b[:, i:]
+        b = torch.cat([b[:, :i], new_b], dim=1)
+        i *= 2
+    return b
+```
+
+This approach enables training on millions of order book snapshots in hours rather than days.
 
 ## The "Split Brain" Cloud Architecture
 
