@@ -72,6 +72,16 @@
 
 [➡️ View All Posts](/blog/){ .md-button .md-button--primary }
 
+### [Building a Home Lab Trading System](/blog/2025/12/24/building-home-lab-trading-system/)
+
+**Architecture · Infrastructure** · 18 min read
+
+A deep dive into building a personal cryptocurrency market intelligence system for a home lab. Explores microservices architecture, real-time data processing with Redis and TimescaleDB, ML pipelines for market regime detection, and the "Split Brain" cloud-hybrid execution pattern.
+
+**Topics**: home-lab, microservices, machine-learning, trading, architecture, monitoring
+
+[Read more →](/blog/2025/12/24/building-home-lab-trading-system/){ .md-button }
+
 ### [AI-to-AI Debates and Multi-Agent Swarms](/blog/2025/12/11/gemini-mcp-debate-swarm-architecture/)
 
 **AI · Architecture** · 25 min read

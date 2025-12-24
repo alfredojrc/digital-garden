@@ -43,6 +43,7 @@
 
 ## Coming Soon
 
+- **Home Lab Projects** - Personal infrastructure, trading systems, ML pipelines
 - **Cloud Infrastructure** - GCP, Azure, AWS, multi-cloud architectures
 - **Infrastructure as Code** - Terraform, Ansible, GitOps
 - **Storage & Networking** - Distributed storage, high-performance I/O

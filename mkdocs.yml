@@ -93,6 +93,15 @@ plugins:
   - tags:
       tags_file: blog/tags.md
       tags_allowed:
+        - home-lab
+        - microservices
+        - machine-learning
+        - trading
+        - real-time
+        - time-series
+        - data-engineering
+        - redis
+        - timescaledb
         - pNFS
         - distributed-storage
         - NVMe
