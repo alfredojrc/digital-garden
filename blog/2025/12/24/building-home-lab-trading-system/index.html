@@ -1761,7 +1761,7 @@
                           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 20a8 8 0 0 0 8-8 8 8 0 0 0-8-8 8 8 0 0 0-8 8 8 8 0 0 0 8 8m0-18a10 10 0 0 1 10 10 10 10 0 0 1-10 10C6.47 22 2 17.5 2 12A10 10 0 0 1 12 2m.5 5v5.25l4.5 2.67-.75 1.23L11 13V7z"/></svg>
                           <span class="md-ellipsis">
                             
-                              18 min read
+                              22 min read
                             
                           </span>
                         </div>
@@ -1984,6 +1984,50 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#aws-infrastructure-free-tier-friendly" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        AWS Infrastructure (Free Tier Friendly)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#the-rust-tokyo-executor" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Rust Tokyo Executor
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#the-tamtam-pipeline" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The TamTam Pipeline
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#state-synchronization" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        State Synchronization
+      
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -2097,14 +2141,14 @@
       
       
       
-        <a href="../../../../tags/#tag:ai-agents" class="md-tag">ai-agents</a>
+        <a href="../../../../tags/#tag:architecture" class="md-tag">architecture</a>
       
     
       
       
       
       
-        <a href="../../../../tags/#tag:architecture" class="md-tag">architecture</a>
+        <a href="../../../../tags/#tag:aws" class="md-tag">aws</a>
       
     
       
@@ -2147,6 +2191,20 @@
       
       
         <a href="../../../../tags/#tag:real-time" class="md-tag">real-time</a>
+      
+    
+      
+      
+      
+      
+        <a href="../../../../tags/#tag:rust" class="md-tag">rust</a>
+      
+    
+      
+      
+      
+      
+        <a href="../../../../tags/#tag:terraform" class="md-tag">terraform</a>
       
     
       
@@ -2467,9 +2525,9 @@
 <h2 id="the-split-brain-cloud-architecture">The "Split Brain" Cloud Architecture<a class="headerlink" href="#the-split-brain-cloud-architecture" title="Link to this section">&para;</a></h2>
 <p>One of the most interesting architectural decisions was the "Split Brain" pattern for execution.</p>
 <h3 id="the-problem">The Problem<a class="headerlink" href="#the-problem" title="Link to this section">&para;</a></h3>
-<p>The home lab has a GPU for training, but it's physically far from exchange servers. Low-latency execution requires proximity to exchange data centers.</p>
+<p>The home lab has a GPU for training, but it's physically far from exchange servers. Low-latency execution requires proximity to exchange data centers. Sending Level 2 order book data from Tokyo to a home lab introduces ~200ms of latency - an eternity in high-frequency trading.</p>
 <h3 id="the-solution">The Solution<a class="headerlink" href="#the-solution" title="Link to this section">&para;</a></h3>
-<p>Separate the "brain" (strategy/ML) from the "hands" (execution):</p>
+<p>Separate the "brain" (strategy/ML) from the "hands" (execution), deploying a lightweight executor in AWS Tokyo (<code>ap-northeast-1</code>), close to exchange matching engines.</p>
 <pre class="mermaid"><code>flowchart TB
     subgraph Home["Home Lab (Brain)"]
         GPU["GPU Training"]
@@ -2477,40 +2535,194 @@
         REGIME["Regime&lt;br/&gt;Detection"]
     end
 
-    subgraph Cloud["Cloud (Hands)"]
-        EXEC["Execution&lt;br/&gt;Engine"]
-        OB["Order Book&lt;br/&gt;Processor"]
-        ORDERS["Order&lt;br/&gt;Management"]
+    subgraph AWS["AWS Tokyo (Hands)"]
+        EC2["EC2 t4g.micro&lt;br/&gt;(ARM64/Graviton2)"]
+        RUST["Rust Executor&lt;br/&gt;(Tokio)"]
+        ONNX["ONNX Runtime&lt;br/&gt;(Inference)"]
     end
 
-    subgraph Exchange["Exchange"]
-        WS["WebSocket&lt;br/&gt;Feed"]
+    subgraph Exchange["Exchange (Tokyo)"]
+        WS["WebSocket&lt;br/&gt;L2 Data"]
         API["Order&lt;br/&gt;API"]
     end
 
     subgraph Sync["State Synchronization"]
-        S3[("Object&lt;br/&gt;Storage")]
+        S3[("S3 Bucket&lt;br/&gt;Models + Context")]
     end
 
     GPU --&gt; STRAT
     STRAT --&gt; REGIME
-    REGIME --&gt;|"Push context&lt;br/&gt;(every 5 min)"| S3
-    S3 --&gt;|"Pull context"| EXEC
+    REGIME --&gt;|"Push context.json&lt;br/&gt;(every 5 min)"| S3
+    S3 --&gt;|"Pull models&lt;br/&gt;+ context"| RUST
 
-    WS --&gt;|"Real-time&lt;br/&gt;L2 data"| OB
-    OB --&gt; EXEC
-    EXEC --&gt; ORDERS
-    ORDERS --&gt; API
+    WS --&gt;|"Real-time&lt;br/&gt;depth data"| RUST
+    RUST --&gt; ONNX
+    ONNX --&gt; RUST
+    RUST --&gt;|"&lt;10ms"| API
 
     style Home fill:#2d5a27
-    style Cloud fill:#1e3a5f</code></pre>
-<p>Key aspects:</p>
-<ol>
-<li><strong>The Brain</strong> runs ML inference and determines strategic bias (bullish/bearish/neutral)</li>
-<li><strong>The Hands</strong> receive real-time order book data and execute within the strategic context</li>
-<li><strong>State synchronization</strong> happens via object storage, with positions and context shared bidirectionally</li>
-<li><strong>Latency budget</strong>: The brain can be slow (seconds), but the hands must be fast (milliseconds)</li>
-</ol>
+    style AWS fill:#1e3a5f
+    style Exchange fill:#5a2d27</code></pre>
+<h3 id="aws-infrastructure-free-tier-friendly">AWS Infrastructure (Free Tier Friendly)<a class="headerlink" href="#aws-infrastructure-free-tier-friendly" title="Link to this section">&para;</a></h3>
+<p>The cloud infrastructure is managed with <strong>Terraform</strong> and designed for minimal cost:</p>
+<table>
+<thead>
+<tr>
+<th>Component</th>
+<th>Choice</th>
+<th>Rationale</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Compute</strong></td>
+<td>EC2 <code>t4g.micro</code> (ARM64)</td>
+<td>Graviton2 efficiency, free tier eligible</td>
+</tr>
+<tr>
+<td><strong>Storage</strong></td>
+<td>S3 Standard</td>
+<td>ONNX models + context files</td>
+</tr>
+<tr>
+<td><strong>Container Registry</strong></td>
+<td>ECR</td>
+<td>Docker image storage</td>
+</tr>
+<tr>
+<td><strong>Access</strong></td>
+<td>SSM Session Manager</td>
+<td>Zero open ports (no SSH)</td>
+</tr>
+<tr>
+<td><strong>IP</strong></td>
+<td>Elastic IP</td>
+<td>Required for exchange API whitelisting</td>
+</tr>
+</tbody>
+</table>
+<p>The infrastructure is <strong>self-healing</strong>: if the instance is terminated, Terraform recreates it and a User Data script automatically pulls the latest code bundle from S3 and restarts the executor.</p>
+<h3 id="the-rust-tokyo-executor">The Rust Tokyo Executor<a class="headerlink" href="#the-rust-tokyo-executor" title="Link to this section">&para;</a></h3>
+<p>The execution layer is written in <strong>Rust</strong> for maximum performance. Python is great for ML research, but for sub-millisecond tick processing, Rust's zero-cost abstractions and predictable latency are essential.</p>
+<pre class="mermaid"><code>flowchart LR
+    subgraph DataSources["Market Data"]
+        BN["Binance&lt;br/&gt;WebSocket"]
+        CB["Coinbase&lt;br/&gt;WebSocket"]
+    end
+
+    subgraph RustExecutor["Rust Executor (Tokio)"]
+        AGG["Aggregator&lt;br/&gt;Actor"]
+        SIG["Signal&lt;br/&gt;Engine"]
+        TAM["TamTam&lt;br/&gt;Pipeline"]
+        INF["ONNX&lt;br/&gt;Inference"]
+        EXEC["Execution&lt;br/&gt;Actor"]
+    end
+
+    subgraph Output["Actions"]
+        ORD["Orders"]
+        MET["Metrics"]
+    end
+
+    BN &amp; CB --&gt;|"MicroTicks"| AGG
+    AGG --&gt; SIG
+    AGG --&gt; TAM
+    SIG --&gt; INF
+    TAM --&gt;|"Anomaly&lt;br/&gt;Detection"| EXEC
+    INF --&gt;|"ML Signal"| EXEC
+    EXEC --&gt; ORD
+    EXEC --&gt; MET
+
+    style RustExecutor fill:#b7410e</code></pre>
+<p><strong>Key Rust Crates in the Workspace:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Crate</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>core</code></td>
+<td>Domain types and shared logic</td>
+</tr>
+<tr>
+<td><code>features</code></td>
+<td>Signal engine (RSI, Z-Score) ported to Rust</td>
+</tr>
+<tr>
+<td><code>execution</code></td>
+<td>Main async runtime with Tokio actors</td>
+</tr>
+<tr>
+<td><code>aggregator</code></td>
+<td>Tick aggregation and snapshot latching</td>
+</tr>
+<tr>
+<td><code>reservoir</code></td>
+<td>Echo State Network for temporal patterns</td>
+</tr>
+<tr>
+<td><code>detector</code></td>
+<td>Multivariate streaming anomaly detection</td>
+</tr>
+<tr>
+<td><code>tamtam</code></td>
+<td>Novel pipeline combining ESN + Gaussian detector</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Performance Optimizations:</strong></p>
+<ul>
+<li><strong>jemalloc</strong>: Custom allocator for predictable memory behavior</li>
+<li><strong>SIMD JSON</strong>: Fast parsing of WebSocket messages</li>
+<li><strong>Zero-allocation hot paths</strong>: Pre-allocated buffers in the tick processing loop</li>
+<li><strong>Actor model</strong>: Tokio channels for concurrent, non-blocking data flow</li>
+</ul>
+<h3 id="the-tamtam-pipeline">The TamTam Pipeline<a class="headerlink" href="#the-tamtam-pipeline" title="Link to this section">&para;</a></h3>
+<p>One of the more experimental components is the "TamTam" pipeline - a combination of reservoir computing and streaming anomaly detection:</p>
+<pre class="mermaid"><code>flowchart LR
+    TICK["Market&lt;br/&gt;Tick"] --&gt; FEAT["Feature&lt;br/&gt;Extraction"]
+    FEAT --&gt; ESN["Echo State&lt;br/&gt;Network"]
+    ESN --&gt;|"Reservoir&lt;br/&gt;State"| GAUSS["Streaming&lt;br/&gt;Gaussian"]
+    GAUSS --&gt;|"Anomaly&lt;br/&gt;Score &gt; 3σ"| ALERT["Stealth&lt;br/&gt;Order Logic"]
+
+    style ESN fill:#4a4a6a
+    style GAUSS fill:#6a4a4a</code></pre>
+<p>The idea is to use the <strong>Echo State Network</strong> as a "tuning fork" that resonates with normal market patterns. When the market behaves unusually, the reservoir state deviates, and the <strong>Multivariate Streaming Gaussian</strong> detector flags it as an anomaly.</p>
+<h3 id="state-synchronization">State Synchronization<a class="headerlink" href="#state-synchronization" title="Link to this section">&para;</a></h3>
+<p>The Brain and Hands communicate asynchronously via S3:</p>
+<table>
+<thead>
+<tr>
+<th>Direction</th>
+<th>File</th>
+<th>Contents</th>
+<th>Frequency</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Brain → Hands</td>
+<td><code>context.json</code></td>
+<td>Regime, bias, thresholds</td>
+<td>Every 5 min</td>
+</tr>
+<tr>
+<td>Brain → Hands</td>
+<td><code>*.onnx</code></td>
+<td>ML models</td>
+<td>On retrain</td>
+</tr>
+<tr>
+<td>Hands → Brain</td>
+<td><code>positions.json</code></td>
+<td>Current inventory</td>
+<td>On change</td>
+</tr>
+</tbody>
+</table>
+<p>This design means the executor can operate <strong>autonomously</strong> for extended periods, even if the home lab goes offline. It simply continues executing within its last-known strategic context.</p>
 <h2 id="monitoring-and-observability">Monitoring and Observability<a class="headerlink" href="#monitoring-and-observability" title="Link to this section">&para;</a></h2>
 <p>For a system running 24/7, observability is critical. The monitoring stack includes:</p>
 <pre class="mermaid"><code>flowchart LR
